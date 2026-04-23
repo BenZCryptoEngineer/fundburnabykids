@@ -123,17 +123,17 @@ These are cross-cutting. Every instruction module references at least one of the
 
 ### `policies/VOICE.md`
 
-Contains Ben's writing DNA. Agents read this before generating any content (emails, updates, replies).
+Coalition communication principles. Agents read this before generating any content (emails, updates, replies) on behalf of Burnaby Kids First.
 
 Should include:
 
-- Core principles (diagnostic > metaphysical, adversarial courtesy, structural isomorphism, restraint at peak, end with reader's work unfinished)
-- 止觀寫作技法 principles for Chinese content (止 as paragraph breaks, 觀內呼吸 as micro-breaths, 不確定性三門 as 菩薩方便門, 斷言密度 ≤ 1.0/kw, 指月不說法)
-- Anti-patterns: what NOT to sound like (generic AI register, "I'd be happy to help", em-dash overuse, positive-framing padding, false confidence)
-- Concrete rewrites: "good faith" → "Genuinely"; "I hear" → "I get"; "positing" → "putting"
-- Six-expert review gate for high-stakes content (behavioural scientist, social psychologist, comms scholar, X marketing lead, X algorithm specialist, Mahayana Buddhist master) — 9.0/10 threshold
+- Coalition communication principles: institutional, factual, non-promotional, non-partisan, evidence-first
+- Anti-patterns: generic AI register ("I'd be happy to help"), marketing hype, political advocacy language, emotional manipulation
+- Register: direct, brief, specific, sources-cited
+- Bilingual guidance: EN primary; ZH translations preserve factual neutrality, not personal-essay register
+- Example good vs bad openings for: PAC verification email, fortnightly update, media response, policy inquiry
 
-**Ben's note to Claude Code:** Draft this based on context clues from PRD and existing HTML (Ben's byline, FAQ answers, etc.). Ben will augment with his own pre-written docs after your draft.
+**Ben's note to Claude Code:** Do NOT draft VOICE.md v1 speculatively. Leave as placeholder with "TBD — Ben will fill after first real coalition operations." Reference "TBD voice; use neutral institutional tone" in any agent-instruction module that would otherwise depend on it.
 
 ### `policies/COMPLIANCE.md`
 
