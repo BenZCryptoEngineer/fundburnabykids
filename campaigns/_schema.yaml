@@ -1,0 +1,39 @@
+# Campaign YAML schema — v0.1 (placeholder)
+#
+# Every file matching `campaigns/*.yaml` (except this one, which starts with _)
+# is a campaign definition consumed by:
+#   - platform/src/content/config.ts   (Astro Content Collection validator)
+#   - agent-instructions/CREATE_CAMPAIGN.md  (how agents generate new ones)
+#
+# The authoritative schema lives in platform/src/content/config.ts (Zod).
+# This file is human-readable documentation.
+#
+# Full schema is finalized during Phase 3 when CREATE_CAMPAIGN.md is written.
+# Phase 2 (this scaffold) documents only the minimum v0.1 shape.
+
+# Required keys (v0.1):
+#
+#   slug:            string, URL-safe, kebab-case        # e.g. "fund-burnaby-kids"
+#   status:          "draft" | "live" | "archived"
+#   deadline:        ISO date (YYYY-MM-DD)               # policy-outcome deadline
+#   title:
+#     en:            string                              # primary EN headline
+#     zh:            string (optional for draft)         # primary ZH headline
+#   subtitle:
+#     en:            string (optional)
+#     zh:            string (optional)
+
+# Phase 3 will add (indicative, not binding):
+#
+#   founder:         { name, role, contact }
+#   personas:        list of { id, label_en, label_zh, visualizations: [key, key] }
+#   facts:           list of { claim_en, claim_zh, citation_url, cited_on }
+#   visualizations:  map of key → { type, data, _en, _zh }   # EN/ZH SVG variants kept separate
+#   mla_scorecard:   list of { riding, name, status, evidence }
+#   mailto_recipients: list of { name, email, role }
+#   faq:             list of { q_en, q_zh, a_en, a_zh }
+#   pac_endorsement_kit: { modal_content, contact_template }
+#
+# Phase 3's CREATE_CAMPAIGN.md will document what "good" looks like for each
+# field (the strategic moves: BCPSEA-admission equivalent, Contingencies-Vote
+# equivalent, cascade story, 2.2x concrete contrast).

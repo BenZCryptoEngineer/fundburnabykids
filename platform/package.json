@@ -1,0 +1,25 @@
+{
+  "name": "burnabykidsfirst-platform",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Astro frontend for Burnaby Kids First coalition campaigns. Multi-campaign, bilingual (EN/ZH), static.",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "astro": "^5.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.0",
+    "typescript": "^5.5.0"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
