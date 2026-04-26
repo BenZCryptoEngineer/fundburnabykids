@@ -27,9 +27,23 @@
 --   - Fraud detection is query-based (GROUP BY ip_address)
 -- ============================================================================
 
--- Required extensions (Supabase enables both by default; included for clarity).
+-- Required extensions.
+--   pgcrypto: pre-installed on Supabase, no enabling needed.
+--   pg_cron:  installed but NOT auto-enabled. CREATE EXTENSION below enables it.
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 CREATE EXTENSION IF NOT EXISTS "pg_cron";
+
+-- IMPORTANT: If the Supabase project was created with
+-- "Automatically expose new tables and functions" UNCHECKED in the
+-- Data API security settings (recommended for tighter access control),
+-- then NEW tables in the public schema are NOT auto-granted to the
+-- Data API roles (anon, authenticated, service_role). The Netlify
+-- Functions use the service_role key, so without explicit GRANTs
+-- the Functions get HTTP 403 "permission denied for table X".
+--
+-- The GRANTs at the BOTTOM of this file fix that. Do not remove them
+-- even if it looks redundant — Supabase does not auto-grant in this
+-- security mode. Verified via acceptance test on 2026-04-26.
 
 
 -- ----------------------------------------------------------------------------
@@ -251,6 +265,25 @@ SELECT cron.schedule(
       AND confirm_token_expires < NOW();
   $$
 );
+
+
+-- ----------------------------------------------------------------------------
+-- DATA API GRANTS
+-- ----------------------------------------------------------------------------
+-- See note at top of file: required when project security setting
+-- "Automatically expose new tables and functions" is unchecked.
+-- service_role bypasses RLS by default once granted DML. anon and
+-- authenticated reach our data only through the public_signatures and
+-- public_pac_endorsements views (already granted above).
+-- ----------------------------------------------------------------------------
+
+GRANT ALL PRIVILEGES ON TABLE signatures        TO service_role;
+GRANT ALL PRIVILEGES ON TABLE pac_endorsements  TO service_role;
+GRANT ALL PRIVILEGES ON TABLE mla_replies       TO service_role;
+
+GRANT USAGE, SELECT ON SEQUENCE signatures_id_seq        TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE pac_endorsements_id_seq  TO service_role;
+GRANT USAGE, SELECT ON SEQUENCE mla_replies_id_seq       TO service_role;
 
 
 -- ============================================================================
