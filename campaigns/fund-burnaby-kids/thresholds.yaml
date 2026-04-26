@@ -1,0 +1,27 @@
+goal: 2000
+deadline: 2026-05-27
+
+milestones:
+  - count: 500
+    name:
+      en: "Press threshold"
+      zh: "媒体关注门槛"
+    consequence:
+      en: "Enough constituent volume to hand-deliver to Burnaby MLA constituency offices and trigger local press coverage."
+      zh: "足够的选民邮件量，可以亲手递交到Burnaby各MLA选区办公室，并引发本地媒体关注。"
+
+  - count: 2000
+    name:
+      en: "Campaign goal"
+      zh: "运动目标"
+    consequence:
+      en: "Headline goal — 2,000 named Burnaby parents by May 27, the day SD41 adopts its budget. At this scale, the petition becomes a political object the Minister of Education and Child Care must respond to in writing."
+      zh: "核心目标——5月27日（SD41预算通过日）之前征集2,000位Burnaby家长。在此规模下，请愿成为教育及儿童保育厅长必须书面回应的政治文件。"
+
+  - count: 5000
+    name:
+      en: "Coalition baseline"
+      zh: "联盟基线"
+    consequence:
+      en: "Stretch threshold establishing Burnaby Kids First as a durable parent coalition with a verified contact list large enough to carry forward into the next provincial budget cycle and beyond this campaign."
+      zh: "进阶门槛——Burnaby Kids First成为持久的家长联盟，拥有足够大的可验证联系人名单，可延续到下一个省级预算周期，并支持本次运动结束后的长期工作。"

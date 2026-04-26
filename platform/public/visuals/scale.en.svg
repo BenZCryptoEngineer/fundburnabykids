@@ -1,0 +1,17 @@
+<svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <text x="10" y="45" font-family="'Söhne', sans-serif" font-size="10" font-weight="700" fill="#1A1A1A">2025–26</text>
+    <text x="10" y="57" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666">shortfall</text>
+    <text x="10" y="110" font-family="'Söhne', sans-serif" font-size="10" font-weight="700" fill="#C8531A">2026–27</text>
+    <text x="10" y="122" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666">projected</text>
+    <rect x="75" y="30" width="178" height="30" fill="#E5E0D5" stroke="#888" stroke-width="1"/>
+    <text x="263" y="50" font-family="'Söhne', sans-serif" font-size="11" font-weight="700" fill="#1A1A1A">$4.2M</text>
+    <text x="75" y="80" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444"><tspan font-weight="600">What was cut:</tspan> high school counsellors · custodians · Grade 7 band (1,200 students)</text>
+    <text x="75" y="91" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">Mandarin program · Advanced Learning</text>
+    <rect x="75" y="100" width="400" height="30" fill="#C8531A" stroke="#8B3A12" stroke-width="1"/>
+    <text x="485" y="120" font-family="'Söhne', sans-serif" font-size="12" font-weight="700" fill="#C8531A">$9.4M · 2.2×</text>
+    <text x="570" y="50" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555" font-style="italic">Last year already cut</text>
+    <text x="570" y="61" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555" font-style="italic">the obvious things.</text>
+    <text x="570" y="120" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">This year reaches</text>
+    <text x="570" y="131" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">EAs, class sizes,</text>
+    <text x="570" y="142" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">elementary support.</text>
+  </svg>

@@ -1,0 +1,33 @@
+facts:
+  - id: "01"
+    headline:
+      en: "BCPSEA admits this is their interpretive error."
+      zh: "BCPSEA承认这是他们的解读错误。"
+    body:
+      en: "The BC Public School Employers' Association bargains on behalf of every BC school district. An arbitrator ruled that beginning teachers in Burnaby were placed one step too low on the salary grid as of July 1, 2022. SD41 was not a party to that negotiation. Board Chair Kristin Schnider has stated publicly that the costs would have been fully funded at the time if BCPSEA had interpreted the agreement correctly. The cost landed on Burnaby — and only Burnaby — because of a provincial-level interpretive failure."
+      zh: "BCPSEA（BC省公立学校雇主协会）代表BC每一个学区谈判。仲裁员裁定，自2022年7月1日起，Burnaby的初任教师在薪资等级表上被低估了一级。SD41并非谈判方。董事会主席Kristin Schnider公开表示：如果BCPSEA当时正确解读协议，这笔钱本就会被全额资助。这笔成本落到Burnaby——只落到Burnaby——是因为省级层面的解读失误。"
+    citation:
+      text: "SD41 official statement"
+      source_url: "https://burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/"
+
+  - id: "02"
+    headline:
+      en: "Burnaby has no cushion left."
+      zh: "Burnaby已经没有缓冲空间了。"
+    body:
+      en: "In 2025-26, SD41 cut $4.2 million — high school counsellors, custodial staff, the Grade 7 band program serving 1,200 students, advanced learning, and Mandarin. Unrestricted reserves sit at $4.3 million. The arbitration liability is more than double that. \"Doing more with less\" has already been done. What comes next is cutting from the bone."
+      zh: "2025-26年，SD41已削减$4.2M——高中辅导员、清洁人员、服务1,200名学生的7年级乐队项目、advanced learning课程、中文课。非限制性储备金只有$4.3M。这次的仲裁责任是它的两倍多。\"用更少的钱做更多的事\"已经做到头了。接下来只能砍到骨头。"
+    citation:
+      text: "CTV — 2025-26 cuts detail"
+      source_url: "https://www.ctvnews.ca/vancouver/article/burnaby-teachers-urging-province-to-provide-more-funding-district-facing-42m-budget-shortfall/"
+
+  - id: "03"
+    headline:
+      en: "Budget 2026 reserved $5 billion a year for exactly this."
+      zh: "2026预算每年留了$5B就是为了这种情况。"
+    body:
+      en: "The Contingencies Vote in Budget 2026 is explicitly described as covering \"caseload pressures, current collective bargaining mandate costs, and other costs that are uncertain at the time of building the budget.\" The $9.4M Burnaby liability is almost verbatim a collective bargaining mandate cost. It represents 0.19% of the annual Contingencies Vote. The money exists. What remains is the decision to apply it."
+      zh: "2026预算中的应急基金明确说明用于\"案件压力、当前集体谈判授权成本、以及其他在编制预算时不确定的成本\"。Burnaby的$9.4M几乎逐字匹配\"集体谈判授权成本\"的定义。这笔钱占应急基金年度拨款的0.19%。钱已经在那里，剩下的只是决定是否使用。"
+    citation:
+      text: "BC Budget 2026 (Contingencies Vote, Estimates Vote 50)"
+      source_url: "https://www.bcbudget.gov.bc.ca/2026/"

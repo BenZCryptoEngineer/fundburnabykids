@@ -1,0 +1,194 @@
+grades:
+  - { id: K,  label: "K" }
+  - { id: "1",  label: "1" }
+  - { id: "2",  label: "2" }
+  - { id: "3",  label: "3" }
+  - { id: "4",  label: "4" }
+  - { id: "5",  label: "5" }
+  - { id: "6",  label: "6" }
+  - { id: "7",  label: "7" }
+  - { id: "8",  label: "8" }
+  - { id: "9",  label: "9" }
+  - { id: "10", label: "10" }
+  - { id: "11", label: "11" }
+  - { id: "12", label: "12" }
+
+services:
+  - id: ea
+    name:
+      en: "Classroom EA (support aide)"
+      zh: "课堂助教 (EA)"
+    note:
+      en: "EAs support students with IEPs, behavioural needs, and early literacy. Reductions disproportionately affect the students who need the most."
+      zh: "EA为IEP学生、行为需求和早期识字困难的学生提供支持。削减对最需要帮助的学生影响最大。"
+    grades:
+      K:  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "1":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "2":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "3":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "4":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "5":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "6":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "7":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "8":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
+      "9":  { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
+      "10": { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
+      "11": { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
+      "12": { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
+
+  - id: counsellor-elem
+    name:
+      en: "Elementary counsellor"
+      zh: "小学辅导员"
+    note:
+      en: "Elementary counsellors catch early mental health and learning concerns. Already stretched thin — reduction ratios vary by school."
+      zh: "小学辅导员负责发现早期心理健康和学习问题。已经捉襟见肘——各校削减比例不同。"
+    grades:
+      K:  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      "1":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      "2":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      "3":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      "4":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      "5":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      "6":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      "7":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+
+  - id: counsellor-hs
+    name:
+      en: "High school counsellor"
+      zh: "高中辅导员"
+    note:
+      en: "High school counsellor positions were cut in the 2025-26 budget. Already impacts post-secondary planning, mental health referrals, and crisis response times."
+      zh: "高中辅导员岗位在2025-26预算中已被削减。已影响升学规划、心理健康转介和危机响应。"
+    grades:
+      "8":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "9":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "10": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "11": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "12": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+
+  - id: band
+    name:
+      en: "Grade 7 band program"
+      zh: "7年级乐队课"
+    note:
+      en: "Grade 7 band served 1,200 students before being eliminated in 2025-26. Feeder programs into high school music are now disrupted."
+      zh: "7年级乐队原本服务1,200名学生，在2025-26年被取消。高中音乐项目的生源通道被破坏。"
+    grades:
+      "7": { state: lost, tip: { en: "Cut 25-26 (1,200 students)", zh: "2025-26已砍 (1,200学生)" } }
+
+  - id: mandarin
+    name:
+      en: "Mandarin language program"
+      zh: "中文课程"
+    note:
+      en: "Mandarin program reduced in 2025-26. Further cuts in 2026-27 likely given the scale of pressure."
+      zh: "中文项目在2025-26年被削减。鉴于2026-27年的压力规模，可能进一步削减。"
+    grades:
+      "4":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "5":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "6":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "7":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "8":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "9":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "10": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "11": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "12": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+
+  - id: advanced
+    name:
+      en: "Advanced / enrichment learning"
+      zh: "Advanced Learning 拓展课程"
+    note:
+      en: "Advanced Learning streams were cut for 2025-26. These programs are how strong students build a competitive post-secondary profile."
+      zh: "Advanced Learning 课程在2025-26年被取消。这些课程是学生打造有竞争力升学背景的关键。"
+    grades:
+      "4":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "5":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "6":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "7":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "8":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "9":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "10": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "11": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "12": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+
+  - id: library
+    name:
+      en: "Teacher-librarian time"
+      zh: "图书管理员课时"
+    note:
+      en: "Teacher-librarian positions are historically among the first to be reduced in budget pressure. Research literacy and inquiry skills suffer across all grades."
+      zh: "图书管理员是预算压力下最早被削减的岗位之一。所有年级的研究能力和探究技能都会受影响。"
+    grades:
+      K:  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "1":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "2":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "3":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "4":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "5":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "6":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "7":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "8":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "9":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "10": { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "11": { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      "12": { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+
+  - id: electives
+    name:
+      en: "High school electives"
+      zh: "高中选修课"
+    note:
+      en: "Electives like specialty sciences, arts streams, and language options get cut when course allocations drop. Directly affects university admissions."
+      zh: "当课时分配减少，专业科学、艺术、语言选修课被砍。直接影响大学录取。"
+    grades:
+      "8":  { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
+      "9":  { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
+      "10": { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
+      "11": { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
+      "12": { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
+
+  - id: custodial
+    name:
+      en: "Daily cleaning & upkeep"
+      zh: "日常清洁维护"
+    note:
+      en: "Custodial positions reduced in 2025-26. Schools are less clean; maintenance issues accumulate. Affects health and learning environment for everyone."
+      zh: "清洁岗位在2025-26年减少。学校环境变差，维护问题累积。影响所有人的健康和学习环境。"
+    grades:
+      K:  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "1":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "2":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "3":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "4":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "5":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "6":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "7":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "8":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "9":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "10": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "11": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "12": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+
+  - id: class-size
+    name:
+      en: "Class size & composition"
+      zh: "班级规模与组成"
+    note:
+      en: "Without the $9.4M funded, class sizes in Burnaby are projected to grow. Every student feels this — but students with IEPs or high needs feel it most."
+      zh: "如果$9.4M不到位，Burnaby的班级规模预计扩大。每个学生都会感受到——但IEP学生和高需求学生感受最深。"
+    grades:
+      K:  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "1":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "2":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "3":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "4":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "5":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "6":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "7":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "8":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "9":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "10": { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "11": { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      "12": { state: risk, tip: { en: "Pressure", zh: "持续压力" } }

@@ -1,0 +1,92 @@
+faq:
+  - id: privacy
+    q:
+      en: "Is my personal information safe?"
+      zh: "我的个人信息安全吗？"
+    a:
+      en: |
+        We take the minimum information needed and show even less publicly. Collected: first name, last name (or initial), email, school, grade, postal code, plus your three consent choices. Publicly displayed: first name + last initial + school + neighbourhood (derived from first 3 digits of postal code, never the full code). Your email and full postal code are never shown.
+
+        Collection and use are governed by BC's Personal Information Protection Act (PIPA). You can request full deletion at any time by replying to any email from us. We retain consent records for three years per CRTC guidance, then delete them.
+
+        We never sell, trade, or share your data with any third party. Hosting is in Canada.
+      zh: |
+        我们只收集必要的最少信息，公开显示的更少。收集内容：名字、姓氏（或首字母）、邮箱、学校、年级、邮编、以及您的三个同意选项。公开显示内容：名字+姓氏首字母+学校+社区（由邮编前3位推导，绝不显示完整邮编）。您的邮箱和完整邮编从不显示。
+
+        信息收集与使用受BC省《个人信息保护法》(PIPA)保护。您可随时回复任何邮件要求完全删除。根据CRTC指引，同意记录保留3年后删除。
+
+        我们从不出售、交易或与第三方共享您的数据。所有数据托管在加拿大。
+
+  - id: who-runs-this
+    q:
+      en: "Who runs this? Is it DPAC or the school district?"
+      zh: "这是谁在运营？DPAC还是学区？"
+    a:
+      en: |
+        This site was founded and is operated by Ben Zhou, a Burnaby parent with two daughters and founder of Expeta Technologies (a Burnaby-based research company). Ben takes full public responsibility for this campaign, including strategy, content, and operations. See the About section for more.
+
+        Fund Burnaby Kids is the current campaign of Burnaby Kids First — a parent-led coalition built to give Burnaby parents a durable voice on issues affecting local children. Fund Burnaby Kids is urgent and specific ($9.4M, by May 27). Burnaby Kids First is the longer-term coalition that will exist after this campaign ends.
+
+        Burnaby DPAC and the school board have publicly advocated for the same position — the Province must fully fund the $9.4M. This campaign is independent but aligned with their stance. We move faster than DPAC's monthly cycle allows; DPAC endorsements and school PAC coalition members are listed on the page as they join.
+
+        No public funds are used. No political party is endorsed. No candidate is named.
+      zh: |
+        本网站由 Ben Zhou（周子颜） 创立并运营。他是一位Burnaby家长，有两个女儿，同时是Expeta Technologies（设在Burnaby的研究公司）的创始人。Ben对此活动承担完全的公开责任，包括策略、内容和运营。详见 About部分。
+
+        Fund Burnaby Kids 是 Burnaby Kids First 联盟目前的运动——后者是一个家长主导的联盟，旨在为Burnaby家长在影响本地孩子的议题上提供持久的声音。Fund Burnaby Kids 是紧迫而具体的（$9.4M，5月27日之前）。Burnaby Kids First 是在本次运动结束后仍会存续的长期联盟。
+
+        Burnaby DPAC和学区董事会已公开支持相同立场——省府必须全额资助$9.4M。本活动独立运营但与他们立场一致。我们比DPAC的月度周期更快行动；DPAC背书和加入的学校PAC联盟成员加入时会显示在页面上。
+
+        未使用任何公共资金。不支持任何政党。不提及任何候选人。
+
+  - id: pac-joining
+    q:
+      en: "What does it mean when a PAC joins the coalition?"
+      zh: "PAC加入联盟意味着什么？"
+    a:
+      en: |
+        A PAC joining means the PAC has passed a motion at one of its meetings endorsing this campaign's ask (fund the $9.4M from the Contingencies Vote). The PAC's name and school appear publicly on this page. The PAC does not give up any independence, contribute any money, endorse any political party, or take on any legal liability. It is a public endorsement of a specific ask — nothing more.
+
+        If you are a PAC chair and want to propose this at your next meeting, see the PAC Endorsement Kit — we've written the motion wording, the briefing, and an FAQ so you don't have to start from scratch.
+      zh: |
+        PAC加入意味着该PAC在一次会议上通过了支持此活动诉求的动议（从应急基金中资助$9.4M）。PAC的名称和学校会公开显示在此页面。PAC不放弃任何独立性、不出钱、不支持任何政党、不承担任何法律责任。这只是对一个具体诉求的公开背书——仅此而已。
+
+        如果您是PAC主席，想在下次会议上提议此事，请查看PAC背书工具包——我们已写好动议措辞、简报和FAQ，您不用从零开始。
+
+  - id: email-impact
+    q:
+      en: "Will sending an email really change anything?"
+      zh: "发一封邮件真的能改变什么吗？"
+    a:
+      en: |
+        Ministerial Correspondence Units sort incoming mail by postal code. When Burnaby MLAs receive dozens of identical-subject emails in the same week from their own constituents, that becomes a political signal that reaches caucus. The Province has already confirmed they are "actively engaged" on this file — that means the decision is open.
+
+        The petition serves a different purpose: it creates a named collective object that can be printed, counted, and physically delivered. Emails are volume; petitions are weight. We need both.
+      zh: |
+        省府厅长通信单位按邮编分类处理邮件。当Burnaby的MLA在同一周内收到数十封来自本选区居民的相同主题邮件，这就成为一个会传达到党团的政治信号。省府已确认他们正在"积极处理"此事——这意味着决定尚未做出，仍在讨论中。
+
+        请愿有不同作用：它形成一个可打印、可计数、可亲手递交的有名有姓的集体文件。邮件是数量，请愿是重量。两者都需要。
+
+  - id: sign-without-email
+    q:
+      en: "Can I sign without sending an email?"
+      zh: "我能只签名不发邮件吗？"
+    a:
+      en: "Yes. Uncheck the third box in the consent section before submitting. Your name will still appear on the petition. We recommend doing both — they reach different parts of government — but signing alone is fully valid."
+      zh: "可以。提交前取消勾选同意区的第三个选项。您的名字仍会出现在请愿中。我们建议两者都做——它们触达政府的不同部分——但只签名也完全有效。"
+
+  - id: casl
+    q:
+      en: "What about CASL — do your emails comply?"
+      zh: "CASL呢——你们的邮件合规吗？"
+    a:
+      en: "CASL covers \"commercial electronic messages.\" Political advocacy emails fall outside that definition (see Industry Canada guidance and leading non-profit legal analysis). Even so, we follow CASL best practice: we obtain express opt-in consent for updates, every email has a one-click unsubscribe, every email identifies us with a physical address, and we honour unsubscribes within 10 days — well under the statutory requirement."
+      zh: "CASL仅监管\"商业电子信息\"。政治倡导类邮件不属于该定义（见加拿大产业部指引及主要非营利组织的法律分析）。即便如此，我们仍遵循CASL最佳实践：明确获取订阅同意、每封邮件含一键退订、每封邮件包含实体地址、退订请求在10天内处理——远低于法定要求。"
+
+  - id: who-sees-email
+    q:
+      en: "Who sees my email after I sign?"
+      zh: "我签名后谁会看到我的邮件？"
+    a:
+      en: "When you click \"Open my pre-filled email,\" your email client (Apple Mail, Gmail, Outlook) opens with the recipients, subject, and body already filled in. You review and click send — from your own account. We never see the email leave your machine, and we never receive a copy. The Ministry and MLAs see the letter came from your personal address, which is what makes it a constituent letter."
+      zh: "点击\"打开我的预填邮件\"时，您的邮件客户端（Apple Mail、Gmail、Outlook）会打开，收件人、主题和正文都已预填好。您审阅后点击发送——从您自己的账户。我们看不到邮件离开您的设备，也不会收到副本。省府和MLA看到的是来自您个人地址的邮件，这正是它成为\"选民邮件\"的关键。"

@@ -1,0 +1,48 @@
+to: "ECC.Minister@gov.bc.ca"
+cc:
+  - "anne.kang.MLA@leg.bc.ca"
+  - "rohini.arora.MLA@leg.bc.ca"
+  - "janet.routledge.MLA@leg.bc.ca"
+  - "paul.choi.MLA@leg.bc.ca"
+  - "raj.chouhan.MLA@leg.bc.ca"
+  - "FIN.Minister@gov.bc.ca"
+
+subject:
+  en: "Please fund Burnaby's $9.4M arbitration from Budget 2026 Contingencies"
+  zh: ""
+
+placeholders:
+  - key: "{FIRST}"
+    description: "Signer's first name"
+  - key: "{LAST}"
+    description: "Signer's last name"
+  - key: "{SCHOOL}"
+    description: "Signer's child's school (selected from schools.yaml)"
+  - key: "{GRADE}"
+    description: "Signer's child's grade (K, 1..12, Multiple, Future student)"
+  - key: "{POSTAL}"
+    description: "Signer's postal code, normalized to upper-case"
+
+body_template_en: |
+  Dear Minister Beare,
+
+  I am writing as a parent of a student at {SCHOOL} in Burnaby School District 41. My child is in Grade {GRADE}, and I live at postal code {POSTAL}.
+
+  I am asking the Province to fully fund the $9.4 million arbitration liability facing SD41 by drawing on the $5 billion Contingencies Vote in Budget 2026. The budget documents explicitly describe that allocation as covering "current collective bargaining mandate costs" — which is precisely what this liability is.
+
+  Three reasons this matters:
+
+  1. The cost is not SD41's fault. BCPSEA has publicly acknowledged that the cost would have been fully funded in 2022 had they correctly interpreted the salary grid. SD41 was not a party to that negotiation.
+
+  2. The district has no cushion left. Last year, SD41 cut $4.2 million from the operating budget, including counsellors, custodians, the Grade 7 band program affecting 1,200 students, and advanced learning programs. Unrestricted reserves sit at roughly $4.3 million — less than half the arbitration liability.
+
+  3. This is a specific funding source, not a general ask. The $5 billion Contingencies Vote exists precisely for costs like this — unforeseen, arising from collective bargaining, uncertain at budget time. $9.4M represents 0.19% of that allocation.
+
+  I would appreciate a written response on whether the Province will fund the $9.4M from the Contingencies Vote before SD41 adopts its budget on May 27, 2026.
+
+  Sincerely,
+  {FIRST} {LAST}
+  Parent, {SCHOOL}
+  Postal code: {POSTAL}
+
+body_template_zh: ""

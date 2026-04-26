@@ -1,0 +1,113 @@
+intro:
+  heading:
+    en: "What endorsing means"
+    zh: "背书的含义"
+
+do:
+  heading:
+    en: "Your PAC does:"
+    zh: "您的PAC会做："
+  items:
+    - en: "Appear publicly on fundburnabykids.ca"
+      zh: "公开显示在fundburnabykids.ca上"
+    - en: "Share the campaign with your school families (via your existing channels)"
+      zh: "通过您现有渠道向学校家庭分享活动"
+    - en: "Be counted in aggregate when we deliver to the Minister"
+      zh: "当我们向厅长递交时被计入总数"
+
+dont:
+  heading:
+    en: "Your PAC does NOT:"
+    zh: "您的PAC不会："
+  items:
+    - en: "Give up any independence or decision-making authority"
+      zh: "放弃任何独立性或决策权"
+    - en: "Contribute money or resources"
+      zh: "出钱或贡献资源"
+    - en: "Endorse any political party or candidate"
+      zh: "支持任何政党或候选人"
+    - en: "Take on any legal liability"
+      zh: "承担任何法律责任"
+
+motion_text:
+  heading:
+    en: "Standard motion to propose at your PAC meeting"
+    zh: "在PAC会议上提议的标准动议"
+  label:
+    en: "Motion text (English)"
+    zh: "动议措辞（英文）"
+  body:
+    en: "\"That the [School Name] PAC endorse the Fund Burnaby Kids parent coalition calling on the Province of British Columbia to fully fund the $9.4 million arbitration liability affecting Burnaby School District 41 from the Budget 2026 Contingencies Vote, and that the PAC chair be authorized to submit this endorsement on behalf of the PAC.\""
+    zh: "\"[学校名称] PAC 在此背书 Fund Burnaby Kids 家长联盟，呼吁BC省政府从2026预算应急基金中全额资助影响Burnaby 41学区的$9.4M仲裁责任，并授权PAC主席代表PAC提交此背书。\""
+
+briefing:
+  heading:
+    en: "The two-minute briefing (to read at your PAC meeting)"
+    zh: "两分钟简报（在PAC会议上朗读）"
+  items:
+    - en: "SD41 faces a $9.4 million unfunded liability from a 2022 salary arbitration."
+      zh: "SD41面临$9.4M的无资金缺口，来自2022年薪资仲裁。"
+    - en: "BCPSEA — the Province's own bargaining agent — has acknowledged the cost would have been funded in 2022 if they had interpreted the agreement correctly."
+      zh: "BCPSEA——省府自己的谈判代表——已承认如果他们2022年正确解读协议，这笔钱本就会被资助。"
+    - en: "Last year, SD41 already cut $4.2M. This year's pressure is more than double."
+      zh: "去年SD41已削减$4.2M。今年的压力是其两倍多。"
+    - en: "Budget 2026's $5 billion Contingencies Vote is explicitly described as covering \"collective bargaining mandate costs\" — exactly this."
+      zh: "2026预算的$5B应急基金明确说明涵盖\"集体谈判授权成本\"——正是此类情况。"
+    - en: "The SD41 budget will be adopted on May 27. We have a narrow window."
+      zh: "SD41预算将于5月27日通过。窗口期很短。"
+
+qa:
+  heading:
+    en: "Answers to questions your PAC members might ask"
+    zh: "PAC成员可能提出的问题的回答"
+  items:
+    - q:
+        en: "Is this partisan?"
+        zh: "这是党派行为吗？"
+      a:
+        en: "No. The campaign does not name any political party or candidate. The ask (apply the Contingencies Vote) is a technical budget request that any government of any party could do."
+        zh: "不是。活动不提任何政党或候选人。诉求（应用应急基金）是一个技术性预算请求，任何党派的政府都可以做。"
+    - q:
+        en: "Is DPAC behind this?"
+        zh: "DPAC在后面吗？"
+      a:
+        en: "DPAC has publicly advocated for the same position. This coalition is parent-led and aligned with DPAC's stance, but organizationally independent so it can move faster than DPAC's monthly cycle allows."
+        zh: "DPAC已公开支持同一立场。此联盟由家长主导，与DPAC立场一致，但组织上独立，能比DPAC的月度周期更快行动。"
+    - q:
+        en: "What if we endorse and the Province funds it — was it worth it?"
+        zh: "如果我们背书后省府拨款了——值得吗？"
+      a:
+        en: "Yes. If funding happens, the coalition and the signatures were evidence that moved the needle. If funding doesn't happen, the list becomes the foundation for next year's harder campaign."
+        zh: "值得。如果资金到位，联盟和签名就是推动了改变的证据。如果资金未到位，这份名单将成为来年更艰难活动的基础。"
+
+after_vote:
+  heading:
+    en: "After your PAC votes"
+    zh: "您的PAC投票后"
+  items:
+    - en: "Fill in the form below. We verify the endorsement with the PAC chair's email, then add your school to the public list within 24 hours."
+      zh: "填写下方表单。我们会通过PAC主席邮箱确认背书，然后24小时内将您的学校加入公开名单。"
+    - en: "You'll receive a short \"coalition update\" email every two weeks with what has happened and what to share next."
+      zh: "您会每两周收到一封简短的\"联盟更新\"邮件，告知进展和下一步分享内容。"
+
+sources:
+  - label:
+      en: "SD41 official statement"
+      zh: "SD41官方声明"
+    url: "https://burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/"
+  - label:
+      en: "BC Budget 2026 (Contingencies Vote, Estimates Vote 50)"
+      zh: "BC 2026预算（应急基金, Estimates Vote 50）"
+    url: "https://www.bcbudget.gov.bc.ca/2026/"
+  - label:
+      en: "CBC — SD41 shortfall"
+      zh: "CBC — SD41预算缺口报道"
+    url: "https://www.cbc.ca/news/canada/british-columbia/burnaby-school-district-millions-shortfall-9.7169146"
+  - label:
+      en: "CTV — 2025-26 cuts detail"
+      zh: "CTV — 2025-26削减细节"
+    url: "https://www.ctvnews.ca/vancouver/article/burnaby-teachers-urging-province-to-provide-more-funding-district-facing-42m-budget-shortfall/"
+  - label:
+      en: "Black Press Media — cross-district pressures"
+      zh: "Black Press Media — 跨学区压力"
+    url: "https://www.saanichnews.com/home2/bc-school-boards-forced-to-make-cuts-say-they-are-all-out-of-band-aids-8107025"

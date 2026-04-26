@@ -1,0 +1,105 @@
+mlas:
+  - id: beare
+    name: "Hon. Lisa Beare"
+    riding:
+      en: "Minister of Education and Child Care"
+      zh: "教育及儿童保育厅长"
+    is_minister: true
+    email: "ECC.Minister@gov.bc.ca"
+    recipient_role: "to"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
+
+  - id: bailey
+    name: "Hon. Brenda Bailey"
+    riding:
+      en: "Minister of Finance"
+      zh: "财政厅长"
+    is_minister: true
+    email: "FIN.Minister@gov.bc.ca"
+    recipient_role: "cc"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
+
+  - id: kang
+    name: "Anne Kang"
+    riding:
+      en: "Burnaby-Edmonds"
+      zh: "Burnaby-Edmonds"
+    is_minister: false
+    email: "anne.kang.MLA@leg.bc.ca"
+    recipient_role: "cc"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
+
+  - id: arora
+    name: "Rohini Arora"
+    riding:
+      en: "Burnaby North"
+      zh: "Burnaby North"
+    is_minister: false
+    email: "rohini.arora.MLA@leg.bc.ca"
+    recipient_role: "cc"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
+
+  - id: routledge
+    name: "Janet Routledge"
+    riding:
+      en: "Burnaby-Willingdon"
+      zh: "Burnaby-Willingdon"
+    is_minister: false
+    email: "janet.routledge.MLA@leg.bc.ca"
+    recipient_role: "cc"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
+
+  - id: choi
+    name: "Paul Choi"
+    riding:
+      en: "Burnaby East"
+      zh: "Burnaby East"
+    is_minister: false
+    email: "paul.choi.MLA@leg.bc.ca"
+    recipient_role: "cc"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
+
+  - id: chouhan
+    name: "Raj Chouhan"
+    riding:
+      en: "Burnaby-Lougheed"
+      zh: "Burnaby-Lougheed"
+    is_minister: false
+    email: "raj.chouhan.MLA@leg.bc.ca"
+    recipient_role: "cc"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
