@@ -1,0 +1,290 @@
+-- ============================================================================
+-- Burnaby Kids First — Initial Database Schema (v0.1)
+-- ============================================================================
+-- Apply once to a fresh Supabase project (region: ca-central-1).
+-- Run via Supabase MCP, the SQL editor in Supabase Dashboard, or psql.
+--
+-- Idempotent where reasonable (CREATE TABLE IF NOT EXISTS, OR REPLACE VIEW,
+-- DROP/CREATE policies). Re-running on a populated database is safe but will
+-- not migrate existing data shape — for that, write a v0.2 migration.
+--
+-- Tables:
+--   signatures              — petition signatories with confirmation lifecycle
+--   pac_endorsements        — Parent Advisory Council endorsements
+--   mla_replies             — reserved for v2 (MLA reply capture)
+--
+-- Views:
+--   public_signatures       — anon-readable, only confirmed + non-anonymized
+--   public_pac_endorsements — anon-readable, only verified
+--
+-- Scheduled jobs (pg_cron):
+--   purge-expired-pending-signatures  — hourly, drops expired pending rows
+--
+-- IP / fraud-detection design follows alphagov/e-petitions (UK Parliament):
+--   - Raw IP stored at submission AND at validation (two events)
+--   - No IP hashing (no industry precedent)
+--   - Anonymization on lifecycle event (campaign close + 90 days), not cron
+--   - Fraud detection is query-based (GROUP BY ip_address)
+-- ============================================================================
+
+-- Required extensions (Supabase enables both by default; included for clarity).
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "pg_cron";
+
+
+-- ----------------------------------------------------------------------------
+-- TABLE: signatures
+-- ----------------------------------------------------------------------------
+-- Lifecycle:
+--   1. POST to on-signature function:
+--        INSERT with confirmed=FALSE, confirm_token=<random>,
+--        confirm_token_expires=NOW()+'48h', pending_email=<email>,
+--        pending_consent_updates=<bool>, ip_address=<remote_ip>
+--   2. User clicks confirmation link within 48h:
+--        UPDATE WHERE confirm_token=? SET
+--          confirmed=TRUE, validated_at=NOW(), validated_ip=<remote_ip>,
+--          confirm_token=NULL, confirm_token_expires=NULL,
+--          pending_email=NULL, pending_consent_updates=NULL
+--        (Email + consent are dropped after processing — the only persistent
+--         PII on this row becomes first_name + last_initial + school +
+--         neighbourhood + IP.)
+--   3. Hourly cron purges any row with confirmed=FALSE AND
+--      confirm_token_expires < NOW() — unconfirmed within 48h is gone.
+--   4. After campaign close + 90 days, manually run anonymization:
+--        UPDATE signatures
+--        SET ip_address=NULL, validated_ip=NULL, anonymized_at=NOW()
+--        WHERE petition_slug='fund-burnaby-kids';
+--      (No automated trigger — Ben runs this when ready.)
+--
+-- Public visibility: public_signatures view (below) exposes only confirmed,
+-- non-anonymized rows with safe columns.
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS signatures (
+  id                        BIGSERIAL PRIMARY KEY,
+
+  -- Public-display data (retained indefinitely for the historical record)
+  first_name                TEXT NOT NULL,
+  last_initial              CHAR(1) NOT NULL,
+  school                    TEXT NOT NULL,
+  grade                     TEXT NOT NULL,
+  neighbourhood             TEXT NOT NULL,
+
+  -- Petition identifier (one row per petition signed; future-proof for
+  -- multi-campaign deployments under the umbrella).
+  petition_slug             TEXT NOT NULL DEFAULT 'fund-burnaby-kids',
+
+  -- Confirmation lifecycle
+  confirmed                 BOOLEAN NOT NULL DEFAULT FALSE,
+  confirm_token             TEXT UNIQUE,
+  confirm_token_expires     TIMESTAMPTZ,
+  signed_at                 TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  validated_at              TIMESTAMPTZ,
+
+  -- Pending fields (held for at most 48h, NULLed on confirmation or expiry)
+  pending_email             TEXT,
+  pending_consent_updates   BOOLEAN,
+  pending_locale            TEXT,  -- 'en' or 'zh', used to pick email template
+
+  -- Fraud-detection data (anonymized 90 days after campaign close)
+  ip_address                INET,
+  validated_ip              INET,
+  anonymized_at             TIMESTAMPTZ,
+
+  -- Constraints
+  CONSTRAINT signatures_first_name_length    CHECK (char_length(first_name)    BETWEEN 1 AND 40),
+  CONSTRAINT signatures_last_initial_length  CHECK (char_length(last_initial)  = 1),
+  CONSTRAINT signatures_school_length        CHECK (char_length(school)        BETWEEN 1 AND 80),
+  CONSTRAINT signatures_grade_length         CHECK (char_length(grade)         BETWEEN 1 AND 20),
+  CONSTRAINT signatures_neighbourhood_length CHECK (char_length(neighbourhood) BETWEEN 1 AND 80),
+  CONSTRAINT signatures_pending_email_basic  CHECK (
+    pending_email IS NULL OR pending_email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$'
+  ),
+  CONSTRAINT signatures_pending_locale_valid CHECK (
+    pending_locale IS NULL OR pending_locale IN ('en','zh')
+  )
+);
+
+CREATE INDEX IF NOT EXISTS idx_signatures_confirmed_recent
+  ON signatures (signed_at DESC)
+  WHERE confirmed = TRUE;
+
+CREATE INDEX IF NOT EXISTS idx_signatures_confirm_token
+  ON signatures (confirm_token)
+  WHERE confirm_token IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_signatures_confirm_expires
+  ON signatures (confirm_token_expires)
+  WHERE confirmed = FALSE;
+
+CREATE INDEX IF NOT EXISTS idx_signatures_ip_audit
+  ON signatures (ip_address)
+  WHERE ip_address IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS idx_signatures_petition_slug
+  ON signatures (petition_slug);
+
+ALTER TABLE signatures ENABLE ROW LEVEL SECURITY;
+-- No policy granted to anon — anon cannot SELECT/INSERT/UPDATE/DELETE directly.
+-- The Netlify Functions use the service_role key which bypasses RLS.
+
+
+-- ----------------------------------------------------------------------------
+-- VIEW: public_signatures
+-- ----------------------------------------------------------------------------
+-- Anon-readable. Only confirmed signatures, only safe columns. The view
+-- bypasses RLS on the underlying table by virtue of being a view.
+-- ----------------------------------------------------------------------------
+
+DROP VIEW IF EXISTS public_signatures;
+CREATE VIEW public_signatures AS
+  SELECT
+    first_name,
+    last_initial,
+    school,
+    neighbourhood,
+    signed_at,
+    petition_slug
+  FROM signatures
+  WHERE confirmed = TRUE
+    AND anonymized_at IS NULL
+  ORDER BY signed_at DESC;
+
+GRANT SELECT ON public_signatures TO anon, authenticated;
+
+
+-- ----------------------------------------------------------------------------
+-- TABLE: pac_endorsements
+-- ----------------------------------------------------------------------------
+-- Parent Advisory Council endorsements. Workflow: form submit → status='pending'
+-- → Ben verifies via email exchange → status='verified' (manual UPDATE).
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS pac_endorsements (
+  id                BIGSERIAL PRIMARY KEY,
+  school            TEXT NOT NULL,
+  students          INTEGER NOT NULL,
+  chair_name        TEXT NOT NULL,
+  chair_email       TEXT NOT NULL,
+  approval_date     DATE,
+  future_interest   BOOLEAN NOT NULL DEFAULT FALSE,
+  status            TEXT NOT NULL DEFAULT 'pending',
+  submitted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  verified_at       TIMESTAMPTZ,
+  petition_slug     TEXT NOT NULL DEFAULT 'fund-burnaby-kids',
+  notes             TEXT,
+  ip_address        INET,
+  anonymized_at     TIMESTAMPTZ,
+
+  CONSTRAINT pac_status_valid       CHECK (status IN ('pending', 'verified', 'rejected')),
+  CONSTRAINT pac_school_length      CHECK (char_length(school) BETWEEN 1 AND 80),
+  CONSTRAINT pac_students_range     CHECK (students > 0 AND students < 5000),
+  CONSTRAINT pac_chair_email_basic  CHECK (chair_email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$')
+);
+
+CREATE INDEX IF NOT EXISTS idx_pac_status ON pac_endorsements (status);
+CREATE INDEX IF NOT EXISTS idx_pac_petition_slug ON pac_endorsements (petition_slug);
+
+ALTER TABLE pac_endorsements ENABLE ROW LEVEL SECURITY;
+
+
+DROP VIEW IF EXISTS public_pac_endorsements;
+CREATE VIEW public_pac_endorsements AS
+  SELECT school, students, approval_date, petition_slug
+  FROM pac_endorsements
+  WHERE status = 'verified'
+    AND anonymized_at IS NULL
+  ORDER BY approval_date DESC NULLS LAST;
+
+GRANT SELECT ON public_pac_endorsements TO anon, authenticated;
+
+
+-- ----------------------------------------------------------------------------
+-- TABLE: mla_replies (reserved for v2 — empty in v1)
+-- ----------------------------------------------------------------------------
+-- v1: Ben curates MLA scorecard via git commit on YAML. This table is unused.
+-- v2: inbound emails to mla-reply@fundburnabykids.ca are parsed by Postmark
+--     Inbound, POSTed to a webhook function, written here as 'pending_review',
+--     manually approved by Ben, then surfaced on the MLA scorecard.
+-- See infrastructure/MLA_REPLY_WORKFLOW.md.
+-- ----------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS mla_replies (
+  id                BIGSERIAL PRIMARY KEY,
+  mla_riding        TEXT,
+  mla_name          TEXT,
+  reply_excerpt     TEXT,
+  reply_full        TEXT,
+  source_url        TEXT,
+  submitted_via     TEXT,
+  submitted_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  status            TEXT NOT NULL DEFAULT 'pending_review',
+  reviewed_by       TEXT,
+  reviewed_at       TIMESTAMPTZ,
+  publish_notes     TEXT,
+  petition_slug     TEXT,
+
+  CONSTRAINT mla_status_valid CHECK (status IN ('pending_review', 'published', 'rejected'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_mla_replies_status ON mla_replies (status);
+ALTER TABLE mla_replies ENABLE ROW LEVEL SECURITY;
+
+
+-- ----------------------------------------------------------------------------
+-- SCHEDULED JOBS (pg_cron)
+-- ----------------------------------------------------------------------------
+
+-- Every hour: purge unconfirmed signatures past their 48h window.
+-- Safe re-schedule: unschedule existing job with same name first.
+SELECT cron.unschedule('purge-expired-pending-signatures')
+  WHERE EXISTS (
+    SELECT 1 FROM cron.job WHERE jobname = 'purge-expired-pending-signatures'
+  );
+
+SELECT cron.schedule(
+  'purge-expired-pending-signatures',
+  '0 * * * *',
+  $$
+    DELETE FROM signatures
+    WHERE confirmed = FALSE
+      AND confirm_token_expires < NOW();
+  $$
+);
+
+
+-- ============================================================================
+-- ACCEPTANCE TEST (run after migration with both anon and service_role keys)
+-- ============================================================================
+-- 1. Insert via service_role:
+--      INSERT INTO signatures (first_name, last_initial, school, grade,
+--                              neighbourhood, confirm_token,
+--                              confirm_token_expires, pending_email,
+--                              pending_locale)
+--      VALUES ('Test', 'X', 'Test School', '5', 'Willingdon Heights',
+--              'test_token_abc123', NOW() + INTERVAL '48 hours',
+--              'test@example.com', 'en')
+--      RETURNING id;
+--
+-- 2. Anon SELECT from public_signatures:
+--      Expected: 0 rows (confirmed=FALSE, view excludes)
+--
+-- 3. Anon SELECT from signatures directly:
+--      Expected: 0 rows or RLS-denied (no SELECT policy granted)
+--
+-- 4. Service_role UPDATE:
+--      UPDATE signatures
+--      SET confirmed=TRUE, validated_at=NOW(),
+--          validated_ip='127.0.0.1', confirm_token=NULL,
+--          confirm_token_expires=NULL, pending_email=NULL,
+--          pending_consent_updates=NULL, pending_locale=NULL
+--      WHERE confirm_token='test_token_abc123';
+--      (Pre-NULL because confirm_token cleared above; in production code,
+--       you'd capture id from step 1 and use that as the WHERE.)
+--
+-- 5. Anon SELECT from public_signatures:
+--      Expected: 1 row showing Test, X, Test School, Willingdon Heights
+--
+-- 6. Cleanup:
+--      DELETE FROM signatures WHERE first_name='Test' AND last_initial='X';
+-- ============================================================================
