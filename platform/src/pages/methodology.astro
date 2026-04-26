@@ -1,0 +1,242 @@
+---
+// "What 'verified' means" — the page linked from the SignatureCounter ?
+// tooltip. Public-facing version of SIGNATURE_INTEGRITY_BRIEF.md, with
+// language calibrated for parents (not MLA staff).
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+---
+
+<CampaignLayout
+  lang={lang}
+  noindex
+  title={lang === 'zh' ? '签名验证方式 — Fund Burnaby Kids' : 'How signatures are verified — Fund Burnaby Kids'}
+  description={lang === 'zh' ? '我们如何确认每个签名都是真人。' : 'How we ensure every signature is from a real person.'}
+>
+  <section class="methodology">
+    <div class="wrap">
+      <header class="methodology__header">
+        <p class="kicker sans">
+          <I18nText
+            en="Trust + transparency"
+            zh="信任 + 透明"
+            lang={lang}
+          />
+        </p>
+        <h1>
+          <I18nText
+            en="How we verify every signature."
+            zh="我们怎么验证每一个签名。"
+            lang={lang}
+          />
+        </h1>
+        <p class="lede">
+          <I18nText
+            en="When we tell an MLA's office that 5,000 Burnaby parents have signed, we should be able to defend every one of those numbers. Here's exactly how."
+            zh="当我们告诉 MLA 办公室「5,000 位本拿比家长已签名」时，我们应该能为每一个签名背书。这就是具体怎么做的。"
+            lang={lang}
+          />
+        </p>
+      </header>
+
+      <section class="step">
+        <h2 class="sans">
+          <span class="step__num">1.</span>
+          <I18nText en="Block bots before the form" zh="表单提交前拦截机器人" lang={lang} />
+        </h2>
+        <p>
+          <I18nText
+            en="The signature form is protected by Cloudflare Turnstile — a behind-the-scenes check that quietly confirms you're a real person. You won't see anything if you're human; if you're an automated script, you can't get past it."
+            zh="签名表单由 Cloudflare Turnstile 保护——一个幕后检查，悄悄确认你是真人。如果你是真人，什么都不会看到；如果是自动脚本，就过不去。"
+            lang={lang}
+          />
+        </p>
+      </section>
+
+      <section class="step">
+        <h2 class="sans">
+          <span class="step__num">2.</span>
+          <I18nText en="Email confirmation (48 hours)" zh="邮件确认（48 小时）" lang={lang} />
+        </h2>
+        <p>
+          <I18nText
+            en="After you sign, we send a confirmation link to your email. You have 48 hours to click it. Until you click, your signature stays private and is not counted in the public total. Unconfirmed signatures are deleted automatically."
+            zh="你签名后，我们给你的邮箱发一封确认链接。你有 48 小时点击它。在你点击之前，你的签名保持私密，不计入公开总数。未确认的签名会被自动删除。"
+            lang={lang}
+          />
+        </p>
+        <p>
+          <I18nText
+            en="This is the same approach the Canadian House of Commons uses for its official e-petition system. It's the single biggest reason the count we publish can be trusted."
+            zh="这跟加拿大下议院官方 e-petition 系统用的方法一样。这是我们公开计数能被信任的最大原因。"
+            lang={lang}
+          />
+        </p>
+      </section>
+
+      <section class="step">
+        <h2 class="sans">
+          <span class="step__num">3.</span>
+          <I18nText en="Device tracking (anonymized)" zh="设备追踪（匿名化）" lang={lang} />
+        </h2>
+        <p>
+          <I18nText
+            en="When you sign, we record the IP address you signed from. This lets us notice if one device tries to sign hundreds of times pretending to be different parents. Every signature gets the IP at submission AND at email confirmation. We delete this device information 90 days after the petition closes."
+            zh="你签名时我们记录你的 IP 地址。这让我们能发现一台设备试图假扮成几百位家长签名的情况。每个签名都会记录提交时的 IP 和邮件确认时的 IP。请愿结束 90 天后我们删除这部分信息。"
+            lang={lang}
+          />
+        </p>
+        <p>
+          <I18nText
+            en="This is the same model the UK Parliament's official petitions system uses. The source code for that system is public on GitHub."
+            zh="这跟 UK Parliament 官方请愿系统使用的模型一样。该系统的源代码在 GitHub 公开。"
+            lang={lang}
+          />
+        </p>
+      </section>
+
+      <section class="step">
+        <h2 class="sans">
+          <span class="step__num">4.</span>
+          <I18nText en="What appears publicly is minimal" zh="公开的内容最少化" lang={lang} />
+        </h2>
+        <p>
+          <I18nText
+            en="On our public list, your signature appears as just:"
+            zh="在我们的公开名单上，你的签名只显示为："
+            lang={lang}
+          />
+        </p>
+        <div class="example">
+          <strong>Sarah C.</strong>
+          <span class="example__meta">Westridge Elementary · Willingdon Heights</span>
+        </div>
+        <p>
+          <I18nText
+            en="Your full last name, your email address, and your exact postal code are NEVER displayed publicly and are NEVER shared with any government office, party, or third party. See the"
+            zh="你的完整姓氏、邮箱地址、完整邮编从不公开展示，从不与任何政府办公室、政党或第三方共享。详见"
+            lang={lang}
+          />{' '}
+          <a href={localizedUrl('/privacy', lang)}>
+            <I18nText en="privacy policy" zh="隐私政策" lang={lang} />
+          </a>{' '}
+          <I18nText
+            en="for the full data flow."
+            zh="完整数据流程。"
+            lang={lang}
+          />
+        </p>
+      </section>
+
+      <div class="methodology__cta">
+        <p>
+          <I18nText
+            en="Have a specific concern about a specific signature? Email"
+            zh="对某个具体签名有疑问？邮件"
+            lang={lang}
+          />{' '}
+          <a href="mailto:hello@fundburnabykids.ca">hello@fundburnabykids.ca</a>{' '}
+          <I18nText
+            en="and we will investigate within a day."
+            zh="，我们一天内调查。"
+            lang={lang}
+          />
+        </p>
+        <p>
+          <a class="back-link" href={localizedUrl('/', lang)}>
+            ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .methodology {
+    padding: 48px 0;
+  }
+  .methodology__header {
+    margin-bottom: 32px;
+    max-width: 720px;
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .methodology__header h1 {
+    font-family: var(--font-sans);
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 12px;
+  }
+  .lede {
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  .step {
+    margin-bottom: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .step h2 {
+    font-family: var(--font-sans);
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--ink);
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .step__num {
+    font-family: var(--font-sans);
+    font-weight: 800;
+    color: var(--warm);
+  }
+  .step p {
+    margin: 0 0 12px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  .example {
+    background: var(--cream);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin: 12px 0;
+    font-family: var(--font-sans);
+  }
+  .example__meta {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .methodology__cta {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+  .back-link {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .back-link:hover { color: var(--accent-deep); }
+</style>

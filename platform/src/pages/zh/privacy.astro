@@ -1,0 +1,435 @@
+---
+// Privacy & FAQ — ported from Phase 4A standalone privacy.html files
+// in platform/campaigns/fund-burnaby-kids/. Now served by Astro and
+// uses CampaignLayout. Content unchanged in substance; layout matches
+// the rest of the rewrite.
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+const mailingAddress = import.meta.env.MAILING_ADDRESS ?? '(Mailing address being established)';
+---
+
+<CampaignLayout
+  lang={lang}
+  noindex
+  title={lang === 'zh' ? '隐私 与 你的疑问 — Fund Burnaby Kids' : 'Privacy & Your Questions — Fund Burnaby Kids'}
+  description={lang === 'zh' ? 'Fund Burnaby Kids 对你个人信息会做什么、不会做什么。' : 'What Fund Burnaby Kids does and does not do with your personal information.'}
+>
+  <article class="privacy">
+    <div class="wrap">
+      <header class="privacy__header">
+        <h1>
+          <I18nText
+            en="Privacy & Your Questions"
+            zh="隐私 与 你的疑问"
+            lang={lang}
+          />
+        </h1>
+        <p class="meta">
+          <I18nText en="Last updated: 2026-04-26" zh="最后更新：2026-04-26" lang={lang} />
+        </p>
+      </header>
+
+      {/* "What we DON'T do" lead */}
+      <div class="lead">
+        <h2>
+          <I18nText
+            en="What we don't do with your information"
+            zh="关于你的信息，我们不会做的事"
+            lang={lang}
+          />
+        </h2>
+        <ul>
+          <li><I18nText
+            en="We never sell your data, or rent, trade, or share it with anyone."
+            zh="我们从不出售你的数据，也不出租、交换、分享。"
+            lang={lang} /></li>
+          <li><I18nText
+            en="We never share with political parties, candidates, or campaigns — any party, any level."
+            zh="我们从不分享给政党、候选人、政治竞选——任何党派、任何级别。"
+            lang={lang} /></li>
+          <li><I18nText
+            en="We never ask about or record your citizenship, immigration status, or residency status."
+            zh="我们从不询问或记录你的公民身份、移民状态、居留状态。"
+            lang={lang} /></li>
+          <li><I18nText
+            en="We never display your full name, your full email, or your exact postal code."
+            zh="我们从不公开你的全名、完整邮箱、或完整邮编。"
+            lang={lang} /></li>
+          <li><I18nText
+            en="We never contact you about anything other than this campaign — and only if you opted in."
+            zh="我们从不就本次 campaign 之外的事情联系你——而且只在你勾选了订阅时联系。"
+            lang={lang} /></li>
+          <li><I18nText
+            en="We never store your data outside Canada beyond what's strictly required for email delivery."
+            zh="除非邮件投递严格需要，我们从不把你的数据存到加拿大境外。"
+            lang={lang} /></li>
+        </ul>
+      </div>
+
+      {/* Public listing preview */}
+      <h2>
+        <I18nText
+          en="Here's exactly how your signature appears publicly"
+          zh="你的签名公开后，外人能看到的内容"
+          lang={lang}
+        />
+      </h2>
+      <p>
+        <I18nText
+          en="This is the only thing visible to anyone — your MLA, the Province, a reporter, your neighbour:"
+          zh="下面这块就是任何人——你的 MLA、省政府、记者、邻居——能看到的全部："
+          lang={lang}
+        />
+      </p>
+      <div class="preview-card">
+        <strong class="preview-card__name">Sarah C.</strong>
+        <span class="preview-card__meta">Westridge Elementary &middot; Willingdon Heights</span>
+      </div>
+      <p>
+        <I18nText
+          en="Your full last name, email address, exact postal code, and your child's name and grade are never displayed publicly. They aren't shared with anyone outside our coalition, ever."
+          zh="你的完整姓氏、邮箱地址、完整邮编、以及你孩子的姓名和年级，从不公开。它们也从不分享给我们联盟以外的任何人。"
+          lang={lang}
+        />
+      </p>
+
+      {/* FAQ */}
+      <h2>
+        <I18nText
+          en="Your questions, answered"
+          zh="你的疑问，我们的回答"
+          lang={lang}
+        />
+      </h2>
+
+      <p class="category-label sans">
+        <I18nText en="Identity & exposure" zh="身份与曝光" lang={lang} />
+      </p>
+
+      <details class="qa">
+        <summary><I18nText en="1. Will my full name be public?" zh="1. 我的全名会被公开吗？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en={`No. The public list shows only your first name + the first letter of your last name + your child's school + your neighbourhood. For example: "Sarah C., Westridge Elementary, Willingdon Heights".`}
+            zh={`不会。公开名单只显示你的名字 + 姓的首字母 + 你孩子的学校 + 你所在街区。比如：「Sarah C., Westridge Elementary, Willingdon Heights」。`}
+            lang={lang} />
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="2. Can my MLA or the Province identify me individually?" zh="2. MLA 或省政府能查到我个人吗？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en="No. We only share aggregate counts and the public list (in the form above) with MLAs and reporters — exactly what you see on the website. We do not give individual signers' details to any government office, party, or candidate. Ever."
+            zh="不能。我们只把总数和已确认签名公开列表（也就是你在网站上看到的那种格式）发给 MLA 和媒体。我们不会把任何具体签名者的信息发给任何政府办公室、政党或候选人。从不。"
+            lang={lang} />
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="3. Could my employer, my child's school, or my neighbours figure out it's me?" zh="3. 我老板、孩子学校、邻居能不能猜到是我？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en="The public information (first name + last initial + school + neighbourhood) is enough for you to recognize your own listing, but not enough for a stranger to single you out. Unless you tell people, they won't know."
+            zh="公开信息（名字 + 姓首字母 + 学校 + 街区）足够你自己认出列表里的你，但不足以让陌生人锁定你。除非你主动告诉别人，否则他们不会知道。"
+            lang={lang} />
+        </p>
+      </details>
+
+      <p class="category-label sans">
+        <I18nText en="Email & ongoing contact" zh="邮箱与持续联系" lang={lang} />
+      </p>
+
+      <details class="qa">
+        <summary><I18nText en="4. Will I be added to a mailing list that emails me forever?" zh="4. 我会不会被加进一个永远发邮件的列表？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en={`You will receive one confirmation email — the click that activates your signature.`}
+            zh={`你只会收到一封确认邮件——点击之后，你的签名才生效。`}
+            lang={lang} />
+        </p>
+        <p>
+          <I18nText
+            en={`You will receive ongoing updates only if you check the "send me updates" box on the form. If you check it, you'll get a short update roughly every two weeks (max ~26 emails per year), each with a one-click unsubscribe.`}
+            zh={`只有当你在表单上勾选了「想收到后续更新」，才会收到我们的后续邮件——大约每两周一封简短更新（一年最多约 26 封），每封都有一键退订。`}
+            lang={lang} />
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="5. Will my email be sold or shared with political parties?" zh="5. 我的邮箱会被卖给政党或商业公司吗？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en={`No. Not sold, not rented, not traded, not shared with parties, candidates, other advocacy groups, or commercial partners. This is a written, permanent policy. If you suspect we've broken it, you can complain to the BC Office of the Information and Privacy Commissioner at oipc.bc.ca.`}
+            zh={`不会。不卖、不租、不交换，不分享给政党、候选人、其它倡导组织、商业合作方。这是 written-in-stone 政策。如果你怀疑我们违反了，可以投诉到 BC 隐私专员办公室：oipc.bc.ca。`}
+            lang={lang} />
+        </p>
+      </details>
+
+      <p class="category-label sans">
+        <I18nText en="Withdraw & security" zh="撤回与安全" lang={lang} />
+      </p>
+
+      <details class="qa">
+        <summary><I18nText en="6. Can I withdraw my signature later?" zh="6. 我可以随时撤回我的签名吗？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en="Yes, at any time. Email privacy@fundburnabykids.ca. We delete your information within 7 days (BC's PIPA law allows up to 30 days; we commit to faster)."
+            zh="可以，随时。发邮件到 privacy@fundburnabykids.ca。我们 7 天内删除你的全部信息（BC PIPA 法律允许我们 30 天内回应，我们承诺更快）。"
+            lang={lang} />
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="7. What happens if there's a data breach?" zh="7. 数据被黑了怎么办？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en="We use industry-standard encryption and access controls. If a breach occurs, we will notify all affected signers and the BC Office of the Information and Privacy Commissioner within 72 hours, as required by PIPA."
+            zh="我们使用业界标准的加密和访问控制。如果发生数据泄露，我们会按 PIPA 要求，72 小时内通知所有受影响的签名者，并向 BC 隐私专员办公室报告。"
+            lang={lang} />
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="8. I gave my child's school and grade — could that expose my child?" zh="8. 我写了孩子的学校 + 年级——会不会暴露孩子？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en={`The public listing shows the school name only, paired with your neighbourhood (e.g. "Westridge Elementary, Willingdon Heights"). We never publish your child's name, class, or teacher — and we never collect those.`}
+            zh={`公开列表只显示学校名，搭配你的街区（比如「Westridge Elementary, Willingdon Heights」）。我们从不公开你孩子的姓名、班级、老师——而且也从不收集这些。`}
+            lang={lang} />
+        </p>
+        <p>
+          <I18nText
+            en="Grade is used internally so we can send you updates relevant to your child's grade level if you opted in. Grade is never shown publicly."
+            zh="年级我们内部分组用，方便你只收到与你孩子年级相关的更新（如果你订阅了的话）。年级从不公开。"
+            lang={lang} />
+        </p>
+      </details>
+
+      <p class="category-label sans">
+        <I18nText en="Status, data location, and who's behind this" zh="身份、数据存放、谁在做这件事" lang={lang} />
+      </p>
+
+      <details class="qa">
+        <summary><I18nText en="9. I'm not a Canadian citizen / I'm a permanent resident / I'm on a work permit. Will signing affect my status?" zh="9. 我不是加拿大公民 / 是 PR / 持工签——签了会影响我的身份吗？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en="No. We do not ask about, collect, or record your citizenship or immigration status. You are eligible to participate if you live in Burnaby and have a child in the SD41 school district."
+            zh="不会。我们不询问、不收集、不记录你的公民身份或移民状态。只要你住在本拿比、孩子在 SD41 学区，你就有理由参与。"
+            lang={lang} />
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="10. Where is my data stored? Will it leave Canada?" zh="10. 我的数据存在哪里？会不会传到别的国家？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en="Your name, school, and neighbourhood are stored on a server in the Vancouver area (Supabase, ca-central-1 region). Your email address is held by Buttondown, a US-based email service — this is industry-standard (Gmail and Outlook are also US-based). We never proactively transfer your data to other countries."
+            zh="你的姓名、学校、街区存在温哥华附近的服务器（Supabase 的加拿大区，ca-central-1）。你的邮箱保存在 Buttondown，一个美国的邮件服务——这是行业惯例，Gmail 和 Outlook 也是美国服务。我们从不主动把你的数据传到其它国家。"
+            lang={lang} />
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="11. How do you make sure fake signatures aren't added to the count?" zh="11. 你们怎么确认签名是真的，不是假账号？" lang={lang} /></summary>
+        <p>
+          <I18nText en="Three things: email confirmation, bot blocking, and device record." zh="三件事：邮件确认、机器人拦截、设备记录。" lang={lang} />
+          {' '}
+          <a href={localizedUrl('/methodology', lang)}>
+            <I18nText en="Full methodology page →" zh="完整说明页 →" lang={lang} />
+          </a>
+        </p>
+      </details>
+
+      <details class="qa">
+        <summary><I18nText en="12. Who is Ben? How is this campaign funded?" zh="12. Ben 是谁？这个 campaign 靠什么运作？" lang={lang} /></summary>
+        <p>
+          <I18nText
+            en="Ben Zhou is a Burnaby parent who founded this advocacy coalition. Operating costs are paid out of his own pocket: the domain (~$30/year) and email service (~$10/month). The website itself, all development, and ongoing maintenance are donated volunteer work. No one is paid. No commercial revenue. No political party funding."
+            zh="Ben Zhou 是本拿比家长，发起了这个倡导联盟。运营成本由他个人承担：域名（约 $30/年）和邮件服务（约 $10/月）。网站本身、所有开发和后续维护，都是义务志愿工作。没人拿薪水，没有商业收入，没有政党资助。"
+            lang={lang} />
+        </p>
+      </details>
+
+      {/* Legal disclosures */}
+      <h2>
+        <I18nText en="Legal disclosures" zh="法律披露" lang={lang} />
+      </h2>
+
+      <h3><I18nText en="Who we are" zh="我们是谁" lang={lang} /></h3>
+      <p>
+        <I18nText
+          en="Fund Burnaby Kids is a campaign of Burnaby Kids First, a parent-led advocacy coalition founded by Ben Zhou. Our mailing address is "
+          zh="Fund Burnaby Kids 是 Burnaby Kids First 旗下的一个 campaign，Burnaby Kids First 是 Ben Zhou 发起的家长倡导联盟。我们的邮寄地址是 "
+          lang={lang} />
+        <strong>{mailingAddress}</strong>.{' '}
+        <I18nText en="Privacy inquiries:" zh="隐私相关咨询：" lang={lang} />{' '}
+        <a href="mailto:privacy@fundburnabykids.ca">privacy@fundburnabykids.ca</a>.
+      </p>
+
+      <h3><I18nText en="What we collect" zh="我们收集什么" lang={lang} /></h3>
+      <p>
+        <I18nText
+          en="First name, last name, email address, your child's school, your child's grade, and the first three characters of your postal code. Governed by BC's Personal Information Protection Act (PIPA)."
+          zh="名字、姓氏、邮箱地址、孩子的学校、孩子的年级、邮编的前 3 个字符。受 BC 省《个人信息保护法》（PIPA）管辖。"
+          lang={lang} />
+      </p>
+
+      <h3><I18nText en="Technical data for fraud prevention" zh="用于反欺诈的技术数据" lang={lang} /></h3>
+      <p>
+        <I18nText
+          en="When you submit a signature, we record your IP address (the address of the device you signed from) and the IP address used to confirm the signature when you click the email link. These are used solely to detect coordinated fraudulent submissions."
+          zh="当你提交签名时，我们记录你的 IP 地址（你签名时所用设备的网络地址），以及你点击邮件确认链接时使用的 IP 地址。仅用于发现协同欺诈式提交。"
+          lang={lang} />
+      </p>
+      <p>
+        <I18nText
+          en="These are deleted 90 days after the petition closes. They are never displayed publicly or shared with third parties. They exist for one purpose: so we can defend the integrity of the signature count if challenged."
+          zh="请愿结束 90 天后删除。从不公开展示，从不与第三方共享。它们存在的唯一目的，是当签名计数受到质疑时，我们能拿出证据。"
+          lang={lang} />
+      </p>
+
+      <h3><I18nText en="Where your information lives" zh="你的信息存放在哪里" lang={lang} /></h3>
+      <ul>
+        <li><I18nText
+          en="Public display info (first name, last initial, school, neighbourhood): Supabase (Canadian region, ca-central-1)"
+          zh="公开显示信息（名字、姓首字母、学校、街区）：Supabase（加拿大区 ca-central-1）"
+          lang={lang} /></li>
+        <li><I18nText
+          en="Email + opt-in consent (only if you opted in to ongoing updates): Buttondown"
+          zh="邮箱 + 订阅同意（仅当你勾选了订阅）：Buttondown"
+          lang={lang} /></li>
+        <li><I18nText
+          en="Confirmation email delivery: Resend (transactional only — your address is not retained on a marketing list)"
+          zh="确认邮件投递：Resend（仅 transactional 用，不会进入营销列表）"
+          lang={lang} /></li>
+        <li><I18nText
+          en="Raw form submission (includes email + postal code): Netlify Forms, 30-day retention then auto-purged"
+          zh="原始表单提交（含邮箱 + 邮编）：Netlify Forms，30 天后自动清除"
+          lang={lang} /></li>
+      </ul>
+
+      <h3><I18nText en="Your rights under PIPA" zh="你在 PIPA 下的权利" lang={lang} /></h3>
+      <ul>
+        <li><strong><I18nText en="Access / correction / deletion:" zh="查阅 / 更正 / 删除：" lang={lang} /></strong>{' '}
+          <a href="mailto:privacy@fundburnabykids.ca"><I18nText en="email us" zh="发邮件给我们" lang={lang} /></a>.
+          {' '}<I18nText en="7-day response." zh="7 天内回复。" lang={lang} /></li>
+        <li><strong><I18nText en="Unsubscribe from updates:" zh="退订更新：" lang={lang} /></strong>{' '}
+          <I18nText en="one-click link in every email." zh="每封邮件里都有一键退订链接。" lang={lang} /></li>
+        <li><strong><I18nText en="Complaint:" zh="投诉：" lang={lang} /></strong>{' '}
+          <I18nText en="BC's Office of the Information and Privacy Commissioner at " zh="BC 隐私专员办公室 " lang={lang} />
+          <a href="https://www.oipc.bc.ca">oipc.bc.ca</a>.</li>
+      </ul>
+
+      <h3><I18nText en="Cookies and tracking" zh="Cookie 和追踪" lang={lang} /></h3>
+      <p>
+        <I18nText
+          en="No tracking cookies. No Google Analytics. No advertising pixels. Netlify's anonymous analytics counts page views only."
+          zh="无追踪 cookie，无 Google Analytics，无广告像素。Netlify 的匿名分析仅统计页面浏览量。"
+          lang={lang} />
+      </p>
+
+      <h3><I18nText en="Contact" zh="联系" lang={lang} /></h3>
+      <p>
+        <a href="mailto:privacy@fundburnabykids.ca">privacy@fundburnabykids.ca</a><br />
+        {mailingAddress}
+      </p>
+
+      <p style="margin-top: 32px;">
+        <a href={localizedUrl('/', lang)}>← <I18nText en="Back to campaign" zh="返回主页" lang={lang} /></a>
+      </p>
+    </div>
+  </article>
+</CampaignLayout>
+
+<style>
+  .privacy { padding: 48px 0; }
+  .privacy__header { margin-bottom: 24px; }
+  h1 {
+    font-family: var(--font-sans);
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 700;
+    margin: 0 0 8px;
+  }
+  .meta { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+  h2 {
+    font-size: 22px;
+    margin: 36px 0 12px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 700;
+  }
+  h3 {
+    font-size: 17px;
+    margin: 24px 0 8px;
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 700;
+  }
+  p { margin: 0 0 12px; line-height: 1.7; color: var(--ink-soft); }
+  ul {
+    margin: 8px 0 16px 24px;
+    padding: 0;
+    color: var(--ink-soft);
+  }
+  ul li { margin-bottom: 6px; line-height: 1.6; }
+  .lead {
+    background: #f4f7fc;
+    border-left: 4px solid var(--accent);
+    padding: 16px 20px;
+    margin: 24px 0;
+    border-radius: var(--radius-md);
+  }
+  .lead h2 { margin: 0 0 8px; font-size: 18px; }
+  .lead ul { margin: 0 0 0 24px; }
+  .preview-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 16px 20px;
+    margin: 16px 0 24px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+  }
+  .preview-card__name {
+    display: block;
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 16px;
+  }
+  .preview-card__meta {
+    display: block;
+    font-size: 14px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .qa {
+    margin: 8px 0;
+    padding: 12px 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
+  .qa[open] { border-color: var(--accent); }
+  .qa summary {
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+    list-style: none;
+    line-height: 1.4;
+  }
+  .qa summary::-webkit-details-marker { display: none; }
+  .qa[open] summary { margin-bottom: 8px; }
+  .qa p { margin: 8px 0; font-size: 15px; }
+  .category-label {
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    margin: 28px 0 8px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+</style>
