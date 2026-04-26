@@ -1,25 +1,40 @@
 # =============================================================================
 # Netlify build + deploy configuration for the coalition platform.
 # =============================================================================
+#
+# Repo layout reminder:
+#   /package.json              — root deps (Functions: supabase-js, types)
+#   /platform/package.json     — Astro frontend deps
+#   /netlify/functions/        — Netlify Functions source
+#   /platform/                 — Astro project (build output → platform/dist/)
+#
+# Build runs at repo ROOT (no `base` set) so:
+#   - Netlify auto-runs `npm install` at root → installs Function deps
+#   - Our `command` then installs Astro deps in platform/ and builds
+#   - Functions bundler (esbuild) finds deps in root node_modules
+#
+# =============================================================================
 
 [build]
-  base = "platform/"
+  # No `base` — keep build at repo root so Functions can resolve root deps.
   publish = "platform/dist/"
-  command = "npm install && npm run build"
-  # Functions live OUTSIDE platform/ so the Astro build doesn't try to bundle them.
-  functions = "../netlify/functions/"
+  command = "npm install --prefix platform && (cd platform && npm run build)"
 
 [build.environment]
   NODE_VERSION = "20"
-
-[functions]
-  # Netlify Functions: TypeScript via esbuild bundler (default since 2023).
-  node_bundler = "esbuild"
-  directory = "netlify/functions"
-  # Keep included_files small; Functions only need their own files.
+  # Astro requires NODE_ENV=production for production builds; Netlify sets this.
+  # Keep devDependencies installed (needed for astro check + types).
+  NPM_FLAGS = "--include=dev"
 
 # -----------------------------------------------------------------------------
-# Pretty URLs for the confirmation flow.
+# Functions
+# -----------------------------------------------------------------------------
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# -----------------------------------------------------------------------------
+# Pretty URL for the confirmation flow.
 # -----------------------------------------------------------------------------
 [[redirects]]
   from = "/api/confirm"
@@ -27,11 +42,10 @@
   status = 200
   force  = true
 
-# Webhook target for Netlify Forms submissions is configured in the site
-# Notification settings (Phase 4B), pointing at:
+# Webhook target for Netlify Forms submissions is configured at site level
+# (POST /api/v1/hooks with event=submission_created), pointing at:
 #   https://<site>/.netlify/functions/on-signature
-# We don't pre-route /api/on-signature because the function only fires from
-# Netlify's own webhook, not from public requests.
+# Already configured during Phase 4B.
 
 # -----------------------------------------------------------------------------
 # Headers — security baseline.
@@ -43,9 +57,3 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-
-# -----------------------------------------------------------------------------
-# Forms: Netlify auto-discovers forms via data-netlify="true" in the rendered
-# HTML. We do NOT need to declare them here. Webhook targets are configured
-# in the Netlify UI / via API during Phase 4B.
-# -----------------------------------------------------------------------------
