@@ -2,7 +2,10 @@
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import Hero from '~/components/Hero.astro';
 import SignatoriesFeed from '~/components/SignatoriesFeed.astro';
+import ThreeFacts from '~/components/ThreeFacts.astro';
+import PersonaSelector from '~/components/PersonaSelector.astro';
 import ActionForm from '~/components/ActionForm.astro';
+import FaqAccordion from '~/components/FaqAccordion.astro';
 import I18nText from '~/components/I18nText.astro';
 
 const lang = 'en';
@@ -22,29 +25,32 @@ const lang = 'en';
     </div>
   </section>
 
+  <ThreeFacts lang={lang} />
+
+  <PersonaSelector lang={lang} />
+
   <ActionForm lang={lang} />
 
-  <section class="phase-note" id="why">
+  <FaqAccordion lang={lang} />
+
+  <section class="phase-note">
     <div class="wrap">
       <p class="kicker sans">
         <I18nText
-          en="Coming in the next batch (Phase 5.3+)"
-          zh="下一批要补的（Phase 5.3+）"
+          en="Coming in the next batches (Phase 5.4 - 5.7)"
+          zh="下面几批要补的（Phase 5.4 - 5.7）"
           lang={lang}
         />
       </p>
       <ul>
-        <li>Three facts (BCPSEA admission · prior cuts · Contingencies Vote)</li>
-        <li>Persona-tailored content (Parent / PAC / Trustee)</li>
-        <li>Journey visualization (10 services × 13 grades)</li>
-        <li>MLA scorecard (7 representatives, status + last-updated)</li>
-        <li>Coalition + PAC endorsement kit</li>
-        <li>Founder + About section</li>
-        <li>FAQ</li>
+        <li>Journey heatmap — 10 services × 13 grades, interactive grade picker</li>
+        <li>MLA scorecard — 7 representatives, status + last-updated, card-based</li>
+        <li>Coalition section + PAC endorsement kit modal</li>
+        <li>Founder + Burnaby Kids First about section</li>
+        <li>PAC kit printable page (`/pac-kit`)</li>
+        <li>Methodology page (`/methodology`) — verified-signature explainer</li>
+        <li>Privacy page port from Phase 4A standalone HTML</li>
       </ul>
-      <p class="muted small">
-        These already exist as YAML data and SVG files in the repo. Just need their Astro components.
-      </p>
     </div>
   </section>
 </CampaignLayout>
@@ -58,6 +64,7 @@ const lang = 'en';
   .phase-note {
     padding: 48px 0;
     background: var(--cream);
+    border-top: 1px solid var(--line);
   }
   .phase-note .kicker {
     font-size: 13px;
@@ -69,12 +76,10 @@ const lang = 'en';
   }
   .phase-note ul {
     padding-left: 20px;
-    margin: 0 0 12px;
+    margin: 0;
     color: var(--ink-soft);
   }
   .phase-note li {
     margin-bottom: 6px;
   }
-  .small { font-size: 13px; }
-  .muted { color: var(--muted); }
 </style>

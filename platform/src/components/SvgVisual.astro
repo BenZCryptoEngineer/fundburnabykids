@@ -1,0 +1,99 @@
+---
+// Inline an SVG visualization from platform/public/visuals/{key}.{lang}.svg.
+// Reads the file at build time and inlines the markup so we can:
+//   - style internals via CSS if needed
+//   - avoid an extra HTTP request
+//   - keep EN and ZH variants strictly separate per VISUAL_DESIGN policy
+//
+// Usage:
+//   <SvgVisual visual="cascade" lang={lang} />
+//   <SvgVisual visual="money" lang={lang} caption="Where the money lives" />
+
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  visual: 'cascade' | 'money' | 'scale' | 'responsibility';
+  lang: Lang;
+  /** optional kicker label above the visual */
+  kicker?: string;
+  /** optional headline above the visual */
+  headline?: string;
+  /** optional take-away below the visual */
+  takeaway?: string;
+}
+
+const { visual, lang, kicker, headline, takeaway } = Astro.props;
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const svgPath = join(__dirname, '../../public/visuals', `${visual}.${lang}.svg`);
+
+let svgContent = '';
+try {
+  svgContent = readFileSync(svgPath, 'utf-8');
+} catch (err) {
+  console.error(`SvgVisual: failed to read ${svgPath}:`, err);
+  svgContent = `<!-- SVG ${visual}.${lang} not found -->`;
+}
+---
+
+<figure class="svg-visual">
+  {kicker && <p class="svg-visual__kicker sans">{kicker}</p>}
+  {headline && <h4 class="svg-visual__headline sans">{headline}</h4>}
+  <div class="svg-visual__media" set:html={svgContent} />
+  {takeaway && (
+    <figcaption class="svg-visual__takeaway">
+      <span class="sans muted">
+        <I18nText en="Take-away: " zh="结论：" lang={lang} />
+      </span>
+      {takeaway}
+    </figcaption>
+  )}
+</figure>
+
+<style>
+  .svg-visual {
+    margin: 0;
+    padding: 24px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+  }
+  .svg-visual__kicker {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .svg-visual__headline {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .svg-visual__media {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0 16px;
+  }
+  .svg-visual__media :global(svg) {
+    max-width: 100%;
+    height: auto;
+  }
+  .svg-visual__takeaway {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .muted { color: var(--muted); }
+</style>

@@ -2,7 +2,10 @@
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import Hero from '~/components/Hero.astro';
 import SignatoriesFeed from '~/components/SignatoriesFeed.astro';
+import ThreeFacts from '~/components/ThreeFacts.astro';
+import PersonaSelector from '~/components/PersonaSelector.astro';
 import ActionForm from '~/components/ActionForm.astro';
+import FaqAccordion from '~/components/FaqAccordion.astro';
 import I18nText from '~/components/I18nText.astro';
 
 const lang = 'zh';
@@ -22,29 +25,32 @@ const lang = 'zh';
     </div>
   </section>
 
+  <ThreeFacts lang={lang} />
+
+  <PersonaSelector lang={lang} />
+
   <ActionForm lang={lang} />
 
-  <section class="phase-note" id="why">
+  <FaqAccordion lang={lang} />
+
+  <section class="phase-note">
     <div class="wrap">
       <p class="kicker sans">
         <I18nText
-          en="Coming in the next batch (Phase 5.3+)"
-          zh="下一批要补的（Phase 5.3+）"
+          en="Coming in the next batches (Phase 5.4 - 5.7)"
+          zh="下面几批要补的（Phase 5.4 - 5.7）"
           lang={lang}
         />
       </p>
       <ul>
-        <li>三大事实（BCPSEA 承认 · 前期裁员 · Contingencies Vote）</li>
-        <li>persona 分层内容（家长 / PAC / Trustee）</li>
-        <li>影响地图（10 项服务 × 13 个年级）</li>
-        <li>MLA 跟踪表（7 位代表，状态 + 更新日期）</li>
-        <li>联盟 + PAC endorsement 资料包</li>
-        <li>发起人 + 关于联盟</li>
-        <li>FAQ</li>
+        <li>影响地图（10 项服务 × 13 个年级，可点击选年级）</li>
+        <li>MLA 跟踪表（7 位代表，卡片式 + 最近更新时间）</li>
+        <li>联盟 + PAC endorsement 资料包 modal</li>
+        <li>发起人 + Burnaby Kids First 关于章节</li>
+        <li>PAC 资料包打印页（/pac-kit）</li>
+        <li>验证机制说明页（/methodology）</li>
+        <li>隐私政策（从 Phase 4A 的独立 HTML 迁过来）</li>
       </ul>
-      <p class="muted small">
-        这些数据 YAML 和 SVG 已经在 repo 里。差 Astro 组件。
-      </p>
     </div>
   </section>
 </CampaignLayout>
@@ -58,6 +64,7 @@ const lang = 'zh';
   .phase-note {
     padding: 48px 0;
     background: var(--cream);
+    border-top: 1px solid var(--line);
   }
   .phase-note .kicker {
     font-size: 13px;
@@ -68,12 +75,10 @@ const lang = 'zh';
   }
   .phase-note ul {
     padding-left: 20px;
-    margin: 0 0 12px;
+    margin: 0;
     color: var(--ink-soft);
   }
   .phase-note li {
     margin-bottom: 6px;
   }
-  .small { font-size: 13px; }
-  .muted { color: var(--muted); }
 </style>

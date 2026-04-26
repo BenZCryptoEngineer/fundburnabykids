@@ -1,0 +1,150 @@
+---
+// Three rhetorically decisive facts.
+// Per source HTML + PRD §3: numbered 01/02/03 in tabular nums + warm
+// orange. Headline in sans, body in serif. Each fact ends with a
+// citation source link (auditability — see SIGNATURE_INTEGRITY_BRIEF).
+
+import { getEntry } from 'astro:content';
+import { t } from '~/lib/i18n';
+import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const factsEntry = await getEntry('campaign', 'facts');
+const facts: Array<{
+  id: string;
+  headline: { en: string; zh: string };
+  body: { en: string; zh: string };
+  citation?: { text: string; source_url?: string };
+}> = (factsEntry?.data as any)?.facts ?? [];
+---
+
+<section class="facts" id="why">
+  <div class="wrap">
+    <header class="facts__header">
+      <p class="kicker sans">
+        <I18nText
+          en="Why this is solvable today"
+          zh="为什么今天就能解决"
+          lang={lang}
+        />
+      </p>
+      <h2>
+        <I18nText
+          en="Three facts that change the conversation."
+          zh="三个改变对话方向的事实。"
+          lang={lang}
+        />
+      </h2>
+    </header>
+
+    <ol class="facts__list">
+      {facts.map((f) => (
+        <li class="fact">
+          <div class="fact__num tabular">{f.id}</div>
+          <div class="fact__content">
+            <h3 class="fact__headline sans">{t(f.headline, lang)}</h3>
+            <p class="fact__body">{t(f.body, lang)}</p>
+            {f.citation && (
+              <p class="fact__cite sans">
+                <span class="muted">
+                  <I18nText en="Source: " zh="来源：" lang={lang} />
+                </span>
+                {f.citation.source_url ? (
+                  <a href={f.citation.source_url} target="_blank" rel="noopener noreferrer">
+                    {f.citation.text}
+                  </a>
+                ) : (
+                  <span>{f.citation.text}</span>
+                )}
+              </p>
+            )}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .facts {
+    padding: 64px 0;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+  .facts__header {
+    margin-bottom: 32px;
+    max-width: 640px;
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .facts__header h2 {
+    font-family: var(--font-sans);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    color: var(--ink);
+  }
+  .facts__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 32px;
+  }
+  .fact {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 16px;
+    align-items: start;
+  }
+  .fact__num {
+    font-family: var(--font-sans);
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--warm);
+    line-height: 1;
+  }
+  .fact__content {
+    max-width: 640px;
+  }
+  .fact__headline {
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .fact__body {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    margin: 0 0 8px;
+  }
+  .fact__cite {
+    font-size: 13px;
+    margin: 0;
+  }
+  .fact__cite a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: var(--line);
+    text-underline-offset: 3px;
+  }
+  .fact__cite a:hover {
+    text-decoration-color: var(--accent);
+  }
+  .muted { color: var(--muted); }
+</style>
