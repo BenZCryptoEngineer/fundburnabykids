@@ -25,7 +25,22 @@ const subheadline = (meta?.subheadline ? t(meta.subheadline, lang) : '') as stri
 const askAmount = meta?.ask?.amount_label ?? '$9.4M';
 const founderName = meta?.founder?.name ?? 'Ben Zhou';
 const founderRole = meta?.founder?.role ? t(meta.founder.role, lang) : '';
-const deadline = meta?.deadline ? `${meta.deadline}T00:00:00-07:00` : '2026-05-27T00:00:00-07:00';
+
+// meta.deadline may come back as a Date object from the YAML loader.
+// Normalize to ISO date string before composing the deadline timestamp.
+function normalizeDeadline(raw: unknown): string {
+  if (raw instanceof Date) {
+    const y = raw.getUTCFullYear();
+    const m = String(raw.getUTCMonth() + 1).padStart(2, '0');
+    const d = String(raw.getUTCDate()).padStart(2, '0');
+    return `${y}-${m}-${d}T00:00:00-07:00`;
+  }
+  if (typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}/.test(raw)) {
+    return `${raw.slice(0, 10)}T00:00:00-07:00`;
+  }
+  return '2026-05-27T00:00:00-07:00';
+}
+const deadline = normalizeDeadline(meta?.deadline);
 const goal = thresholds?.goal ?? 2000;
 ---
 

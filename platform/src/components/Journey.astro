@@ -81,10 +81,10 @@ const clientData = {
     </header>
 
     <div class="journey__legend sans">
-      <span class="legend-item"><span class="cell cell--have"></span><I18nText en="Available" zh="目前可用" lang={lang} /></span>
-      <span class="legend-item"><span class="cell cell--lost"></span><I18nText en="Already cut (2025-26)" zh="已削减 (25-26)" lang={lang} /></span>
-      <span class="legend-item"><span class="cell cell--risk"></span><I18nText en="At risk if not funded" zh="若未拨款则有风险" lang={lang} /></span>
-      <span class="legend-item"><span class="cell cell--gone"></span><I18nText en="Likely eliminated" zh="可能被取消" lang={lang} /></span>
+      <span class="legend-item"><span class="legend-cell legend-cell--have"></span><I18nText en="Available" zh="目前可用" lang={lang} /></span>
+      <span class="legend-item"><span class="legend-cell legend-cell--lost"></span><I18nText en="Already cut (2025-26)" zh="已削减 (25-26)" lang={lang} /></span>
+      <span class="legend-item"><span class="legend-cell legend-cell--risk"></span><I18nText en="At risk if not funded" zh="若未拨款则有风险" lang={lang} /></span>
+      <span class="legend-item"><span class="legend-cell legend-cell--gone"></span><I18nText en="Likely eliminated" zh="可能被取消" lang={lang} /></span>
     </div>
 
     <div class="journey__scroll-hint sans" aria-hidden="true">
@@ -369,29 +369,21 @@ const clientData = {
     border-color: transparent;
   }
 
-  /* state colors */
-  .cell {
+  /* Legend-only cell preview (NOT applied to table cells — separate class
+     to avoid breaking table layout via display:inline-block on td). */
+  .legend-cell {
     display: inline-block;
     width: 18px;
     height: 18px;
     border-radius: 3px;
     border: 1px solid transparent;
   }
-  .cell--have {
-    background: #15803D;
-  }
-  .cell--lost {
-    background: #E5E7EB;
-    border: 1px dashed #9CA3AF;
-  }
-  .cell--risk {
-    background: repeating-linear-gradient(45deg, #FED7AA 0 6px, #FDBA74 6px 12px);
-  }
-  .cell--gone {
-    background: #DC2626;
-  }
+  .legend-cell--have { background: #15803D; }
+  .legend-cell--lost { background: #E5E7EB; border: 1px dashed #9CA3AF; }
+  .legend-cell--risk { background: repeating-linear-gradient(45deg, #FED7AA 0 6px, #FDBA74 6px 12px); }
+  .legend-cell--gone { background: #DC2626; }
 
-  /* Override for table cells */
+  /* Table cells — keep default td display, only paint background. */
   .journey__cell.cell--have { background: #15803D; }
   .journey__cell.cell--lost { background: #E5E7EB; border: 1px dashed #9CA3AF; }
   .journey__cell.cell--risk { background: repeating-linear-gradient(45deg, #FED7AA 0 6px, #FDBA74 6px 12px); }

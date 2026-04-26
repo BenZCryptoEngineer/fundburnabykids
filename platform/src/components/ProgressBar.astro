@@ -133,7 +133,7 @@ const nextRemaining = next ? next.count - initialCount : 0;
 
 <style>
   .progress {
-    margin: 32px 0;
+    margin: 32px 0 96px; /* bottom = milestone-label height + buffer */
   }
   .progress__bar {
     position: relative;
@@ -141,6 +141,7 @@ const nextRemaining = next ? next.count - initialCount : 0;
     background: var(--line);
     border-radius: 999px;
     overflow: visible;
+    margin-bottom: 64px; /* room for absolutely-positioned labels below the bar */
   }
   .progress__fill {
     height: 100%;
