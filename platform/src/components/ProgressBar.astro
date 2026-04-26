@@ -1,0 +1,201 @@
+---
+// Progress bar with named milestones (UK Parliament e-petition pattern).
+// Per UX research: thresholds tied to named consequences pull signers
+// toward the next milestone. Reads thresholds + goal from
+// thresholds.yaml.
+
+import { getEntry } from 'astro:content';
+import I18nText from '~/components/I18nText.astro';
+import { t } from '~/lib/i18n';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const thresholdsEntry = await getEntry('campaign', 'thresholds');
+const thresholds = (thresholdsEntry?.data ?? {}) as any;
+const goal: number = thresholds.goal ?? 2000;
+const milestones: Array<{ count: number; consequence: { en: string; zh?: string } }> =
+  thresholds.milestones ?? [];
+
+// Initial signature count for SSR (will be updated client-side)
+const url = import.meta.env.PUBLIC_SUPABASE_URL;
+const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+let initialCount = 0;
+if (url && key) {
+  try {
+    const res = await fetch(`${url}/rest/v1/public_signatures?select=*&limit=0`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: 'count=exact' },
+    });
+    if (res.ok) {
+      const range = res.headers.get('content-range');
+      if (range) initialCount = parseInt(range.split('/')[1] || '0', 10) || 0;
+    }
+  } catch { /* keep 0 */ }
+}
+
+const maxMilestone = milestones.length ? milestones[milestones.length - 1].count : goal;
+const initialPct = Math.min(100, (initialCount / maxMilestone) * 100);
+
+// Find next-milestone hint
+function nextMilestone(count: number) {
+  for (const m of milestones) {
+    if (count < m.count) return m;
+  }
+  return null;
+}
+const next = nextMilestone(initialCount);
+const nextRemaining = next ? next.count - initialCount : 0;
+---
+
+<div class="progress"
+     data-supabase-url={url}
+     data-supabase-key={key}
+     data-poll-ms="30000"
+     data-max={maxMilestone}>
+  <div class="progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax={maxMilestone} aria-valuenow={initialCount}>
+    <div class="progress__fill" style={`width: ${initialPct}%`} data-progress-fill></div>
+    {milestones.map((m) => {
+      const pct = (m.count / maxMilestone) * 100;
+      return (
+        <div
+          class={`progress__milestone ${initialCount >= m.count ? 'progress__milestone--reached' : ''}`}
+          style={`left: ${pct}%`}
+          data-milestone={m.count}
+        >
+          <span class="progress__milestone-tick" aria-hidden="true"></span>
+          <span class="progress__milestone-label sans">
+            <span class="progress__milestone-count tabular">{m.count.toLocaleString()}</span>
+            <span class="progress__milestone-consequence">{t(m.consequence, lang)}</span>
+          </span>
+        </div>
+      );
+    })}
+  </div>
+
+  {next ? (
+    <p class="progress__hint sans" data-progress-hint>
+      <I18nText
+        en={`${nextRemaining.toLocaleString()} more until ${t(next.consequence, lang)}`}
+        zh={`再 ${nextRemaining.toLocaleString()} 个签名 → ${t(next.consequence, lang)}`}
+        lang={lang}
+      />
+    </p>
+  ) : (
+    <p class="progress__hint sans" data-progress-hint>
+      <I18nText
+        en="Top milestone reached. Keep going."
+        zh="顶级里程碑已达成。继续。"
+        lang={lang}
+      />
+    </p>
+  )}
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.progress').forEach((el) => {
+    const url = el.dataset.supabaseUrl;
+    const key = el.dataset.supabaseKey;
+    const pollMs = parseInt(el.dataset.pollMs || '30000', 10);
+    const max = parseInt(el.dataset.max || '0', 10);
+    if (!url || !key || !max) return;
+
+    const fill = el.querySelector<HTMLElement>('[data-progress-fill]');
+    const milestoneEls = el.querySelectorAll<HTMLElement>('.progress__milestone');
+
+    async function poll() {
+      try {
+        const res = await fetch(`${url}/rest/v1/public_signatures?select=*&limit=0`, {
+          headers: { apikey: key!, Authorization: `Bearer ${key!}`, Prefer: 'count=exact' },
+        });
+        if (!res.ok) return;
+        const range = res.headers.get('content-range');
+        if (!range) return;
+        const total = parseInt(range.split('/')[1] || '0', 10);
+        if (!Number.isFinite(total)) return;
+
+        const pct = Math.min(100, (total / max) * 100);
+        if (fill) fill.style.width = `${pct}%`;
+        milestoneEls.forEach((m) => {
+          const c = parseInt(m.dataset.milestone || '0', 10);
+          m.classList.toggle('progress__milestone--reached', total >= c);
+        });
+      } catch {
+        /* keep last good */
+      }
+    }
+    setInterval(poll, pollMs);
+  });
+</script>
+
+<style>
+  .progress {
+    margin: 32px 0;
+  }
+  .progress__bar {
+    position: relative;
+    height: 8px;
+    background: var(--line);
+    border-radius: 999px;
+    overflow: visible;
+  }
+  .progress__fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.6s ease;
+  }
+  .progress__milestone {
+    position: absolute;
+    top: 0;
+    transform: translate(-50%, 0);
+  }
+  .progress__milestone-tick {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--line);
+  }
+  .progress__milestone--reached .progress__milestone-tick {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+  .progress__milestone-label {
+    position: absolute;
+    top: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.3;
+    color: var(--muted);
+    width: max-content;
+    max-width: 140px;
+  }
+  .progress__milestone-count {
+    display: block;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .progress__milestone-consequence {
+    display: block;
+    margin-top: 2px;
+  }
+  .progress__milestone--reached .progress__milestone-count {
+    color: var(--accent);
+  }
+  .progress__hint {
+    margin-top: 60px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: center;
+  }
+</style>

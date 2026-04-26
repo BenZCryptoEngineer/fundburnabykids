@@ -1,0 +1,139 @@
+---
+// ZH duplicate of /confirm-thanks. Parent uses pickLang() for locale.
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+---
+
+<CampaignLayout
+  lang={lang}
+  noindex
+  title={lang === 'zh' ? '查收邮件 — Fund Burnaby Kids' : 'Check your email — Fund Burnaby Kids'}
+>
+  <section class="thanks-page">
+    <div class="wrap">
+      <div class="thanks-card">
+        <div class="thanks-icon" aria-hidden="true">📬</div>
+        <h1>
+          <I18nText en="Check your email" zh="请查收邮件" lang={lang} />
+        </h1>
+        <p class="thanks-lede">
+          <I18nText
+            en="We just sent a confirmation link to your email. Click it within 48 hours to add your name to the public count."
+            zh="我们刚向你的邮箱发了一封确认邮件。请在 48 小时内点击链接，将你的名字加入公开计数。"
+            lang={lang}
+          />
+        </p>
+
+        <div class="thanks-next">
+          <h2 class="sans">
+            <I18nText en="If you don't see it" zh="如果没收到" lang={lang} />
+          </h2>
+          <ul>
+            <li>
+              <I18nText
+                en="Check your spam / promotions folder. New domains sometimes land there."
+                zh="检查垃圾邮件 / 促销标签。新域名有时会被分到那里。"
+                lang={lang}
+              />
+            </li>
+            <li>
+              <I18nText en="The email comes from" zh="邮件发件人是" lang={lang} />
+              <strong>campaign@fundburnabykids.ca</strong>
+              {' '}
+              <I18nText en="with subject" zh="主题是" lang={lang} />
+              {' '}
+              <em>"再点一下：让你为本拿比孩子的签名生效"</em>
+            </li>
+            <li>
+              <I18nText en="Still nothing after 5 minutes? Email" zh="5 分钟还没收到？邮件给" lang={lang} />{' '}
+              <a href="mailto:hello@fundburnabykids.ca">hello@fundburnabykids.ca</a>
+              {' '}
+              <I18nText en="and we'll fix it." zh="，我们处理。" lang={lang} />
+            </li>
+          </ul>
+        </div>
+
+        <div class="thanks-letter-note">
+          <p class="sans muted small">
+            <I18nText
+              en="A pre-filled email to your MLA + the Education Minister should have opened in a new tab. Send it whenever you're ready — no rush."
+              zh="一封预填给你的 MLA 和教育部长的邮件应该已经在新标签页打开了。准备好就发出去，不急。"
+              lang={lang}
+            />
+          </p>
+        </div>
+
+        <p class="thanks-back">
+          <a href={localizedUrl('/', lang)}>
+            ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .thanks-page { padding: 64px 0; }
+  .thanks-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .thanks-icon { font-size: 48px; margin-bottom: 16px; }
+  h1 { font-size: 28px; margin-bottom: 12px; }
+  .thanks-lede {
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin-bottom: 32px;
+  }
+  .thanks-next {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-bottom: 24px;
+  }
+  .thanks-next h2 {
+    font-size: 14px;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .thanks-next ul { list-style: none; padding: 0; }
+  .thanks-next li {
+    padding-left: 24px;
+    position: relative;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  .thanks-next li::before {
+    content: "·";
+    position: absolute;
+    left: 4px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .thanks-letter-note {
+    background: var(--cream);
+    border-left: 3px solid var(--warm);
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 24px 0;
+  }
+  .thanks-back { margin-top: 24px; }
+  .thanks-back a {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .small { font-size: 13px; }
+  .muted { color: var(--muted); }
+</style>

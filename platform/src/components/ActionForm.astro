@@ -1,0 +1,497 @@
+---
+// The signature + send form. POSTs to Netlify Forms; Netlify webhook
+// fires the on-signature Function which writes Supabase + sends the
+// transactional confirmation email via Resend.
+//
+// Per UX research: live "public listing preview" calms privacy fears.
+// Per PRD §9.1: data-netlify + bot-field honeypot + form-name hidden.
+// Per VISUAL_DESIGN: Turnstile loaded server-side rendered, widget
+// hydrated client-side.
+
+import { getEntry } from 'astro:content';
+import I18nText from '~/components/I18nText.astro';
+import { t, localizedUrl } from '~/lib/i18n';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const schools = (await getEntry('campaign', 'schools'))?.data as any;
+const letter = (await getEntry('campaign', 'letter'))?.data as any;
+const mlas = (await getEntry('campaign', 'mlas'))?.data?.mlas as Array<any> ?? [];
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+const subjectEn = letter?.subject?.en ?? '';
+const bodyTemplateEn = letter?.body_template_en ?? '';
+
+// Build recipient list for mailto: TO and CC
+const recipientsTo = mlas.filter((m) => m.recipient_role === 'to').map((m) => m.email);
+const recipientsCc = mlas.filter((m) => m.recipient_role === 'cc').map((m) => m.email);
+
+// Encode for safe embedding as data attribute
+const dataMailto = JSON.stringify({
+  subject: subjectEn,
+  body: bodyTemplateEn,
+  to: recipientsTo,
+  cc: recipientsCc,
+});
+---
+
+<section class="action-form-section" id="act">
+  <div class="wrap">
+    <header class="action-form-header">
+      <p class="kicker sans">
+        <I18nText
+          en="Take action — 60 seconds"
+          zh="行动 — 60 秒"
+          lang={lang}
+        />
+      </p>
+      <h2>
+        <I18nText
+          en="Sign the petition. Send the pre-filled email. Both go to MLAs together."
+          zh="签署请愿。发送预填邮件。两个一起送到 MLA。"
+          lang={lang}
+        />
+      </h2>
+    </header>
+
+    {/* Live public-listing preview */}
+    <div class="public-preview-card">
+      <p class="public-preview-label sans">
+        <I18nText
+          en="↓ This is what appears publicly. Your full name, email, and exact postal code stay private."
+          zh="↓ 公开后这就是大家看到的。你的全名、邮箱、完整邮编不公开。"
+          lang={lang}
+        />
+      </p>
+      <div class="public-preview" id="public-preview">
+        <span class="preview-name">
+          <I18nText en="Your Name" zh="你的名字" lang={lang} />
+        </span>
+        <span class="preview-meta">
+          <I18nText en="Your School · Your Neighbourhood" zh="你的学校 · 你的街区" lang={lang} />
+        </span>
+      </div>
+    </div>
+
+    <form
+      class="action-form"
+      name="signature"
+      method="POST"
+      action={localizedUrl('/confirm-thanks', lang)}
+      data-netlify="true"
+      netlify-honeypot="bot-field"
+      data-mailto={dataMailto}
+    >
+      <input type="hidden" name="form-name" value="signature" />
+      <input type="hidden" name="locale" value={lang} />
+      <p class="hidden" aria-hidden="true">
+        <label>
+          <I18nText en="Don't fill this:" zh="不要填这个：" lang={lang} />
+          <input name="bot-field" />
+        </label>
+      </p>
+
+      <div class="form-row form-row--two">
+        <div class="field">
+          <label for="firstname">
+            <I18nText en="First name" zh="名" lang={lang} />
+          </label>
+          <input type="text" name="firstname" id="firstname" required maxlength="40" autocomplete="given-name" />
+        </div>
+        <div class="field">
+          <label for="lastname">
+            <I18nText en="Last name" zh="姓" lang={lang} />
+          </label>
+          <input type="text" name="lastname" id="lastname" required maxlength="40" autocomplete="family-name" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">
+          <I18nText en="Email" zh="邮箱" lang={lang} />
+        </label>
+        <input type="email" name="email" id="email" required maxlength="254" autocomplete="email" />
+        <p class="hint">
+          <I18nText
+            en="One confirmation email comes here. Updates only if you opt in below."
+            zh="一封确认邮件会发到这里。后续更新只在你勾选订阅时才发。"
+            lang={lang}
+          />
+        </p>
+      </div>
+
+      <div class="form-row form-row--two">
+        <div class="field">
+          <label for="school">
+            <I18nText en="Your child's school" zh="孩子的学校" lang={lang} />
+          </label>
+          <select name="school" id="school" required>
+            <option value="">— {t({en: 'select', zh: '选择'}, lang)} —</option>
+            {schools?.elementary && (
+              <optgroup label={lang === 'zh' ? '小学' : 'Elementary'}>
+                {schools.elementary.map((s: string) => <option value={s}>{s}</option>)}
+              </optgroup>
+            )}
+            {schools?.secondary && (
+              <optgroup label={lang === 'zh' ? '中学' : 'Secondary'}>
+                {schools.secondary.map((s: string) => <option value={s}>{s}</option>)}
+              </optgroup>
+            )}
+            {schools?.other && (
+              <optgroup label={lang === 'zh' ? '其它' : 'Other'}>
+                {schools.other.map((s: string) => <option value={s}>{s}</option>)}
+              </optgroup>
+            )}
+          </select>
+        </div>
+        <div class="field">
+          <label for="grade">
+            <I18nText en="Grade" zh="年级" lang={lang} />
+          </label>
+          <select name="grade" id="grade" required>
+            <option value="">— {t({en: 'select', zh: '选择'}, lang)} —</option>
+            <option value="K">K</option>
+            {Array.from({length: 12}, (_, i) => i + 1).map((n) => <option value={String(n)}>{n}</option>)}
+            <option value="multiple">{lang === 'zh' ? '多个孩子' : 'Multiple children'}</option>
+            <option value="future">{lang === 'zh' ? '未来入学' : 'Future student'}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="postal">
+          <I18nText en="Postal code" zh="邮编" lang={lang} />
+        </label>
+        <input
+          type="text"
+          name="postal"
+          id="postal"
+          required
+          pattern="^V[0-9][A-Z]\s?[0-9][A-Z][0-9]$"
+          placeholder="V5C 5W6"
+          autocomplete="postal-code"
+          maxlength="7"
+        />
+        <p class="hint">
+          <I18nText
+            en="Used to derive your neighbourhood (V5C → Willingdon Heights). Full code never displayed publicly."
+            zh="用于推算街区（V5C → Willingdon Heights）。完整邮编从不公开。"
+            lang={lang}
+          />
+        </p>
+      </div>
+
+      <fieldset class="consents">
+        <legend class="sr-only">
+          <I18nText en="Consents" zh="同意项" lang={lang} />
+        </legend>
+
+        <label class="consent">
+          <input type="checkbox" name="consent-public" required />
+          <span>
+            <strong>
+              <I18nText
+                en="Display my first name + last initial + school + neighbourhood publicly"
+                zh="同意公开显示我的名 + 姓首字母 + 学校 + 街区"
+                lang={lang}
+              />
+            </strong>
+            <span class="consent-required">
+              {' '}
+              <I18nText en="(required to count)" zh="（必选 — 否则签名不计入）" lang={lang} />
+            </span>
+          </span>
+        </label>
+
+        <label class="consent">
+          <input type="checkbox" name="consent-updates" />
+          <span>
+            <I18nText
+              en="Send me updates (~once every 2 weeks until campaign closes). One-click unsubscribe in every email."
+              zh="发送更新邮件给我（约 2 周一封，直到活动结束）。每封邮件一键退订。"
+              lang={lang}
+            />
+          </span>
+        </label>
+
+        <label class="consent">
+          <input type="checkbox" name="consent-letter" checked />
+          <span>
+            <I18nText
+              en="Also open a pre-filled email to my MLA + the Education Minister when I submit."
+              zh="提交时同时打开一封预填给我 MLA 和教育部长的邮件。"
+              lang={lang}
+            />
+          </span>
+        </label>
+      </fieldset>
+
+      {turnstileSiteKey && (
+        <div class="turnstile-wrap">
+          <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+        </div>
+      )}
+
+      <button type="submit" class="btn btn--primary btn--lg btn--block">
+        <I18nText
+          en="Sign — and send your email →"
+          zh="签名 — 并发送邮件 →"
+          lang={lang}
+        />
+      </button>
+
+      <p class="form-footer-note muted">
+        <I18nText
+          en="By submitting you confirm you've read our"
+          zh="提交即表示你阅读了我们的"
+          lang={lang}
+        />{' '}
+        <a href={localizedUrl('/privacy', lang)}>
+          <I18nText en="privacy policy" zh="隐私政策" lang={lang} />
+        </a>.
+      </p>
+    </form>
+  </div>
+</section>
+
+{turnstileSiteKey && (
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
+<script>
+  (function () {
+    const formEl = document.querySelector<HTMLFormElement>('form.action-form');
+    if (!formEl) return;
+    const form: HTMLFormElement = formEl;
+
+    const previewName = form.parentElement?.querySelector<HTMLElement>('.preview-name');
+    const previewMeta = form.parentElement?.querySelector<HTMLElement>('.preview-meta');
+
+    const NEIGHBOURHOODS: Record<string, string> = {
+      V3J: 'North Burnaby', V3N: 'Edmonds',
+      V5A: 'Burnaby Mountain', V5B: 'Brentwood',
+      V5C: 'Willingdon Heights', V5E: 'Big Bend',
+      V5G: 'Central Burnaby', V5H: 'Metrotown',
+      V5J: 'South Burnaby',
+    };
+
+    function postalToNeighbourhood(postal: string): string {
+      const prefix = postal.trim().toUpperCase().substring(0, 3);
+      return NEIGHBOURHOODS[prefix] || 'Burnaby';
+    }
+
+    function updatePreview() {
+      const fn = (form.elements.namedItem('firstname') as HTMLInputElement | null)?.value.trim() || 'Your name';
+      const ln = (form.elements.namedItem('lastname') as HTMLInputElement | null)?.value.trim() || '';
+      const initial = ln ? ln[0].toUpperCase() + '.' : '';
+      const sch = (form.elements.namedItem('school') as HTMLSelectElement | null)?.value || 'Your school';
+      const postal = (form.elements.namedItem('postal') as HTMLInputElement | null)?.value || '';
+      const neigh = postal.length >= 3 ? postalToNeighbourhood(postal) : 'Your neighbourhood';
+      if (previewName) previewName.textContent = `${fn}${initial ? ' ' + initial : ''}`;
+      if (previewMeta) previewMeta.textContent = `${sch} · ${neigh}`;
+    }
+
+    form.addEventListener('input', updatePreview);
+    form.addEventListener('change', updatePreview);
+    updatePreview();
+
+    // On submit: optionally open mailto: in a new tab so user can review + send.
+    form.addEventListener('submit', () => {
+      const sendLetter = (form.elements.namedItem('consent-letter') as HTMLInputElement | null)?.checked;
+      if (!sendLetter) return; // nothing extra to do; form posts to Netlify Forms
+
+      const mailtoData = form.dataset.mailto;
+      if (!mailtoData) return;
+      try {
+        const m = JSON.parse(mailtoData) as { subject: string; body: string; to: string[]; cc: string[] };
+        const fn = (form.elements.namedItem('firstname') as HTMLInputElement).value.trim();
+        const ln = (form.elements.namedItem('lastname') as HTMLInputElement).value.trim();
+        const sch = (form.elements.namedItem('school') as HTMLSelectElement).value;
+        const grade = (form.elements.namedItem('grade') as HTMLSelectElement).value;
+        const postal = (form.elements.namedItem('postal') as HTMLInputElement).value;
+        const body = m.body
+          .replace(/\{FIRST\}/g, fn)
+          .replace(/\{LAST\}/g, ln)
+          .replace(/\{SCHOOL\}/g, sch)
+          .replace(/\{GRADE\}/g, grade)
+          .replace(/\{POSTAL\}/g, postal);
+        const url =
+          `mailto:${encodeURIComponent(m.to.join(','))}` +
+          `?cc=${encodeURIComponent(m.cc.join(','))}` +
+          `&subject=${encodeURIComponent(m.subject)}` +
+          `&body=${encodeURIComponent(body)}`;
+        // Open in a new tab so the form submit isn't disrupted
+        window.open(url, '_blank');
+      } catch (err) {
+        console.error('mailto build failed:', err);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .action-form-section {
+    padding: 64px 0;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+  .action-form-header {
+    margin-bottom: 32px;
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .action-form-header h2 {
+    font-family: var(--font-sans);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+    color: var(--ink);
+  }
+
+  /* Live preview card */
+  .public-preview-card {
+    background: var(--cream);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+  }
+  .public-preview-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 8px;
+  }
+  .public-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .preview-name {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--ink);
+    font-size: 16px;
+  }
+  .preview-meta {
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  /* Form */
+  .action-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .form-row {
+    display: grid;
+    gap: 20px;
+  }
+  .form-row--two {
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width: 560px) {
+    .form-row--two { grid-template-columns: 1fr; }
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .field input,
+  .field select {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .field input:focus,
+  .field select:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
+  }
+  .hint {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  /* Consents */
+  .consents {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .consent {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .consent input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .consent-required {
+    color: var(--warm);
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  /* Turnstile */
+  .turnstile-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 8px 0;
+  }
+
+  /* Submit */
+  .btn--block {
+    width: 100%;
+    font-size: 18px;
+    padding: 16px;
+  }
+
+  .form-footer-note {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    text-align: center;
+    margin: 0;
+  }
+
+  .hidden { display: none; }
+</style>

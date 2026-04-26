@@ -5,13 +5,13 @@ import SignatoriesFeed from '~/components/SignatoriesFeed.astro';
 import ActionForm from '~/components/ActionForm.astro';
 import I18nText from '~/components/I18nText.astro';
 
-const lang = 'en';
+const lang = 'zh';
 ---
 
 <CampaignLayout
   lang={lang}
-  title="Fund Burnaby Kids — $9.4M from BC Budget 2026 for Burnaby schools"
-  description="Sign + send the pre-filled email to your MLA. Budget adopts May 27. Parent-led, non-partisan, Burnaby-only."
+  title="Fund Burnaby Kids — 为本拿比孩子争取 BC 2026 预算 940 万"
+  description="签名 + 发预填邮件给你的 MLA。预算 5 月 27 日通过。家长发起，非党派，仅本拿比。"
   noindex
 >
   <Hero lang={lang} />
@@ -34,16 +34,16 @@ const lang = 'en';
         />
       </p>
       <ul>
-        <li>Three facts (BCPSEA admission · prior cuts · Contingencies Vote)</li>
-        <li>Persona-tailored content (Parent / PAC / Trustee)</li>
-        <li>Journey visualization (10 services × 13 grades)</li>
-        <li>MLA scorecard (7 representatives, status + last-updated)</li>
-        <li>Coalition + PAC endorsement kit</li>
-        <li>Founder + About section</li>
+        <li>三大事实（BCPSEA 承认 · 前期裁员 · Contingencies Vote）</li>
+        <li>persona 分层内容（家长 / PAC / Trustee）</li>
+        <li>影响地图（10 项服务 × 13 个年级）</li>
+        <li>MLA 跟踪表（7 位代表，状态 + 更新日期）</li>
+        <li>联盟 + PAC endorsement 资料包</li>
+        <li>发起人 + 关于联盟</li>
         <li>FAQ</li>
       </ul>
       <p class="muted small">
-        These already exist as YAML data and SVG files in the repo. Just need their Astro components.
+        这些数据 YAML 和 SVG 已经在 repo 里。差 Astro 组件。
       </p>
     </div>
   </section>
@@ -61,7 +61,6 @@ const lang = 'en';
   }
   .phase-note .kicker {
     font-size: 13px;
-    text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--warm);
     font-weight: 600;

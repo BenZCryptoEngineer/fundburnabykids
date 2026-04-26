@@ -1,0 +1,207 @@
+---
+// Campaign hero — countdown + headline + counter + dual CTA + founder line.
+// Designed for civic-credibility (UK Parliament / Toronto Council Scorecard
+// style), not activist-platform marketing. Every claim must be auditable.
+
+import { getEntry } from 'astro:content';
+import I18nText from '~/components/I18nText.astro';
+import Countdown from '~/components/Countdown.astro';
+import SignatureCounter from '~/components/SignatureCounter.astro';
+import ProgressBar from '~/components/ProgressBar.astro';
+import { localizedUrl, t } from '~/lib/i18n';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const meta = (await getEntry('campaign', 'fund-burnaby-kids'))?.data as any;
+const thresholds = (await getEntry('campaign', 'thresholds'))?.data as any;
+
+const headline = (meta?.headline ? t(meta.headline, lang) : '') as string;
+const subheadline = (meta?.subheadline ? t(meta.subheadline, lang) : '') as string;
+const askAmount = meta?.ask?.amount_label ?? '$9.4M';
+const founderName = meta?.founder?.name ?? 'Ben Zhou';
+const founderRole = meta?.founder?.role ? t(meta.founder.role, lang) : '';
+const deadline = meta?.deadline ? `${meta.deadline}T00:00:00-07:00` : '2026-05-27T00:00:00-07:00';
+const goal = thresholds?.goal ?? 2000;
+---
+
+<section class="hero">
+  <div class="wrap-wide hero__inner">
+
+    {/* Countdown pill */}
+    <div class="hero__countdown-row">
+      <Countdown deadline={deadline} lang={lang} />
+    </div>
+
+    {/* Kicker */}
+    <p class="hero__kicker sans">
+      <I18nText
+        en="BC Budget 2026 · Burnaby School District 41 · Arbitration funding"
+        zh="BC Budget 2026 · Burnaby 学区 SD41 · 仲裁裁决拨款"
+        lang={lang}
+      />
+    </p>
+
+    {/* Headline (highlights $X.XM as a styled span) */}
+    <h1 class="hero__headline">
+      {(() => {
+        const parts = headline.split(askAmount);
+        if (parts.length === 2) {
+          return (
+            <>{parts[0]}<span class="hero__amount">{askAmount}</span>{parts[1]}</>
+          );
+        }
+        return headline;
+      })()}
+    </h1>
+
+    {/* Subheadline */}
+    {subheadline && <p class="hero__sub">{subheadline}</p>}
+
+    {/* Counter + Progress */}
+    <div class="hero__counter">
+      <SignatureCounter lang={lang} goal={goal} />
+    </div>
+
+    <ProgressBar lang={lang} />
+
+    {/* Dual CTA */}
+    <div class="hero__cta-row">
+      <a class="btn btn--primary btn--lg" href={localizedUrl('/#act', lang)}>
+        <I18nText
+          en="Sign + email your MLA — 60 seconds"
+          zh="签名 + 给你的 MLA 发邮件 — 60 秒"
+          lang={lang}
+        />
+      </a>
+      <a class="btn btn--ghost btn--lg" href={localizedUrl('/#why', lang)}>
+        <I18nText
+          en="Read the case first"
+          zh="先看证据"
+          lang={lang}
+        />
+      </a>
+    </div>
+
+    {/* Founder credit */}
+    <p class="hero__founder sans">
+      <I18nText en="Founded by " zh="发起人：" lang={lang} />
+      <strong>{founderName}</strong>
+      {founderRole && <span class="muted">, {founderRole}</span>}
+      {' · '}
+      <a href={localizedUrl('/#about', lang)}>
+        <I18nText en="About this campaign" zh="关于本活动" lang={lang} />
+      </a>
+    </p>
+
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding: 48px 0 32px;
+    background: var(--cream);
+  }
+  .hero__inner {
+    max-width: 820px;
+  }
+  .hero__countdown-row {
+    margin-bottom: 24px;
+  }
+  .hero__kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .hero__headline {
+    font-family: var(--font-sans);
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 0 0 16px;
+    max-width: 800px;
+  }
+  .hero__amount {
+    color: var(--warm);
+    font-style: italic;
+    font-weight: 800;
+    white-space: nowrap;
+  }
+  .hero__sub {
+    font-size: clamp(17px, 2.2vw, 20px);
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0 0 28px;
+    max-width: 640px;
+  }
+  .hero__counter {
+    margin: 24px 0 8px;
+  }
+  .hero__cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 24px 0 16px;
+  }
+  .hero__founder {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 16px;
+  }
+  .hero__founder a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .hero__founder a:hover { text-decoration: underline; }
+
+  /* Buttons (shared utility — could lift to tokens.css if reused widely) */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, transform 0.1s;
+    cursor: pointer;
+  }
+  .btn--lg {
+    padding: 14px 24px;
+    font-size: 16px;
+  }
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    color: #fff;
+    transform: translateY(-1px);
+  }
+  .btn--ghost {
+    background: transparent;
+    color: var(--accent);
+    border-color: var(--line);
+  }
+  .btn--ghost:hover {
+    border-color: var(--accent);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .btn { transition: none; }
+    .btn:hover { transform: none; }
+  }
+</style>

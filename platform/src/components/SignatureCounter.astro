@@ -1,0 +1,156 @@
+---
+// Signature counter — server fetches initial count at build, client polls
+// every 30s for updates. Falls back to "—" if Supabase env vars missing.
+//
+// Per UX research: label as "verified" (not just "signatures") so the
+// number reads as audited, not generated. Includes ? tooltip linking
+// to /methodology for trust-skeptics.
+
+import I18nText from '~/components/I18nText.astro';
+import { localizedUrl } from '~/lib/i18n';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+  /** Optional goal — if provided, renders "X / GOAL" framing */
+  goal?: number;
+}
+
+const { lang, goal } = Astro.props;
+
+const url = import.meta.env.PUBLIC_SUPABASE_URL;
+const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+let initialCount: number | null = null;
+if (url && key) {
+  try {
+    const res = await fetch(`${url}/rest/v1/public_signatures?select=*&limit=0`, {
+      headers: {
+        apikey: key,
+        Authorization: `Bearer ${key}`,
+        Prefer: 'count=exact',
+      },
+    });
+    if (res.ok) {
+      const range = res.headers.get('content-range');
+      if (range) {
+        const total = parseInt(range.split('/')[1] || '0', 10);
+        if (Number.isFinite(total)) initialCount = total;
+      }
+    }
+  } catch {
+    /* fall through to placeholder */
+  }
+}
+
+const display = initialCount === null ? '—' : initialCount.toLocaleString();
+---
+
+<div class="counter"
+     data-supabase-url={url}
+     data-supabase-key={key}
+     data-poll-ms="30000"
+     data-goal={goal ?? ''}>
+  <div class="counter__row">
+    <span class="counter__num tabular" data-counter-num>{display}</span>
+    {goal && (
+      <span class="counter__goal tabular">
+        <span class="counter__sep">/</span>
+        <span>{goal.toLocaleString()}</span>
+      </span>
+    )}
+  </div>
+  <div class="counter__label">
+    <I18nText
+      en="verified Burnaby parents have signed"
+      zh="本拿比家长已签名（已验证）"
+      lang={lang}
+    />
+    <a class="counter__why" href={localizedUrl('/methodology', lang)} aria-label="What does verified mean?">?</a>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.counter').forEach((el) => {
+    const url = el.dataset.supabaseUrl;
+    const key = el.dataset.supabaseKey;
+    const pollMs = parseInt(el.dataset.pollMs || '30000', 10);
+    if (!url || !key) return;
+
+    const numEl = el.querySelector<HTMLElement>('[data-counter-num]');
+    if (!numEl) return;
+
+    async function poll() {
+      try {
+        const res = await fetch(`${url}/rest/v1/public_signatures?select=*&limit=0`, {
+          headers: { apikey: key!, Authorization: `Bearer ${key!}`, Prefer: 'count=exact' },
+        });
+        if (!res.ok) return;
+        const range = res.headers.get('content-range');
+        if (!range) return;
+        const total = parseInt(range.split('/')[1] || '0', 10);
+        if (Number.isFinite(total)) {
+          numEl!.textContent = total.toLocaleString();
+        }
+      } catch {
+        /* swallow — keep last good value */
+      }
+    }
+    setInterval(poll, pollMs);
+  });
+</script>
+
+<style>
+  .counter {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .counter__row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .counter__num {
+    font-family: var(--font-sans);
+    font-size: clamp(40px, 6vw, 64px);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .counter__goal {
+    font-family: var(--font-sans);
+    font-size: 22px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .counter__sep {
+    margin-right: 4px;
+    color: var(--line);
+  }
+  .counter__label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--ink-soft);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .counter__why {
+    display: inline-grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--line);
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .counter__why:hover {
+    background: var(--accent);
+    color: #fff;
+  }
+</style>

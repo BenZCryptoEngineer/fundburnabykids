@@ -2,12 +2,23 @@ slug: fund-burnaby-kids
 status: draft
 deadline: 2026-05-27
 launch_date: 2026-05-01
-title:
+brand_name:
+  en: "Fund Burnaby Kids"
+  zh: "Fund Burnaby Kids"
+headline:
   en: "The Province owes Burnaby kids $9.4 million. Their own budget says they can pay it."
   zh: "省府欠Burnaby学生 $9.4M。他们自己的预算里有这笔钱。"
+subheadline:
+  en: "Sign + send the pre-filled email to your MLA. 60 seconds. Budget adoption May 27."
+  zh: "签名 + 发送给你的 MLA 一封预填邮件。60 秒。5 月 27 日预算通过。"
+# Kept for backward compat with CampaignLayout that still reads `title`.
+# Phase 5.2 layout update points to brand_name.
+title:
+  en: "Fund Burnaby Kids"
+  zh: "Fund Burnaby Kids"
 tagline:
   en: "A Burnaby Kids First campaign"
-  zh: "Burnaby Kids First 联盟运动"
+  zh: "Burnaby Kids First 旗下行动"
 ask:
   amount_label: "$9.4M"
   source_label:
