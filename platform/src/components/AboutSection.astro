@@ -1,0 +1,174 @@
+---
+// About section: founder card + Burnaby Kids First coalition card.
+// Reads bio + about_coalition from meta.yaml.
+
+import { getEntry } from 'astro:content';
+import { t } from '~/lib/i18n';
+import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const meta = (await getEntry('campaign', 'fund-burnaby-kids'))?.data as any;
+const founder = meta?.founder ?? {};
+const founderBio: string = founder.bio ? t(founder.bio, lang) : '';
+const founderRole: string = founder.role ? t(founder.role, lang) : '';
+const aboutCoalition: string = meta?.about_coalition ? t(meta.about_coalition, lang) : '';
+
+// Split bio into paragraphs for nicer rendering
+const bioParas = founderBio.split(/\n\s*\n/).filter(Boolean);
+const coalitionParas = aboutCoalition.split(/\n\s*\n/).filter(Boolean);
+---
+
+<section class="about" id="about">
+  <div class="wrap">
+    <header class="about__header">
+      <p class="kicker sans">
+        <I18nText
+          en="About this campaign"
+          zh="关于本活动"
+          lang={lang}
+        />
+      </p>
+    </header>
+
+    <div class="founder-card">
+      <header class="founder-card__head">
+        <div class="founder-card__avatar" aria-hidden="true">
+          {founder.avatar_text ?? 'BZ'}
+        </div>
+        <div class="founder-card__id">
+          <h3 class="founder-card__name sans">{founder.name ?? 'Ben Zhou'}</h3>
+          {founderRole && <p class="founder-card__role sans muted">{founderRole}</p>}
+        </div>
+        {founder.contact && (
+          <a class="founder-card__contact sans" href={`mailto:${founder.contact}`}>
+            {founder.contact}
+          </a>
+        )}
+      </header>
+      <div class="founder-card__bio">
+        {bioParas.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+
+    <div class="founder-card founder-card--coalition">
+      <header class="founder-card__head">
+        <div class="founder-card__avatar founder-card__avatar--alt" aria-hidden="true">
+          BKF
+        </div>
+        <div class="founder-card__id">
+          <h3 class="founder-card__name sans">Burnaby Kids First</h3>
+          <p class="founder-card__role sans muted">
+            <I18nText
+              en="Parent-led, non-partisan, Burnaby-only"
+              zh="家长发起、非党派、仅本拿比"
+              lang={lang}
+            />
+          </p>
+        </div>
+      </header>
+      <div class="founder-card__bio">
+        {coalitionParas.map((p) => <p>{p}</p>)}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about {
+    padding: 64px 0;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+  .about__header {
+    margin-bottom: 24px;
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .founder-card {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-bottom: 16px;
+  }
+  .founder-card__head {
+    display: grid;
+    grid-template-columns: 64px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 560px) {
+    .founder-card__head {
+      grid-template-columns: 56px 1fr;
+    }
+    .founder-card__contact {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+    }
+  }
+  .founder-card__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+  }
+  .founder-card__avatar--alt {
+    background: var(--warm);
+    font-size: 16px;
+  }
+  .founder-card__id {
+    min-width: 0;
+  }
+  .founder-card__name {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 2px;
+    line-height: 1.2;
+  }
+  .founder-card__role {
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.3;
+  }
+  .founder-card__contact {
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .founder-card__contact:hover {
+    text-decoration: underline;
+  }
+  .founder-card__bio p {
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin: 0 0 12px;
+  }
+  .founder-card__bio p:last-child {
+    margin-bottom: 0;
+  }
+  .muted { color: var(--muted); }
+</style>

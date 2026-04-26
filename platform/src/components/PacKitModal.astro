@@ -1,0 +1,512 @@
+---
+// PAC Endorsement Kit modal — content + form. Triggered by
+// CoalitionSection's "Open the PAC Kit" button.
+//
+// Includes the full kit content from pac-kit.yaml (intro, do/dont,
+// motion text, briefing, qa) AND the pac-endorsement form that POSTs
+// to Netlify Forms → on-signature webhook (form-name dispatch).
+
+import { getEntry } from 'astro:content';
+import I18nText from '~/components/I18nText.astro';
+import { t, localizedUrl } from '~/lib/i18n';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+  /** Modal id used by data-open-modal triggers */
+  modalId?: string;
+}
+
+const { lang, modalId = 'pac-kit-modal' } = Astro.props;
+
+const kitEntry = await getEntry('campaign', 'pac-kit');
+const kit = (kitEntry?.data as any) ?? {};
+
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+---
+
+<dialog class="pac-modal" id={modalId} aria-labelledby={`${modalId}-title`}>
+  <div class="pac-modal__inner">
+    <header class="pac-modal__header">
+      <h2 id={`${modalId}-title`}>
+        <I18nText
+          en="PAC Endorsement Kit"
+          zh="PAC Endorsement 资料包"
+          lang={lang}
+        />
+      </h2>
+      <button class="pac-modal__close" type="button" data-close-modal aria-label="Close">×</button>
+    </header>
+
+    <div class="pac-modal__body">
+      {/* Do / Don't */}
+      {(kit.do || kit.dont) && (
+        <div class="pac-section">
+          <h3 class="pac-section__title sans">
+            {kit.intro?.heading
+              ? t(kit.intro.heading, lang)
+              : <I18nText en="What endorsing means" zh="endorse 意味着什么" lang={lang} />}
+          </h3>
+          <div class="do-dont">
+            {kit.do && (
+              <div class="do-dont__col do-dont__col--do">
+                <h4 class="sans">{t(kit.do.heading, lang)}</h4>
+                <ul>
+                  {(kit.do.items ?? []).map((item: any) => <li>{t(item, lang)}</li>)}
+                </ul>
+              </div>
+            )}
+            {kit.dont && (
+              <div class="do-dont__col do-dont__col--dont">
+                <h4 class="sans">{t(kit.dont.heading, lang)}</h4>
+                <ul>
+                  {(kit.dont.items ?? []).map((item: any) => <li>{t(item, lang)}</li>)}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Motion text */}
+      {kit.motion_text?.body && (
+        <div class="pac-section">
+          <h3 class="pac-section__title sans">
+            {kit.motion_text.heading
+              ? t(kit.motion_text.heading, lang)
+              : <I18nText en="Standard motion text" zh="标准动议文字" lang={lang} />}
+          </h3>
+          <blockquote class="motion-block">
+            {t(kit.motion_text.body, lang)}
+          </blockquote>
+        </div>
+      )}
+
+      {/* Briefing */}
+      {kit.briefing?.items && Array.isArray(kit.briefing.items) && kit.briefing.items.length > 0 && (
+        <div class="pac-section">
+          <h3 class="pac-section__title sans">
+            {kit.briefing.heading
+              ? t(kit.briefing.heading, lang)
+              : <I18nText en="Two-minute briefing" zh="2 分钟说明" lang={lang} />}
+          </h3>
+          <ul class="briefing-list">
+            {kit.briefing.items.map((item: any) => <li>{t(item, lang)}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {/* Q&A */}
+      {kit.qa?.items && Array.isArray(kit.qa.items) && kit.qa.items.length > 0 && (
+        <div class="pac-section">
+          <h3 class="pac-section__title sans">
+            {kit.qa.heading
+              ? t(kit.qa.heading, lang)
+              : <I18nText en="Anticipated questions" zh="可能的提问" lang={lang} />}
+          </h3>
+          <div class="pac-qa">
+            {kit.qa.items.map((qa: any) => (
+              <details class="pac-qa-item">
+                <summary class="sans">{t(qa.q, lang)}</summary>
+                <p>{t(qa.a, lang)}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* The form */}
+      <div class="pac-section pac-form-section">
+        <h3 class="pac-section__title sans">
+          <I18nText en="Submit endorsement" zh="提交 endorsement" lang={lang} />
+        </h3>
+        <form
+          class="pac-form"
+          name="pac-endorsement"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="pac-bot"
+        >
+          <input type="hidden" name="form-name" value="pac-endorsement" />
+          <input type="hidden" name="locale" value={lang} />
+          <p class="hidden" aria-hidden="true">
+            <label>
+              <I18nText en="Don't fill:" zh="不要填：" lang={lang} />
+              <input name="pac-bot" />
+            </label>
+          </p>
+
+          <div class="field">
+            <label for="pac-school">
+              <I18nText en="School name" zh="学校名" lang={lang} />
+            </label>
+            <input type="text" name="pac-school" id="pac-school" required maxlength="80" />
+          </div>
+
+          <div class="form-row form-row--two">
+            <div class="field">
+              <label for="pac-students">
+                <I18nText en="Number of students" zh="学生人数" lang={lang} />
+              </label>
+              <input type="number" name="pac-students" id="pac-students" required min="1" max="3000" />
+            </div>
+            <div class="field">
+              <label for="pac-approval-date">
+                <I18nText en="Approval date (optional)" zh="批准日期（可选）" lang={lang} />
+              </label>
+              <input type="date" name="pac-approval-date" id="pac-approval-date" />
+            </div>
+          </div>
+
+          <div class="form-row form-row--two">
+            <div class="field">
+              <label for="pac-chair-name">
+                <I18nText en="PAC chair name" zh="PAC 主席姓名" lang={lang} />
+              </label>
+              <input type="text" name="pac-chair-name" id="pac-chair-name" required maxlength="60" />
+            </div>
+            <div class="field">
+              <label for="pac-chair-email">
+                <I18nText en="PAC chair email" zh="PAC 主席邮箱" lang={lang} />
+              </label>
+              <input type="email" name="pac-chair-email" id="pac-chair-email" required maxlength="254" />
+            </div>
+          </div>
+
+          <fieldset class="consents">
+            <legend class="sr-only">
+              <I18nText en="Consents" zh="同意项" lang={lang} />
+            </legend>
+            <label class="consent">
+              <input type="checkbox" name="pac-consent" required />
+              <span>
+                <I18nText
+                  en="I confirm this submission was authorized by the PAC (formally or pending formal motion at the next meeting)."
+                  zh="我确认本次提交已获 PAC 授权（正式动议或下次会议待表决）。"
+                  lang={lang}
+                />
+              </span>
+            </label>
+            <label class="consent">
+              <input type="checkbox" name="pac-future-interest" />
+              <span>
+                <I18nText
+                  en="Keep us in the loop for future Burnaby Kids First campaigns."
+                  zh="未来 Burnaby Kids First 的 campaign 也通知我们。"
+                  lang={lang}
+                />
+              </span>
+            </label>
+          </fieldset>
+
+          {turnstileSiteKey && (
+            <div class="turnstile-wrap">
+              <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+            </div>
+          )}
+
+          <button class="btn btn--primary btn--block" type="submit">
+            <I18nText en="Submit for verification" zh="提交以待验证" lang={lang} />
+          </button>
+
+          <p class="form-footer-note muted sans small">
+            <I18nText
+              en="We verify every endorsement personally — usually within 24 hours. We will email the chair address above."
+              zh="每个 endorsement 我们都人工验证 — 通常 24 小时内。我们会向上面的主席邮箱发邮件确认。"
+              lang={lang}
+            />
+          </p>
+        </form>
+      </div>
+
+      {/* Sources */}
+      {kit.sources?.items && Array.isArray(kit.sources.items) && kit.sources.items.length > 0 && (
+        <div class="pac-section">
+          <h3 class="pac-section__title sans">
+            {kit.sources.heading
+              ? t(kit.sources.heading, lang)
+              : <I18nText en="Primary sources" zh="一手来源" lang={lang} />}
+          </h3>
+          <ul class="sources-list">
+            {kit.sources.items.map((s: any) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener noreferrer">
+                  {typeof s.label === 'string' ? s.label : t(s.label, lang)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Printable link */}
+      <p class="pac-printable-link sans">
+        <a href={localizedUrl('/pac-kit', lang)} target="_blank" rel="noopener noreferrer">
+          <I18nText en="Open the printable 2-page version (PDF-friendly) ↗" zh="打开 2 页可打印版（PDF 友好）↗" lang={lang} />
+        </a>
+      </p>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  // Open / close behavior. Clicks outside modal content close it.
+  document.querySelectorAll<HTMLElement>('[data-open-modal]').forEach((trigger) => {
+    trigger.addEventListener('click', () => {
+      const id = trigger.dataset.openModal;
+      if (!id) return;
+      const dlg = document.getElementById(id) as HTMLDialogElement | null;
+      if (dlg && typeof dlg.showModal === 'function') {
+        dlg.showModal();
+      }
+    });
+  });
+  document.querySelectorAll<HTMLElement>('[data-close-modal]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const dlg = btn.closest('dialog') as HTMLDialogElement | null;
+      dlg?.close();
+    });
+  });
+  document.querySelectorAll<HTMLDialogElement>('dialog.pac-modal').forEach((dlg) => {
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) dlg.close();
+    });
+  });
+</script>
+
+<style>
+  .pac-modal {
+    width: min(720px, calc(100vw - 32px));
+    max-height: calc(100vh - 64px);
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-lg);
+  }
+  .pac-modal::backdrop {
+    background: rgba(15, 23, 36, 0.5);
+    backdrop-filter: blur(2px);
+  }
+  .pac-modal__inner {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 64px);
+  }
+  .pac-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .pac-modal__header h2 {
+    font-family: var(--font-sans);
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--ink);
+  }
+  .pac-modal__close {
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .pac-modal__close:hover {
+    color: var(--ink);
+    background: var(--line-soft);
+  }
+  .pac-modal__body {
+    overflow-y: auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .pac-section { }
+  .pac-section__title {
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+  .pac-intro {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 560px) {
+    .do-dont { grid-template-columns: 1fr; }
+  }
+  .do-dont__col {
+    background: var(--cream);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--line);
+  }
+  .do-dont__col--do { border-left-color: var(--success); }
+  .do-dont__col--dont { border-left-color: var(--warm); }
+  .do-dont__col h4 {
+    font-size: 13px;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .do-dont__col ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .do-dont__col li {
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+
+  .motion-block {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--cream);
+    padding: 20px;
+    border-radius: var(--radius-md);
+    border-left: 3px solid var(--accent);
+    margin: 0;
+  }
+
+  .briefing-list {
+    margin: 0;
+    padding-left: 20px;
+    color: var(--ink-soft);
+  }
+  .briefing-list li {
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .pac-qa-item {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    background: var(--paper);
+  }
+  .pac-qa-item summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    list-style: none;
+  }
+  .pac-qa-item summary::-webkit-details-marker { display: none; }
+  .pac-qa-item p {
+    padding: 0 16px 12px;
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .pac-form-section {
+    background: var(--cream);
+    padding: 20px;
+    border-radius: var(--radius-md);
+  }
+  .pac-form { display: flex; flex-direction: column; gap: 16px; }
+  .form-row { display: grid; gap: 16px; }
+  .form-row--two { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 560px) {
+    .form-row--two { grid-template-columns: 1fr; }
+  }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field label {
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .field input {
+    font-family: inherit;
+    font-size: 15px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
+  }
+  .consents {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .consent {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .consent input { width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
+  .turnstile-wrap { display: flex; justify-content: center; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    border: 2px solid transparent;
+  }
+  .btn--primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn--primary:hover { background: var(--accent-deep); border-color: var(--accent-deep); }
+  .btn--block { width: 100%; padding: 12px 16px; font-size: 15px; }
+
+  .sources-list {
+    list-style: disc;
+    padding-left: 20px;
+    margin: 0;
+  }
+  .sources-list li { margin-bottom: 4px; font-size: 14px; }
+  .sources-list a { color: var(--accent); }
+
+  .pac-printable-link {
+    text-align: center;
+    font-size: 13px;
+    margin: 0;
+  }
+  .pac-printable-link a { color: var(--accent); }
+
+  .hidden { display: none; }
+  .small { font-size: 12px; }
+  .muted { color: var(--muted); }
+  .form-footer-note { text-align: center; margin: 0; line-height: 1.5; }
+</style>

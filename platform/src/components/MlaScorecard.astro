@@ -1,0 +1,311 @@
+---
+// MLA scorecard — 7 representatives as cards (NOT table per UX research:
+// table reads as inflammatory league-table; cards are reader-friendly).
+//
+// Per VISUAL_DESIGN + UX research:
+//   - Status colors: green (committed) / amber (acknowledged) /
+//     grey (awaiting, with date) / orange (opposed, with citation)
+//   - NEVER red on a politician (reads as attack ad)
+//   - Always show last-updated date
+//   - Always cite the public source for any non-default status
+
+import { getEntry } from 'astro:content';
+import I18nText from '~/components/I18nText.astro';
+import { formatDate } from '~/lib/i18n';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+type Status = 'awaiting' | 'acknowledged' | 'committed' | 'opposed';
+type Mla = {
+  id: string;
+  name: string;
+  riding: string;
+  is_minister?: boolean;
+  email: string;
+  recipient_role: 'to' | 'cc';
+  status: Status;
+  status_evidence?: { quote?: string; source_url?: string; source_date?: string | null };
+  last_updated: string;
+};
+
+const mlasEntry = await getEntry('campaign', 'mlas');
+const mlas: Mla[] = (mlasEntry?.data as any)?.mlas ?? [];
+
+const statusLabels: Record<Status, { en: string; zh: string }> = {
+  awaiting: { en: 'Awaiting reply', zh: '等待回复' },
+  acknowledged: { en: 'Acknowledged', zh: '已确认收到' },
+  committed: { en: 'Publicly committed', zh: '公开承诺' },
+  opposed: { en: 'Opposed', zh: '反对' },
+};
+
+function statusLabel(s: Status, l: Lang): string {
+  return statusLabels[s][l];
+}
+---
+
+<section class="scorecard" id="mlas">
+  <div class="wrap-wide">
+    <header class="scorecard__header">
+      <p class="kicker sans">
+        <I18nText
+          en="Public accountability"
+          zh="公开问责"
+          lang={lang}
+        />
+      </p>
+      <h2>
+        <I18nText
+          en="Where each representative stands."
+          zh="每位代表的立场。"
+          lang={lang}
+        />
+      </h2>
+      <p class="scorecard__lede">
+        <I18nText
+          en="We track public statements only — no party attribution, no intent. Status changes only when there's a citable public source."
+          zh="只追踪公开声明 — 不写党派、不揣测意图。状态只在有可引用的公开来源时才更新。"
+          lang={lang}
+        />
+      </p>
+    </header>
+
+    <div class="scorecard__grid">
+      {mlas.map((m) => (
+        <article class={`mla-card mla-card--${m.status}`}>
+          <header class="mla-card__head">
+            <div class="mla-card__avatar" aria-hidden="true">
+              {m.name.split(' ').filter((n) => n[0] !== '.' && !n.includes('.')).slice(-2).map((n) => n[0]).join('')}
+            </div>
+            <div class="mla-card__id">
+              <h3 class="mla-card__name sans">{m.name}</h3>
+              <p class="mla-card__riding sans">{m.riding}</p>
+            </div>
+          </header>
+
+          <div class={`mla-card__status mla-card__status--${m.status}`}>
+            <span class="mla-card__status-dot" aria-hidden="true"></span>
+            <span class="mla-card__status-label sans">{statusLabel(m.status, lang)}</span>
+          </div>
+
+          {m.status_evidence?.quote && (
+            <blockquote class="mla-card__quote">
+              "{m.status_evidence.quote}"
+            </blockquote>
+          )}
+
+          <footer class="mla-card__footer">
+            <span class="mla-card__updated sans muted">
+              <I18nText en="Updated " zh="更新于 " lang={lang} />
+              {formatDate(m.last_updated, lang)}
+            </span>
+            {m.status_evidence?.source_url && (
+              <a class="mla-card__source sans" href={m.status_evidence.source_url} target="_blank" rel="noopener noreferrer">
+                <I18nText en="Source ↗" zh="来源 ↗" lang={lang} />
+              </a>
+            )}
+          </footer>
+        </article>
+      ))}
+    </div>
+
+    <div class="scorecard__legend sans">
+      <span class="legend-row">
+        <span class="status-dot status-dot--awaiting"></span> <I18nText en="Awaiting reply (no public position yet)" zh="等待回复（尚无公开立场）" lang={lang} />
+      </span>
+      <span class="legend-row">
+        <span class="status-dot status-dot--acknowledged"></span> <I18nText en="Acknowledged (received, no position)" zh="已确认收到（无立场）" lang={lang} />
+      </span>
+      <span class="legend-row">
+        <span class="status-dot status-dot--committed"></span> <I18nText en="Publicly committed to the ask" zh="公开承诺支持" lang={lang} />
+      </span>
+      <span class="legend-row">
+        <span class="status-dot status-dot--opposed"></span> <I18nText en="Publicly opposed" zh="公开反对" lang={lang} />
+      </span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .scorecard {
+    padding: 64px 0;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+  .scorecard__header {
+    margin-bottom: 32px;
+    max-width: 720px;
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .scorecard__header h2 {
+    font-family: var(--font-sans);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .scorecard__lede {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .scorecard__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .mla-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .mla-card:hover {
+    border-color: var(--ink-soft);
+    box-shadow: var(--shadow-sm);
+  }
+  .mla-card__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .mla-card__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 14px;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    letter-spacing: 0.03em;
+  }
+  .mla-card__id {
+    flex: 1;
+    min-width: 0;
+  }
+  .mla-card__name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 2px;
+    line-height: 1.2;
+  }
+  .mla-card__riding {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .mla-card__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    align-self: flex-start;
+  }
+  .mla-card__status--awaiting {
+    background: var(--line-soft);
+    color: var(--ink-soft);
+  }
+  .mla-card__status--acknowledged {
+    background: #FEF3C7;     /* amber-soft */
+    color: #92400E;          /* amber */
+  }
+  .mla-card__status--committed {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+  .mla-card__status--opposed {
+    background: var(--warm-soft);
+    color: var(--warm);
+  }
+  .mla-card__status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .mla-card__quote {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0;
+    padding-left: 12px;
+    border-left: 3px solid var(--line);
+  }
+
+  .mla-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    font-size: 12px;
+  }
+  .mla-card__updated { color: var(--muted); }
+  .mla-card__source {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .mla-card__source:hover { text-decoration: underline; }
+
+  .scorecard__legend {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding: 16px 20px;
+    background: var(--cream);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+  }
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-dot--awaiting { background: #6B7280; }
+  .status-dot--acknowledged { background: #92400E; }
+  .status-dot--committed { background: #15803D; }
+  .status-dot--opposed { background: #C2410C; }
+
+  .muted { color: var(--muted); }
+</style>

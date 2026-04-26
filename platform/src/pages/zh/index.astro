@@ -6,6 +6,10 @@ import ThreeFacts from '~/components/ThreeFacts.astro';
 import PersonaSelector from '~/components/PersonaSelector.astro';
 import Journey from '~/components/Journey.astro';
 import ActionForm from '~/components/ActionForm.astro';
+import MlaScorecard from '~/components/MlaScorecard.astro';
+import CoalitionSection from '~/components/CoalitionSection.astro';
+import PacKitModal from '~/components/PacKitModal.astro';
+import AboutSection from '~/components/AboutSection.astro';
 import FaqAccordion from '~/components/FaqAccordion.astro';
 import I18nText from '~/components/I18nText.astro';
 
@@ -34,24 +38,30 @@ const lang = 'zh';
 
   <ActionForm lang={lang} />
 
+  <MlaScorecard lang={lang} />
+
+  <CoalitionSection lang={lang} />
+
+  <AboutSection lang={lang} />
+
   <FaqAccordion lang={lang} />
+
+  <PacKitModal lang={lang} />
 
   <section class="phase-note">
     <div class="wrap">
       <p class="kicker sans">
         <I18nText
-          en="Coming in the next batches (Phase 5.4 - 5.7)"
-          zh="下面几批要补的（Phase 5.4 - 5.7）"
+          en="Coming in the next batches (Phase 5.6 - 5.7)"
+          zh="下面要补的（Phase 5.6 - 5.7）"
           lang={lang}
         />
       </p>
       <ul>
-        <li>MLA 跟踪表（7 位代表，卡片式 + 最近更新时间）</li>
-        <li>联盟 + PAC endorsement 资料包 modal</li>
-        <li>发起人 + Burnaby Kids First 关于章节</li>
         <li>PAC 资料包打印页（/pac-kit）</li>
         <li>验证机制说明页（/methodology）</li>
         <li>隐私政策（从 Phase 4A 的独立 HTML 迁过来）</li>
+        <li>最后整合 + Lighthouse pass</li>
       </ul>
     </div>
   </section>

@@ -1,0 +1,253 @@
+---
+// Coalition section: displays verified PAC endorsements (server-fetched)
+// + an explicit CTA to open the PAC Endorsement Kit modal.
+//
+// Per data flow: PAC submissions → pac_endorsements table (status=pending)
+// → Ben verifies → status='verified' → public_pac_endorsements view
+// → server-render here.
+//
+// Empty state ("No PACs yet — be the first") matches the campaign's
+// pre-launch reality. After verification of first PAC, the grid populates.
+
+import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+  /** Triggered by inline JS to open PacKitModal */
+  modalTriggerId?: string;
+}
+
+const { lang, modalTriggerId = 'pac-kit-modal' } = Astro.props;
+
+const url = import.meta.env.PUBLIC_SUPABASE_URL;
+const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+type Pac = {
+  school: string;
+  students: number;
+  approval_date: string | null;
+};
+
+let pacs: Pac[] = [];
+if (url && key) {
+  try {
+    const res = await fetch(
+      `${url}/rest/v1/public_pac_endorsements?select=school,students,approval_date&order=approval_date.desc.nullslast`,
+      { headers: { apikey: key, Authorization: `Bearer ${key}` } }
+    );
+    if (res.ok) pacs = await res.json();
+  } catch {
+    /* keep empty */
+  }
+}
+
+const totalStudents = pacs.reduce((sum, p) => sum + (p.students ?? 0), 0);
+---
+
+<section class="coalition" id="coalition">
+  <div class="wrap-wide">
+    <header class="coalition__header">
+      <p class="kicker sans">
+        <I18nText
+          en="Coalition partners"
+          zh="联盟成员"
+          lang={lang}
+        />
+      </p>
+      <h2>
+        <I18nText
+          en="Parent Advisory Councils backing this ask."
+          zh="支持本次诉求的家长咨询委员会（PAC）。"
+          lang={lang}
+        />
+      </h2>
+      {pacs.length > 0 && (
+        <p class="coalition__lede">
+          <strong>{pacs.length}</strong>
+          {' '}
+          <I18nText en="PACs · representing" zh="个 PAC · 代表" lang={lang} />
+          {' '}
+          <strong>{totalStudents.toLocaleString()}</strong>
+          {' '}
+          <I18nText en="students" zh="名学生" lang={lang} />
+        </p>
+      )}
+    </header>
+
+    {pacs.length === 0 ? (
+      <div class="coalition__empty">
+        <p>
+          <I18nText
+            en="No PACs have endorsed yet — your school's PAC could be the first."
+            zh="还没有 PAC 正式 endorse — 你孩子学校的 PAC 可以是第一个。"
+            lang={lang}
+          />
+        </p>
+      </div>
+    ) : (
+      <div class="coalition__grid">
+        {pacs.map((p) => (
+          <article class="pac-card">
+            <h3 class="pac-card__school sans">{p.school}</h3>
+            <p class="pac-card__students sans">
+              <span class="tabular">{p.students.toLocaleString()}</span>
+              {' '}
+              <I18nText en="students" zh="名学生" lang={lang} />
+            </p>
+            {p.approval_date && (
+              <p class="pac-card__date sans muted">
+                <I18nText en="Endorsed " zh="endorse 时间：" lang={lang} />
+                {new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-CA', {
+                  year: 'numeric', month: 'short', day: 'numeric',
+                }).format(new Date(p.approval_date))}
+              </p>
+            )}
+          </article>
+        ))}
+      </div>
+    )}
+
+    <div class="coalition__cta">
+      <h3 class="coalition__cta-title sans">
+        <I18nText
+          en="Are you on a PAC executive?"
+          zh="你是 PAC 干事吗？"
+          lang={lang}
+        />
+      </h3>
+      <p>
+        <I18nText
+          en="Open the endorsement kit. It's a 2-page document with the standard motion text, talking points for skeptical PAC members, and a one-form submit. We verify every endorsement personally — usually within 24 hours."
+          zh="打开 endorsement 资料包。这是一份 2 页文档，包含标准动议文字、对持疑虑的 PAC 成员的说明、以及一个提交表单。每个 endorsement 我们都人工验证 — 通常 24 小时内完成。"
+          lang={lang}
+        />
+      </p>
+      <button class="btn btn--primary" type="button" data-open-modal={modalTriggerId}>
+        <I18nText
+          en="Open the PAC Endorsement Kit →"
+          zh="打开 PAC Endorsement 资料包 →"
+          lang={lang}
+        />
+      </button>
+    </div>
+  </div>
+</section>
+
+<style>
+  .coalition {
+    padding: 64px 0;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+  }
+  .coalition__header {
+    margin-bottom: 24px;
+    max-width: 720px;
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .coalition__header h2 {
+    font-family: var(--font-sans);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .coalition__lede {
+    color: var(--ink-soft);
+    margin: 0;
+    font-size: 16px;
+  }
+
+  .coalition__empty {
+    background: var(--paper);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    text-align: center;
+    color: var(--ink-soft);
+    margin-bottom: 32px;
+  }
+
+  .coalition__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .pac-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px;
+  }
+  .pac-card__school {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 4px;
+    line-height: 1.3;
+  }
+  .pac-card__students {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  .pac-card__date {
+    font-size: 12px;
+    margin: 0;
+  }
+
+  .coalition__cta {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .coalition__cta-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .coalition__cta p {
+    margin: 0 0 20px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    transform: translateY(-1px);
+  }
+
+  .muted { color: var(--muted); }
+</style>
