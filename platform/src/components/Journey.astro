@@ -1,0 +1,450 @@
+---
+// Grade-by-grade impact heatmap. 10 services × 13 grades grid.
+// Click a grade column header → highlights that column + renders an
+// impact summary card below ("A student in Grade X loses these
+// services...").
+//
+// State colors per VISUAL_DESIGN.md:
+//   have → success green        service available
+//   lost → grey + dashed border  already cut in 25-26
+//   risk → orange diagonal       at risk if 26-27 underfunded
+//   gone → red                   likely eliminated outright
+
+import { getEntry } from 'astro:content';
+import { t } from '~/lib/i18n';
+import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const journeyEntry = await getEntry('campaign', 'journey');
+const data = journeyEntry?.data as any;
+
+type Grade = { id: string; label: string };
+type GradeCell = { state: 'have' | 'lost' | 'risk' | 'gone'; tip?: { en: string; zh?: string } };
+type Service = {
+  id: string;
+  name: { en: string; zh: string };
+  note?: { en: string; zh: string };
+  grades: Record<string, GradeCell>;
+};
+
+const grades: Grade[] = data?.grades ?? [];
+const services: Service[] = data?.services ?? [];
+
+// Pre-serialize the data we need on the client for impact summary
+const clientData = {
+  lang,
+  grades,
+  services: services.map((s) => ({
+    id: s.id,
+    name: t(s.name, lang),
+    note: s.note ? t(s.note, lang) : '',
+    grades: Object.fromEntries(
+      Object.entries(s.grades).map(([gid, cell]: [string, any]) => [
+        gid,
+        { state: cell.state, tip: cell.tip ? t(cell.tip, lang) : '' },
+      ])
+    ),
+  })),
+};
+---
+
+<section class="journey" id="journey">
+  <div class="wrap-wide">
+    <header class="journey__header">
+      <p class="kicker sans">
+        <I18nText
+          en="Pick your child's grade"
+          zh="选择孩子的年级"
+          lang={lang}
+        />
+      </p>
+      <h2>
+        <I18nText
+          en="What this looks like for your child."
+          zh="对你孩子而言意味着什么。"
+          lang={lang}
+        />
+      </h2>
+      <p class="journey__lede">
+        <I18nText
+          en="Each row is a service. Each column is a grade. Click a column header to see what your child loses, year by year."
+          zh="每一行是一项服务。每一列是一个年级。点击列标题查看你孩子在每一年会失去什么。"
+          lang={lang}
+        />
+      </p>
+    </header>
+
+    <div class="journey__legend sans">
+      <span class="legend-item"><span class="cell cell--have"></span><I18nText en="Available" zh="目前可用" lang={lang} /></span>
+      <span class="legend-item"><span class="cell cell--lost"></span><I18nText en="Already cut (2025-26)" zh="已削减 (25-26)" lang={lang} /></span>
+      <span class="legend-item"><span class="cell cell--risk"></span><I18nText en="At risk if not funded" zh="若未拨款则有风险" lang={lang} /></span>
+      <span class="legend-item"><span class="cell cell--gone"></span><I18nText en="Likely eliminated" zh="可能被取消" lang={lang} /></span>
+    </div>
+
+    <div class="journey__scroll-hint sans" aria-hidden="true">
+      <I18nText en="← swipe to scan all grades →" zh="← 左右滑动查看全部年级 →" lang={lang} />
+    </div>
+
+    <div class="journey__table-wrap">
+      <table class="journey__table" data-journey>
+        <thead>
+          <tr>
+            <th class="journey__corner">
+              <I18nText en="Service" zh="服务" lang={lang} />
+            </th>
+            {grades.map((g) => (
+              <th class="journey__grade-header" data-grade={g.id} scope="col">
+                <button class="journey__grade-btn sans" type="button" data-pick-grade={g.id}>
+                  {g.label}
+                </button>
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {services.map((s) => (
+            <tr>
+              <th class="journey__service" scope="row">
+                <span class="journey__service-name sans">{t(s.name, lang)}</span>
+                {s.note && <span class="journey__service-note muted">{t(s.note, lang)}</span>}
+              </th>
+              {grades.map((g) => {
+                const cell = s.grades[g.id];
+                if (!cell) {
+                  return <td class="journey__cell journey__cell--na" data-grade={g.id} aria-label="not applicable"></td>;
+                }
+                return (
+                  <td
+                    class={`journey__cell cell cell--${cell.state}`}
+                    data-grade={g.id}
+                    data-state={cell.state}
+                    title={cell.tip ? t(cell.tip, lang) : undefined}
+                  ></td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="journey__summary" data-impact-summary hidden>
+      <h3 class="journey__summary-title sans" data-summary-title></h3>
+      <ul class="journey__summary-list" data-summary-list></ul>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="journey-data" set:html={JSON.stringify(clientData)} is:inline></script>
+<script>
+  type Cell = { state: 'have' | 'lost' | 'risk' | 'gone'; tip: string };
+  type ServiceShape = {
+    id: string;
+    name: string;
+    note: string;
+    grades: Record<string, Cell>;
+  };
+  type Data = {
+    lang: 'en' | 'zh';
+    grades: Array<{ id: string; label: string }>;
+    services: ServiceShape[];
+  };
+
+  const dataEl = document.getElementById('journey-data');
+  if (!dataEl) {
+    console.warn('Journey: no data element');
+  } else {
+    const data: Data = JSON.parse(dataEl.textContent || '{}');
+    const table = document.querySelector<HTMLElement>('[data-journey]');
+    const summary = document.querySelector<HTMLElement>('[data-impact-summary]');
+    const summaryTitle = document.querySelector<HTMLElement>('[data-summary-title]');
+    const summaryList = document.querySelector<HTMLElement>('[data-summary-list]');
+
+    function renderSummary(gradeId: string) {
+      if (!summary || !summaryTitle || !summaryList) return;
+
+      const gradeLabel = data.grades.find((g) => g.id === gradeId)?.label ?? gradeId;
+
+      // Find services with state lost/risk/gone for this grade.
+      const items = data.services
+        .map((s) => ({ s, cell: s.grades[gradeId] }))
+        .filter(({ cell }) => cell && (cell.state === 'lost' || cell.state === 'risk' || cell.state === 'gone'));
+
+      const titleEn = `A student in Grade ${gradeLabel}: what they lose`;
+      const titleZh = `${gradeLabel} 年级学生：失去的服务`;
+      summaryTitle.textContent = data.lang === 'zh' ? titleZh : titleEn;
+
+      summaryList.innerHTML = '';
+      if (items.length === 0) {
+        const li = document.createElement('li');
+        li.textContent = data.lang === 'zh' ? '此年级没有标记为有风险的服务。' : 'No services flagged at-risk for this grade.';
+        li.className = 'muted';
+        summaryList.appendChild(li);
+      } else {
+        for (const { s, cell } of items) {
+          const li = document.createElement('li');
+          const stateLabel: Record<string, { en: string; zh: string }> = {
+            lost: { en: 'already cut', zh: '已削减' },
+            risk: { en: 'at risk', zh: '有风险' },
+            gone: { en: 'likely eliminated', zh: '可能取消' },
+          };
+          const tag = stateLabel[cell.state][data.lang];
+          li.innerHTML =
+            `<span class="summary-state summary-state--${cell.state} sans">${tag}</span>` +
+            ` <strong>${s.name}</strong>` +
+            (cell.tip ? ` — <span class="muted">${cell.tip}</span>` : '');
+          summaryList.appendChild(li);
+        }
+      }
+
+      summary.hidden = false;
+    }
+
+    document.querySelectorAll<HTMLButtonElement>('[data-pick-grade]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const gradeId = btn.dataset.pickGrade;
+        if (!gradeId) return;
+        // Toggle highlighted column
+        if (table) {
+          table.querySelectorAll<HTMLElement>('[data-grade]').forEach((cell) => {
+            cell.classList.toggle('journey__highlighted', cell.dataset.grade === gradeId);
+          });
+        }
+        renderSummary(gradeId);
+      });
+    });
+  }
+</script>
+
+<style>
+  .journey {
+    padding: 64px 0;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+  }
+  .journey__header {
+    margin-bottom: 24px;
+    max-width: 720px;
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .journey__header h2 {
+    font-family: var(--font-sans);
+    font-size: clamp(22px, 3vw, 28px);
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .journey__lede {
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .journey__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 24px 0 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .journey__scroll-hint {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin: 4px 0 8px;
+  }
+  @media (min-width: 820px) {
+    .journey__scroll-hint { display: none; }
+  }
+
+  .journey__table-wrap {
+    overflow-x: auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 8px;
+  }
+  .journey__table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 720px;
+  }
+  .journey__corner,
+  .journey__service {
+    text-align: left;
+    padding: 8px 12px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    color: var(--ink-soft);
+    background: var(--paper);
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    border-bottom: 1px solid var(--line);
+    min-width: 160px;
+    max-width: 240px;
+  }
+  .journey__service-name {
+    display: block;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    font-size: 13px;
+  }
+  .journey__service-note {
+    display: block;
+    font-size: 11px;
+    margin-top: 2px;
+    line-height: 1.3;
+  }
+  .journey__corner {
+    z-index: 2;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 11px;
+  }
+  .journey__grade-header {
+    padding: 0;
+    text-align: center;
+    border-bottom: 1px solid var(--line);
+    font-family: var(--font-sans);
+  }
+  .journey__grade-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 4px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.15s, color 0.15s;
+  }
+  .journey__grade-btn:hover {
+    color: var(--accent);
+  }
+  .journey__highlighted {
+    background: var(--cream) !important;
+    box-shadow: inset 0 0 0 2px var(--accent);
+  }
+  .journey__highlighted .journey__grade-btn {
+    color: var(--accent);
+  }
+
+  .journey__cell {
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--line);
+    transition: filter 0.15s;
+  }
+  .journey__cell:hover {
+    filter: brightness(0.95);
+    cursor: help;
+  }
+  .journey__cell--na {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  /* state colors */
+  .cell {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    border: 1px solid transparent;
+  }
+  .cell--have {
+    background: #15803D;
+  }
+  .cell--lost {
+    background: #E5E7EB;
+    border: 1px dashed #9CA3AF;
+  }
+  .cell--risk {
+    background: repeating-linear-gradient(45deg, #FED7AA 0 6px, #FDBA74 6px 12px);
+  }
+  .cell--gone {
+    background: #DC2626;
+  }
+
+  /* Override for table cells */
+  .journey__cell.cell--have { background: #15803D; }
+  .journey__cell.cell--lost { background: #E5E7EB; border: 1px dashed #9CA3AF; }
+  .journey__cell.cell--risk { background: repeating-linear-gradient(45deg, #FED7AA 0 6px, #FDBA74 6px 12px); }
+  .journey__cell.cell--gone { background: #DC2626; }
+
+  .journey__summary {
+    margin-top: 24px;
+    padding: 24px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  .journey__summary-title {
+    font-family: var(--font-sans);
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .journey__summary-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .journey__summary-list :global(li) {
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .journey__summary-list :global(.summary-state) {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 4px;
+  }
+  .journey__summary-list :global(.summary-state--lost) {
+    background: var(--line);
+    color: var(--ink-soft);
+  }
+  .journey__summary-list :global(.summary-state--risk) {
+    background: var(--warm-soft);
+    color: var(--warm);
+  }
+  .journey__summary-list :global(.summary-state--gone) {
+    background: var(--danger-soft);
+    color: var(--danger);
+  }
+  .muted { color: var(--muted); }
+</style>

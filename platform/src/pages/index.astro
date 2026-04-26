@@ -4,6 +4,7 @@ import Hero from '~/components/Hero.astro';
 import SignatoriesFeed from '~/components/SignatoriesFeed.astro';
 import ThreeFacts from '~/components/ThreeFacts.astro';
 import PersonaSelector from '~/components/PersonaSelector.astro';
+import Journey from '~/components/Journey.astro';
 import ActionForm from '~/components/ActionForm.astro';
 import FaqAccordion from '~/components/FaqAccordion.astro';
 import I18nText from '~/components/I18nText.astro';
@@ -29,6 +30,8 @@ const lang = 'en';
 
   <PersonaSelector lang={lang} />
 
+  <Journey lang={lang} />
+
   <ActionForm lang={lang} />
 
   <FaqAccordion lang={lang} />
@@ -43,7 +46,6 @@ const lang = 'en';
         />
       </p>
       <ul>
-        <li>Journey heatmap — 10 services × 13 grades, interactive grade picker</li>
         <li>MLA scorecard — 7 representatives, status + last-updated, card-based</li>
         <li>Coalition section + PAC endorsement kit modal</li>
         <li>Founder + Burnaby Kids First about section</li>

@@ -4,6 +4,7 @@ import Hero from '~/components/Hero.astro';
 import SignatoriesFeed from '~/components/SignatoriesFeed.astro';
 import ThreeFacts from '~/components/ThreeFacts.astro';
 import PersonaSelector from '~/components/PersonaSelector.astro';
+import Journey from '~/components/Journey.astro';
 import ActionForm from '~/components/ActionForm.astro';
 import FaqAccordion from '~/components/FaqAccordion.astro';
 import I18nText from '~/components/I18nText.astro';
@@ -29,6 +30,8 @@ const lang = 'zh';
 
   <PersonaSelector lang={lang} />
 
+  <Journey lang={lang} />
+
   <ActionForm lang={lang} />
 
   <FaqAccordion lang={lang} />
@@ -43,7 +46,6 @@ const lang = 'zh';
         />
       </p>
       <ul>
-        <li>影响地图（10 项服务 × 13 个年级，可点击选年级）</li>
         <li>MLA 跟踪表（7 位代表，卡片式 + 最近更新时间）</li>
         <li>联盟 + PAC endorsement 资料包 modal</li>
         <li>发起人 + Burnaby Kids First 关于章节</li>
