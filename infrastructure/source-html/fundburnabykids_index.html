@@ -1,0 +1,3322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fund Burnaby Kids — $9.4M must come from the Province</title>
+<meta name="description" content="Burnaby schools face $9.4 million in unfunded cuts from a provincial arbitration. Sign the petition and send the email before the May 27 budget deadline.">
+<style>
+  :root {
+    --ink: #0F1724;
+    --ink-soft: #2D3748;
+    --muted: #6B7280;
+    --line: #E5E7EB;
+    --line-soft: #F0F2F5;
+    --cream: #FAF7F1;
+    --paper: #FFFFFF;
+    --accent: #1C3F8F;
+    --accent-deep: #132B63;
+    --accent-ink: #0B1D44;
+    --warm: #C2410C;
+    --warm-soft: #FED7AA;
+    --success: #15803D;
+    --success-soft: #DCFCE7;
+    --danger: #B91C1C;
+    --danger-soft: #FEE2E2;
+    --shadow-sm: 0 1px 2px rgba(15, 23, 36, 0.04), 0 0 0 1px rgba(15, 23, 36, 0.06);
+    --shadow-md: 0 4px 12px rgba(15, 23, 36, 0.06), 0 0 0 1px rgba(15, 23, 36, 0.06);
+    --shadow-lg: 0 10px 30px rgba(15, 23, 36, 0.08), 0 0 0 1px rgba(15, 23, 36, 0.08);
+    --radius: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Charter', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .sans {
+    font-family: 'Söhne', 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  }
+  .mono {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Menlo', monospace;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .wrap-wide {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Top banner */
+  .topbar {
+    background: var(--accent-deep);
+    color: #fff;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.02em;
+    padding: 8px 0;
+    text-align: center;
+  }
+  .topbar strong { font-weight: 600; color: #FCD34D; }
+
+  /* Header */
+  header.site {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+    background: var(--cream);
+  }
+  header.site .wrap-wide { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .brand {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.1;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .brand-main { display: inline-flex; align-items: center; }
+  .brand-tagline {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-left: 18px;
+  }
+  .brand .dot {
+    display: inline-block; width: 10px; height: 10px; background: var(--warm);
+    border-radius: 2px; margin-right: 8px; vertical-align: baseline; transform: translateY(-1px);
+  }
+  .nav-cta {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--accent-deep);
+    background: transparent;
+    border: 1px solid var(--accent-deep);
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .nav-cta:hover { background: var(--accent-deep); color: #fff; }
+
+  /* Hero */
+  .hero { padding: 72px 0 48px; }
+  .kicker {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 20px;
+  }
+  h1.headline {
+    font-size: clamp(36px, 5.5vw, 58px);
+    line-height: 1.05;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 24px;
+  }
+  h1.headline em {
+    font-style: italic;
+    color: var(--accent-deep);
+  }
+  .sub {
+    font-size: 20px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin-bottom: 36px;
+    max-width: 620px;
+  }
+
+  /* Counter */
+  .counter-block {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .counter-main {
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .counter-num {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 52px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: var(--accent-deep);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .counter-label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 240px;
+    line-height: 1.45;
+  }
+  .counter-meta {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-left: auto;
+    border-left: 1px solid var(--line);
+    padding-left: 24px;
+  }
+  .counter-meta strong { color: var(--ink); font-weight: 500; }
+
+  /* Primary CTA */
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 16px; }
+  button.primary, a.primary {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    background: var(--accent-deep);
+    color: #fff;
+    border: none;
+    padding: 16px 28px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s ease;
+    letter-spacing: -0.005em;
+  }
+  button.primary:hover, a.primary:hover { background: var(--accent-ink); transform: translateY(-1px); }
+  button.secondary {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--accent-deep);
+    border: 1px solid var(--accent-deep);
+    padding: 16px 28px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  button.secondary:hover { background: var(--accent-deep); color: #fff; }
+  .cta-note {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* Facts section */
+  section.facts {
+    padding: 64px 0;
+    border-top: 1px solid var(--line);
+    background: var(--paper);
+  }
+  .facts-header {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 24px;
+  }
+  h2.section-title {
+    font-size: 36px; line-height: 1.15; font-weight: 400;
+    letter-spacing: -0.015em; margin-bottom: 48px;
+    color: var(--ink);
+  }
+  .fact-list { display: grid; gap: 36px; }
+  .fact {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  .fact-num {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 42px; font-weight: 400; line-height: 1;
+    color: var(--warm);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .fact h3 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 20px; font-weight: 500; line-height: 1.3;
+    margin-bottom: 12px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .fact p { font-size: 17px; line-height: 1.65; color: var(--ink-soft); }
+  .fact p a { color: var(--accent-deep); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+  /* Action dual-track */
+  section.action {
+    padding: 72px 0;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+  }
+  .action-intro { max-width: 620px; margin-bottom: 48px; }
+  .action-intro p { font-size: 18px; line-height: 1.6; color: var(--ink-soft); }
+
+  .dual-track {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 720px) {
+    .dual-track { grid-template-columns: 1fr; }
+  }
+  .track {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    position: relative;
+  }
+  .track-label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 3px;
+    margin-bottom: 16px;
+  }
+  .track-1 .track-label { background: var(--warm-soft); color: var(--warm); }
+  .track-2 .track-label { background: #DBEAFE; color: var(--accent-deep); }
+  .track h3 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .track .track-desc {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  /* Form */
+  .form-field { margin-bottom: 16px; }
+  .form-field label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    display: block;
+    margin-bottom: 6px;
+    letter-spacing: 0.01em;
+  }
+  .form-field .hint {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  input[type="text"], input[type="email"], select {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    color: var(--ink);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  input[type="text"]:focus, input[type="email"]:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-deep);
+    box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.1);
+  }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Consent checkboxes */
+  .consent {
+    background: var(--line-soft);
+    padding: 14px 16px;
+    border-radius: var(--radius);
+    margin: 20px 0 16px;
+    border-left: 3px solid var(--accent-deep);
+  }
+  .consent label {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    cursor: pointer;
+    margin-bottom: 10px;
+  }
+  .consent label:last-child { margin-bottom: 0; }
+  .consent input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; accent-color: var(--accent-deep); }
+  .consent .required { color: var(--warm); font-weight: 600; }
+
+  button.action-btn {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    width: 100%;
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    border: none;
+    padding: 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-top: 8px;
+  }
+  .track-1 button.action-btn { background: var(--warm); }
+  .track-1 button.action-btn:hover { background: #9A3412; }
+  .track-2 button.action-btn { background: var(--accent-deep); }
+  .track-2 button.action-btn:hover { background: var(--accent-ink); }
+  button.action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* Success state */
+  .success-state {
+    background: var(--success-soft);
+    border: 1px solid #86EFAC;
+    padding: 28px;
+    border-radius: var(--radius-lg);
+    text-align: center;
+  }
+  .success-state .big-num {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 56px;
+    font-weight: 500;
+    color: var(--success);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 8px;
+  }
+  .success-state .success-label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    color: var(--success);
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .success-state h4 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+  .success-state p {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .success-state .next-step {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid var(--success);
+    color: var(--success);
+    padding: 10px 18px;
+    border-radius: var(--radius);
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  .success-state .next-step:hover { background: var(--success); color: #fff; }
+
+  /* MLA scorecard */
+  section.mlas {
+    padding: 64px 0;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+  .mla-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius-lg); overflow: hidden; }
+  .mla-row {
+    background: var(--paper);
+    padding: 20px 24px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: center;
+  }
+  .mla-name {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .mla-riding {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .mla-status {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.01em;
+  }
+  .status-awaiting { background: #F3F4F6; color: #6B7280; }
+  .status-ack { background: #FEF3C7; color: #92400E; }
+  .status-committed { background: var(--success-soft); color: var(--success); }
+  .status-opposed { background: var(--danger-soft); color: var(--danger); }
+
+  /* FAQ */
+  section.faq {
+    padding: 64px 0;
+    background: var(--cream);
+    border-top: 1px solid var(--line);
+  }
+  details.q {
+    border-bottom: 1px solid var(--line);
+    padding: 20px 0;
+  }
+  details.q[open] summary { color: var(--accent-deep); }
+  details.q summary {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--ink);
+    transition: color 0.15s;
+  }
+  details.q summary::-webkit-details-marker { display: none; }
+  details.q summary::after {
+    content: "+";
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  details.q[open] summary::after { content: "−"; }
+  details.q .answer {
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 640px;
+  }
+  details.q .answer p { margin-bottom: 10px; }
+  details.q .answer a { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* Public signatures strip */
+  section.signatories {
+    padding: 48px 0;
+    background: var(--accent-deep);
+    color: #fff;
+  }
+  section.signatories .label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #9CB7E8;
+    margin-bottom: 20px;
+  }
+  section.signatories h2 {
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    margin-bottom: 28px;
+    max-width: 560px;
+    line-height: 1.25;
+  }
+  .sig-flow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .sig-pill {
+    background: rgba(255, 255, 255, 0.08);
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #E5EEFB;
+    white-space: nowrap;
+  }
+  .sig-count {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: #9CB7E8;
+    margin-top: 20px;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--ink);
+    color: #C5CDD9;
+    padding: 48px 0 32px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  footer .cols {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  @media (max-width: 700px) { footer .cols { grid-template-columns: 1fr; gap: 24px; } }
+  footer h4 {
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  footer a { color: #C5CDD9; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(197, 205, 217, 0.3); }
+  footer a:hover { color: #fff; text-decoration-color: #fff; }
+  footer .fine {
+    border-top: 1px solid #2D3748;
+    padding-top: 20px;
+    font-size: 12px;
+    color: #8B95A8;
+    line-height: 1.6;
+  }
+
+  /* Confirmation modal */
+  .modal-backdrop {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 36, 0.6);
+    z-index: 1000;
+    padding: 24px;
+    overflow-y: auto;
+  }
+  .modal-backdrop.active { display: flex; align-items: center; justify-content: center; }
+  .modal {
+    background: var(--paper);
+    border-radius: var(--radius-lg);
+    max-width: 520px;
+    width: 100%;
+    padding: 36px;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal h3 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin-bottom: 14px;
+    color: var(--ink);
+  }
+  .modal p {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+  .modal .preview {
+    background: var(--line-soft);
+    border-radius: var(--radius);
+    padding: 16px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    max-height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    line-height: 1.55;
+    margin: 16px 0;
+    border: 1px solid var(--line);
+  }
+  .modal-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .modal-actions button {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 11px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .modal-actions button.confirm {
+    background: var(--accent-deep);
+    color: #fff;
+    border-color: var(--accent-deep);
+  }
+  .modal-actions button:hover { transform: translateY(-1px); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--ink);
+    color: #fff;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-lg);
+    z-index: 2000;
+    transition: transform 0.25s ease;
+  }
+  .toast.visible { transform: translateX(-50%) translateY(0); }
+
+  /* Errors */
+  .err-msg {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--danger);
+    margin-top: 8px;
+    display: none;
+  }
+  .err-msg.show { display: block; }
+
+  /* Language toggle */
+  .lang-toggle {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .lang-toggle button {
+    background: transparent;
+    border: none;
+    padding: 6px 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .lang-toggle button.active { background: var(--accent-deep); color: #fff; }
+
+  /* Chinese text */
+  .zh { font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif; }
+  .hidden { display: none !important; }
+
+  /* Urgency indicator */
+  .countdown {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--warm);
+    background: var(--warm-soft);
+    padding: 5px 11px;
+    border-radius: 3px;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    margin-bottom: 16px;
+  }
+  .pulse {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--warm);
+    border-radius: 50%;
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* Journey visualization */
+  section.journey {
+    padding: 80px 0;
+    background: linear-gradient(180deg, var(--cream) 0%, #F2EDE3 100%);
+    border-top: 1px solid var(--line);
+  }
+  .journey-intro {
+    max-width: 640px;
+    margin-bottom: 40px;
+  }
+  .journey-lead {
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+
+  .grade-picker {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    margin-bottom: 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .grade-picker-label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 14px;
+    letter-spacing: 0.01em;
+  }
+  .grade-buttons {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .grade-btn {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--line);
+    padding: 9px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    min-width: 44px;
+  }
+  .grade-btn:hover { border-color: var(--accent-deep); color: var(--accent-deep); }
+  .grade-btn.selected {
+    background: var(--accent-deep);
+    color: #fff;
+    border-color: var(--accent-deep);
+  }
+
+  /* Main viz container */
+  .viz-wrap {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 36px 32px 28px;
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+  }
+  .viz-title {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .viz-sub {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    display: inline-block;
+  }
+  .sw-have { background: #15803D; }
+  .sw-lost { background: #E5E7EB; border: 1px dashed #9CA3AF; }
+  .sw-risk { background: repeating-linear-gradient(45deg, #FED7AA, #FED7AA 4px, #FDBA74 4px, #FDBA74 8px); }
+  .sw-gone { background: #B91C1C; }
+
+  /* Grade axis */
+  .grade-axis {
+    display: grid;
+    grid-template-columns: 140px repeat(13, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.02em;
+  }
+  .grade-axis .service-name {
+    font-size: 11px;
+    color: transparent;
+  }
+  .grade-cell-header {
+    text-align: center;
+    padding: 6px 0;
+    border-radius: 2px;
+    transition: all 0.2s ease;
+  }
+  .grade-cell-header.highlighted {
+    background: var(--accent-deep);
+    color: #fff;
+    font-weight: 600;
+  }
+  .school-tier-header {
+    display: grid;
+    grid-template-columns: 140px 6fr 5fr 2fr;
+    gap: 2px;
+    margin-bottom: 8px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+  }
+  .tier-label {
+    text-align: center;
+    padding: 5px 0;
+    background: var(--line-soft);
+    border-radius: 2px;
+  }
+  .tier-label.elem { background: #DBEAFE; color: #1E3A8A; }
+  .tier-label.mid { background: #FEF3C7; color: #92400E; }
+  .tier-label.hs { background: #E9D5FF; color: #6B21A8; }
+
+  /* Service rows */
+  .service-row {
+    display: grid;
+    grid-template-columns: 140px repeat(13, 1fr);
+    gap: 2px;
+    margin-bottom: 4px;
+    align-items: stretch;
+  }
+  .service-name {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    color: var(--ink);
+    padding: 10px 12px 10px 0;
+    text-align: right;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  .grade-cell {
+    height: 32px;
+    border-radius: 2px;
+    position: relative;
+    transition: all 0.2s ease;
+    cursor: help;
+  }
+  .grade-cell.have { background: #15803D; }
+  .grade-cell.have:hover { background: #166534; }
+  .grade-cell.lost {
+    background: var(--line);
+    border: 1px dashed #9CA3AF;
+  }
+  .grade-cell.risk {
+    background: repeating-linear-gradient(45deg, #FED7AA, #FED7AA 4px, #FDBA74 4px, #FDBA74 8px);
+  }
+  .grade-cell.gone {
+    background: #DC2626;
+  }
+  .grade-cell.gone:hover { background: #B91C1C; }
+  .grade-cell.highlighted-col {
+    box-shadow: 0 0 0 2px var(--accent-deep);
+    z-index: 2;
+  }
+
+  /* Tooltip */
+  .grade-cell[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--ink);
+    color: #fff;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+    box-shadow: var(--shadow-md);
+    pointer-events: none;
+  }
+
+  /* Summary card */
+  .impact-summary {
+    margin-top: 32px;
+    background: linear-gradient(135deg, #FEF2F2 0%, #FFF7ED 100%);
+    border: 1px solid #FED7AA;
+    border-left: 4px solid var(--warm);
+    padding: 28px 32px;
+    border-radius: var(--radius-md);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s ease;
+  }
+  .impact-summary.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .impact-summary h4 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 14px;
+    letter-spacing: -0.005em;
+  }
+  .impact-list {
+    display: grid;
+    gap: 10px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .impact-list li {
+    list-style: none;
+    padding-left: 24px;
+    position: relative;
+  }
+  .impact-list li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--warm);
+    font-weight: 500;
+  }
+  .impact-list li strong { color: var(--ink); font-weight: 600; }
+
+  /* Downstream consequences */
+  .downstream {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid var(--line);
+  }
+  .downstream-title {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .downstream h3 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+    margin-bottom: 20px;
+    line-height: 1.3;
+  }
+  .cascade {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) {
+    .cascade { grid-template-columns: 1fr; }
+  }
+  .cascade-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    position: relative;
+  }
+  .cascade-year {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 10px;
+  }
+  .cascade-card h5 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .cascade-card p {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--muted);
+  }
+
+  /* Mobile responsive for viz */
+  @media (max-width: 820px) {
+    .grade-axis, .service-row { grid-template-columns: 100px repeat(13, minmax(24px, 1fr)); font-size: 10px; }
+    .school-tier-header { grid-template-columns: 100px 6fr 5fr 2fr; }
+    .service-name { font-size: 11px; padding: 8px 8px 8px 0; }
+    .grade-cell { height: 28px; }
+    .viz-wrap { padding: 24px 18px; }
+  }
+
+  /* ============================================================
+     COALITION SECTION
+     ============================================================ */
+  section.coalition { padding: 72px 0; background: var(--paper); border-top: 1px solid var(--line); }
+  .coalition-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 32px; flex-wrap: wrap; gap: 16px; }
+  .coalition-stats { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 14px; color: var(--muted); }
+  .coalition-stats strong { color: var(--accent-deep); font-weight: 600; }
+  .pac-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-bottom: 40px; }
+  .pac-card { background: var(--cream); border: 1px solid var(--line); border-radius: var(--radius-md); padding: 18px 20px; transition: border-color 0.15s; }
+  .pac-card:hover { border-color: var(--accent-deep); }
+  .pac-name { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .pac-meta { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 12px; color: var(--muted); }
+  .pac-empty { grid-column: 1 / -1; background: var(--line-soft); border: 1px dashed var(--line); padding: 36px 32px; border-radius: var(--radius-md); text-align: center; font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 14px; color: var(--muted); line-height: 1.7; }
+  .pac-empty em { color: var(--ink); font-style: normal; font-weight: 500; }
+  .coalition-cta { background: linear-gradient(135deg, #EEF4FF 0%, #F0F9FF 100%); border: 1px solid #CBDBEF; border-left: 4px solid var(--accent-deep); padding: 28px 32px; border-radius: var(--radius-md); }
+  .coalition-cta h3 { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 10px; }
+  .coalition-cta p { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 16px; }
+  .coalition-cta-buttons { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn-outline { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 14px; font-weight: 500; color: var(--accent-deep); background: #fff; border: 1px solid var(--accent-deep); padding: 10px 18px; border-radius: var(--radius); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.15s; }
+  .btn-outline:hover { background: var(--accent-deep); color: #fff; }
+
+  /* ============================================================
+     FOUNDER / ABOUT SECTION
+     ============================================================ */
+  section.founder { padding: 56px 0; background: var(--cream); border-top: 1px solid var(--line); }
+  .founder-card { background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 32px 36px; display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start; max-width: 680px; }
+  @media (max-width: 560px) { .founder-card { grid-template-columns: 1fr; } }
+  .founder-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--accent-deep); color: #fff; display: flex; align-items: center; justify-content: center; font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 22px; font-weight: 500; letter-spacing: 0.02em; }
+  .founder-body .label { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; color: var(--warm); margin-bottom: 6px; }
+  .founder-body h3 { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 22px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 14px; }
+  .founder-body p { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 15px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 12px; }
+  .founder-body a { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ============================================================
+     PAC INVITATION MODAL
+     ============================================================ */
+  .modal-backdrop.pac-modal .modal { max-width: 640px; padding: 0; max-height: 88vh; display: flex; flex-direction: column; }
+  .pac-modal-header { padding: 32px 36px 20px; border-bottom: 1px solid var(--line); }
+  .pac-modal-header h3 { font-size: 24px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 8px; font-family: 'Söhne', 'Inter', Helvetica, sans-serif; color: var(--ink); }
+  .pac-modal-header .sub { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 14px; color: var(--muted); margin: 0; }
+  .pac-modal-body { padding: 24px 36px; overflow-y: auto; flex: 1; }
+  .pac-modal-body h4 { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-deep); margin: 20px 0 10px; }
+  .pac-modal-body h4:first-child { margin-top: 0; }
+  .pac-modal-body ul { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 14px; line-height: 1.65; color: var(--ink-soft); padding-left: 20px; margin-bottom: 10px; }
+  .pac-modal-body ul li { margin-bottom: 6px; }
+  .pac-modal-body .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 12px 0 20px; }
+  @media (max-width: 560px) { .pac-modal-body .do-dont { grid-template-columns: 1fr; } }
+  .pac-modal-body .do-dont > div { padding: 16px 18px; border-radius: var(--radius-md); font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 13px; line-height: 1.55; }
+  .pac-modal-body .do-dont .do { background: var(--success-soft); border-left: 3px solid var(--success); color: var(--ink-soft); }
+  .pac-modal-body .do-dont .dont { background: #FEF3C7; border-left: 3px solid #D97706; color: var(--ink-soft); }
+  .pac-modal-body .do-dont strong { display: block; margin-bottom: 6px; color: var(--ink); }
+  .motion-block { background: var(--line-soft); border-left: 4px solid var(--accent-deep); padding: 18px 22px; border-radius: var(--radius-md); font-family: 'Charter', 'Iowan Old Style', Georgia, serif; font-size: 15px; font-style: italic; color: var(--ink); line-height: 1.65; margin: 10px 0 20px; }
+  .motion-block strong { font-style: normal; font-weight: 500; color: var(--accent-deep); font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; display: block; margin-bottom: 8px; }
+  .pac-form { padding: 20px 36px 28px; border-top: 1px solid var(--line); background: var(--cream); }
+  .pac-form h4 { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+  .pac-form p.form-hint { font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .pac-form .row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+  @media (max-width: 560px) { .pac-form .row { grid-template-columns: 1fr; } }
+  .pac-form input { width: 100%; }
+  .pac-form button.submit-pac { width: 100%; padding: 13px; background: var(--accent-deep); color: #fff; border: none; border-radius: var(--radius); font-family: 'Söhne', 'Inter', Helvetica, sans-serif; font-size: 15px; font-weight: 500; cursor: pointer; margin-top: 10px; }
+  .pac-form button.submit-pac:hover { background: var(--accent-ink); }
+
+  /* ============================================================
+     PERSONA SELECTOR SECTION
+     ============================================================ */
+  section.personas {
+    padding: 64px 0 48px;
+    background: linear-gradient(180deg, var(--cream) 0%, #F2EDE3 100%);
+    border-top: 1px solid var(--line);
+  }
+  .personas-intro {
+    max-width: 640px;
+    margin: 0 auto 32px;
+    text-align: center;
+  }
+  .personas-kicker {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+    margin-bottom: 12px;
+  }
+  .personas-title {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    line-height: 1.25;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .personas-sub {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+
+  .personas-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 0;
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  @media (max-width: 720px) {
+    .personas-cards { grid-template-columns: 1fr; gap: 10px; }
+  }
+
+  .persona-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 24px 22px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+    position: relative;
+  }
+  .persona-card:hover {
+    border-color: var(--accent-deep);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .persona-card.active {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+    box-shadow: var(--shadow-md);
+  }
+  .persona-card.inactive {
+    opacity: 0.55;
+  }
+  .persona-card.inactive:hover {
+    opacity: 1;
+  }
+  .persona-icon {
+    font-size: 28px;
+    line-height: 1;
+  }
+  .persona-card.active .persona-icon { filter: brightness(0) invert(1); }
+  .persona-label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .persona-card.active .persona-label { color: #fff; }
+  .persona-question {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .persona-card.active .persona-question { color: rgba(255,255,255,0.85); }
+  .persona-arrow {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--accent-deep);
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .persona-card.active .persona-arrow { color: #fff; }
+
+  .personas-skip {
+    text-align: center;
+    margin-top: 18px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .personas-skip a { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ==== EXPANDED CONTENT PANEL ==== */
+  .persona-panel {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.5s ease, opacity 0.3s ease, margin 0.3s ease;
+    margin-top: 0;
+  }
+  .persona-panel.open {
+    max-height: 4000px;
+    opacity: 1;
+    margin-top: 28px;
+  }
+  .persona-panel-inner {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 36px 40px;
+    box-shadow: var(--shadow-sm);
+    max-width: 920px;
+    margin: 0 auto;
+  }
+  @media (max-width: 720px) {
+    .persona-panel-inner { padding: 28px 22px; }
+  }
+  .persona-panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+  }
+  .persona-panel-header .persona-icon { font-size: 22px; }
+  .persona-panel-header h3 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 19px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  .persona-panel-close {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--muted);
+    padding: 6px 10px;
+    border-radius: 4px;
+    line-height: 1;
+  }
+  .persona-panel-close:hover {
+    background: var(--line-soft);
+    color: var(--ink);
+  }
+
+  .persona-viz {
+    margin: 24px 0 20px;
+    padding: 20px 24px;
+    background: var(--cream);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+  }
+  .persona-viz h4 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--warm);
+    margin-bottom: 6px;
+  }
+  .persona-viz .viz-head {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 14px;
+    letter-spacing: -0.005em;
+  }
+  .persona-viz svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+  .persona-viz .viz-take {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+  .persona-viz .viz-take strong { color: var(--ink); }
+
+  .persona-cta {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .persona-cta .primary {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    background: var(--accent-deep);
+    border: 1px solid var(--accent-deep);
+    padding: 12px 22px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .persona-cta .primary:hover { background: var(--accent-ink); }
+  .persona-cta .secondary {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--accent-deep);
+    background: transparent;
+    border: 1px solid var(--accent-deep);
+    padding: 12px 22px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .persona-cta .secondary:hover { background: var(--accent-deep); color: #fff; }
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap-wide"><span lang-en>Budget decision window closes <strong>May 27, 2026</strong>. Every email sent before then changes the math.</span><span lang-zh class="zh hidden">预算决定窗口 <strong>2026年5月27日</strong> 关闭。在此之前的每一封邮件都会改变结果。</span></div>
+</div>
+
+<header class="site">
+  <div class="wrap-wide">
+    <div class="brand">
+      <span class="brand-main"><span class="dot"></span>Fund Burnaby Kids</span>
+      <span class="brand-tagline" lang-en>A Burnaby Kids First campaign</span>
+      <span class="brand-tagline hidden zh" lang-zh>Burnaby Kids First 旗下运动</span>
+    </div>
+    <div style="display:flex; gap: 14px; align-items: center;">
+      <div class="lang-toggle">
+        <button class="active" onclick="setLang('en')">EN</button>
+        <button onclick="setLang('zh')">中文</button>
+      </div>
+      <a href="#act" class="nav-cta" lang-en>Take action</a>
+      <a href="#act" class="nav-cta hidden zh" lang-zh>立即行动</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap-wide">
+    <div class="countdown"><span class="pulse"></span><span lang-en>35 days until the Board adopts the budget</span><span lang-zh class="zh hidden">距学区董事会通过预算还有35天</span></div>
+
+    <div class="kicker" lang-en>Burnaby School District 41 · Budget 2026-27</div>
+    <div class="kicker hidden zh" lang-zh>Burnaby 41学区 · 2026-27预算</div>
+
+    <h1 class="headline" lang-en>The Province owes Burnaby kids <em>$9.4 million</em>. Their own budget says they can pay it.</h1>
+    <h1 class="headline hidden zh" lang-zh>省府欠Burnaby学生 <em>$9.4M</em>。他们自己的预算里<em>有这笔钱</em>。</h1>
+
+    <p class="sub" lang-en>A provincial arbitration ordered Burnaby to pay 800+ teachers retroactive wages. BCPSEA — the Province's own bargaining agent — admits the cost would have been funded in 2022 if they'd interpreted the agreement correctly. Without provincial funding, Burnaby students lose another round of counsellors, EAs, and programs. They did not cause this. They should not pay for it.</p>
+    <p class="sub hidden zh" lang-zh>省级仲裁裁定Burnaby要向800多名教师补发薪资。BCPSEA——省府自己的谈判代表——承认如果他们在2022年正确解读协议，这笔钱本就会被全额拨付。如果省府不拨款，Burnaby的学生将再次失去辅导员、教师助理、以及重要课程。他们不是原因，也不该承担后果。</p>
+
+    <div class="counter-block">
+      <div class="counter-main">
+        <div class="counter-num" id="counter-display">—</div>
+        <div class="counter-label" lang-en>parents have signed and sent emails. Each one reaches six representatives.</div>
+        <div class="counter-label hidden zh" lang-zh>位家长已签名并发送邮件。每封都发给6位代表。</div>
+      </div>
+      <div class="counter-meta">
+        <span lang-en>Goal: <strong>2,000</strong></span>
+        <span lang-zh class="zh hidden">目标: <strong>2,000</strong></span><br>
+        <span lang-en>Deadline: <strong>May 27</strong></span>
+        <span lang-zh class="zh hidden">截止: <strong>5月27日</strong></span>
+      </div>
+    </div>
+
+    <div class="cta-row">
+      <a href="#act" class="primary" lang-en>Sign and send → 60 seconds</a>
+      <a href="#act" class="primary hidden zh" lang-zh>签名并发送 → 60秒</a>
+      <a href="#why" class="nav-cta" lang-en>Why this matters</a>
+      <a href="#why" class="nav-cta hidden zh" lang-zh>为什么重要</a>
+    </div>
+    <div class="cta-note" lang-en>Your signature is public. Your email address is private and never shared.</div>
+    <div class="cta-note hidden zh" lang-zh>您的签名将公开显示。您的邮箱地址严格保密，绝不共享。</div>
+    <div class="cta-note" style="margin-top: 14px; font-size: 12px; color: var(--muted);" lang-en>Founded and operated by <a href="#about" style="color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px;">Ben Zhou</a>, Burnaby parent.</div>
+    <div class="cta-note hidden zh" lang-zh style="margin-top: 14px; font-size: 12px; color: var(--muted);">由Burnaby家长 <a href="#about" style="color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px;">Ben Zhou（周子颜）</a> 创立并运营。</div>
+  </div>
+</section>
+
+<!-- PERSONA SELECTOR -->
+<section class="personas" id="your-angle">
+  <div class="wrap-wide">
+    <div class="personas-intro">
+      <div class="personas-kicker" lang-en>See the case from your angle</div>
+      <div class="personas-kicker hidden zh" lang-zh>从您的角度看这个议题</div>
+      <h2 class="personas-title" lang-en>Who are you in this story?</h2>
+      <h2 class="personas-title hidden zh" lang-zh>在这个故事里，您是谁？</h2>
+      <p class="personas-sub" lang-en>Different stakeholders need to see different things. Pick the one closest to you.</p>
+      <p class="personas-sub hidden zh" lang-zh>不同角色关心不同的事实。请选择最接近您的身份。</p>
+    </div>
+
+    <div class="personas-cards">
+      <!-- Parent card -->
+      <button class="persona-card" onclick="selectPersona('parent')" id="persona-parent-card">
+        <div class="persona-icon">👪</div>
+        <div class="persona-label" lang-en>I'm a parent</div>
+        <div class="persona-label hidden zh" lang-zh>我是家长</div>
+        <div class="persona-question" lang-en>What does my child actually lose?</div>
+        <div class="persona-question hidden zh" lang-zh>我的孩子到底会失去什么？</div>
+        <div class="persona-arrow" lang-en>See impact on your child →</div>
+        <div class="persona-arrow hidden zh" lang-zh>看对您孩子的影响 →</div>
+      </button>
+
+      <!-- PAC rep card -->
+      <button class="persona-card" onclick="selectPersona('pac')" id="persona-pac-card">
+        <div class="persona-icon">🏫</div>
+        <div class="persona-label" lang-en>I'm on a PAC</div>
+        <div class="persona-label hidden zh" lang-zh>我在PAC</div>
+        <div class="persona-question" lang-en>What does our school lose — and what can we do?</div>
+        <div class="persona-question hidden zh" lang-zh>我们学校会失去什么——我们能做什么？</div>
+        <div class="persona-arrow" lang-en>See school-level view →</div>
+        <div class="persona-arrow hidden zh" lang-zh>查看学校层面视角 →</div>
+      </button>
+
+      <!-- Trustee/media card -->
+      <button class="persona-card" onclick="selectPersona('decision')" id="persona-decision-card">
+        <div class="persona-icon">🏛️</div>
+        <div class="persona-label" lang-en>Trustee · Media · MLA staff</div>
+        <div class="persona-label hidden zh" lang-zh>董事 · 媒体 · 议员助理</div>
+        <div class="persona-question" lang-en>What's the structural case?</div>
+        <div class="persona-question hidden zh" lang-zh>结构性的论点是什么？</div>
+        <div class="persona-arrow" lang-en>See the system view →</div>
+        <div class="persona-arrow hidden zh" lang-zh>查看系统视角 →</div>
+      </button>
+    </div>
+
+    <p class="personas-skip" lang-en>A teacher, community member, or someone supporting? <a href="#why">Just scroll — the full case is below.</a></p>
+    <p class="personas-skip hidden zh" lang-zh>您是教师、社区成员，或仅想了解的支持者？<a href="#why">直接下滑——下方有完整内容。</a></p>
+
+    <!-- Expansion panel -->
+    <div class="persona-panel" id="persona-panel">
+      <div class="persona-panel-inner" id="persona-panel-inner">
+        <!-- Content injected by JS -->
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THREE FACTS -->
+<section class="facts" id="why">
+  <div class="wrap">
+    <div class="facts-header" lang-en>Three things the Province already knows</div>
+    <div class="facts-header hidden zh" lang-zh>省府其实早就知道的三件事</div>
+    <h2 class="section-title" lang-en>This is not a budget problem. It is a decision problem.</h2>
+    <h2 class="section-title hidden zh" lang-zh>这不是预算问题，而是一个决策问题。</h2>
+
+    <div class="fact-list">
+      <div class="fact">
+        <div class="fact-num">01</div>
+        <div>
+          <h3 lang-en>BCPSEA admits this is their interpretive error.</h3>
+          <h3 class="hidden zh" lang-zh>BCPSEA承认这是他们的解读错误。</h3>
+          <p lang-en>The BC Public School Employers' Association bargains on behalf of every BC school district. An arbitrator ruled that beginning teachers in Burnaby were placed one step too low on the salary grid as of July 1, 2022. SD41 was not a party to that negotiation. Board Chair Kristin Schnider has stated publicly that the costs would have been fully funded at the time if BCPSEA had interpreted the agreement correctly. The cost landed on Burnaby — and only Burnaby — because of a provincial-level interpretive failure.</p>
+          <p class="hidden zh" lang-zh>BCPSEA（BC省公立学校雇主协会）代表BC每一个学区谈判。仲裁员裁定，自2022年7月1日起，Burnaby的初任教师在薪资等级表上被低估了一级。SD41并非谈判方。董事会主席Kristin Schnider公开表示：如果BCPSEA当时正确解读协议，这笔钱本就会被全额资助。这笔成本落到Burnaby——只落到Burnaby——是因为省级层面的解读失误。</p>
+        </div>
+      </div>
+
+      <div class="fact">
+        <div class="fact-num">02</div>
+        <div>
+          <h3 lang-en>Burnaby has no cushion left.</h3>
+          <h3 class="hidden zh" lang-zh>Burnaby已经没有缓冲空间了。</h3>
+          <p lang-en>In 2025-26, SD41 cut $4.2 million — high school counsellors, custodial staff, the Grade 7 band program serving 1,200 students, advanced learning, and Mandarin. Unrestricted reserves sit at $4.3 million. The arbitration liability is more than double that. "Doing more with less" has already been done. What comes next is cutting from the bone.</p>
+          <p class="hidden zh" lang-zh>2025-26年，SD41已削减$4.2M——高中辅导员、清洁人员、服务1,200名学生的7年级乐队项目、advanced learning课程、中文课。非限制性储备金只有$4.3M。这次的仲裁责任是它的两倍多。"用更少的钱做更多的事"已经做到头了。接下来只能砍到骨头。</p>
+        </div>
+      </div>
+
+      <div class="fact">
+        <div class="fact-num">03</div>
+        <div>
+          <h3 lang-en>Budget 2026 reserved $5 billion a year for exactly this.</h3>
+          <h3 class="hidden zh" lang-zh>2026预算每年留了$5B就是为了这种情况。</h3>
+          <p lang-en>The Contingencies Vote in Budget 2026 is explicitly described as covering "caseload pressures, current collective bargaining mandate costs, and other costs that are uncertain at the time of building the budget." The $9.4M Burnaby liability is almost verbatim a collective bargaining mandate cost. It represents <strong>0.19%</strong> of the annual Contingencies Vote. The money exists. What remains is the decision to apply it.</p>
+          <p class="hidden zh" lang-zh>2026预算中的应急基金明确说明用于"案件压力、当前集体谈判授权成本、以及其他在编制预算时不确定的成本"。Burnaby的$9.4M几乎逐字匹配"集体谈判授权成本"的定义。这笔钱占应急基金年度拨款的<strong>0.19%</strong>。钱已经在那里，剩下的只是决定是否使用。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY VISUALIZATION -->
+<section class="journey" id="journey">
+  <div class="wrap-wide">
+    <div class="journey-intro">
+      <div class="facts-header" lang-en>What your child actually loses · K through 12</div>
+      <div class="facts-header hidden zh" lang-zh>您的孩子实际会失去什么 · 从幼儿园到12年级</div>
+      <h2 class="section-title" lang-en>$9.4 million is an abstraction. This is what it means.</h2>
+      <h2 class="section-title hidden zh" lang-zh>$9.4M是一个抽象数字。这才是它真正的含义。</h2>
+      <p class="journey-lead" lang-en>Below is your child's entire school journey — kindergarten to Grade 12. The green cells are services a Burnaby student used to count on: a full-time counsellor at your high school, an EA in the classroom when your child needs one, Grade 7 band, Mandarin, advanced learning. The dashed cells show what has already been cut. The striped cells show what is at risk next if the $9.4M isn't funded.</p>
+      <p class="journey-lead hidden zh" lang-zh>下方是您孩子完整的在校旅程——从幼儿园到12年级。绿色代表Burnaby学生曾经可以指望的服务：高中的全职辅导员、课堂上为您孩子提供支持的EA、7年级乐队课、中文课、advanced learning。虚线代表已经被砍掉的。斜纹代表如果$9.4M不到位，下一轮面临风险的。</p>
+      <p class="journey-lead" style="font-weight: 500; color: var(--warm);" lang-en>Pick your child's current grade to see exactly what's coming.</p>
+      <p class="journey-lead hidden zh" lang-zh style="font-weight: 500; color: var(--warm);">选择您孩子目前的年级，看到接下来会发生什么。</p>
+    </div>
+
+    <div class="grade-picker">
+      <div class="grade-picker-label" lang-en>My child is currently in:</div>
+      <div class="grade-picker-label hidden zh" lang-zh>我孩子目前在：</div>
+      <div class="grade-buttons" id="grade-buttons">
+        <button class="grade-btn" data-grade="-1" onclick="selectGrade(-1)"><span lang-en>Pre-K</span><span lang-zh class="zh hidden">学前</span></button>
+        <button class="grade-btn" data-grade="0" onclick="selectGrade(0)">K</button>
+        <button class="grade-btn" data-grade="1" onclick="selectGrade(1)">1</button>
+        <button class="grade-btn" data-grade="2" onclick="selectGrade(2)">2</button>
+        <button class="grade-btn" data-grade="3" onclick="selectGrade(3)">3</button>
+        <button class="grade-btn" data-grade="4" onclick="selectGrade(4)">4</button>
+        <button class="grade-btn" data-grade="5" onclick="selectGrade(5)">5</button>
+        <button class="grade-btn" data-grade="6" onclick="selectGrade(6)">6</button>
+        <button class="grade-btn" data-grade="7" onclick="selectGrade(7)">7</button>
+        <button class="grade-btn" data-grade="8" onclick="selectGrade(8)">8</button>
+        <button class="grade-btn" data-grade="9" onclick="selectGrade(9)">9</button>
+        <button class="grade-btn" data-grade="10" onclick="selectGrade(10)">10</button>
+        <button class="grade-btn" data-grade="11" onclick="selectGrade(11)">11</button>
+        <button class="grade-btn" data-grade="12" onclick="selectGrade(12)">12</button>
+      </div>
+    </div>
+
+    <div class="viz-wrap">
+      <div class="viz-title" lang-en>Services available at each grade · Burnaby School District 41</div>
+      <div class="viz-title hidden zh" lang-zh>每个年级可获得的服务 · Burnaby 41学区</div>
+      <div class="viz-sub" lang-en>Hover any cell for detail. Cuts shown reflect 2025-26 decisions and the scale of 2026-27 pressure (more than 2× last year).</div>
+      <div class="viz-sub hidden zh" lang-zh>鼠标悬停查看详情。削减反映2025-26年的实际决定和2026-27年的压力规模（超过去年2倍）。</div>
+
+      <div class="legend">
+        <div class="legend-item"><span class="legend-swatch sw-have"></span><span lang-en>Available</span><span class="hidden zh" lang-zh>现有</span></div>
+        <div class="legend-item"><span class="legend-swatch sw-lost"></span><span lang-en>Already cut (2025-26)</span><span class="hidden zh" lang-zh>已被削减 (2025-26)</span></div>
+        <div class="legend-item"><span class="legend-swatch sw-risk"></span><span lang-en>At risk if $9.4M not funded</span><span class="hidden zh" lang-zh>如$9.4M未拨款即处风险</span></div>
+        <div class="legend-item"><span class="legend-swatch sw-gone"></span><span lang-en>Likely eliminated</span><span class="hidden zh" lang-zh>很可能消失</span></div>
+      </div>
+
+      <!-- School tier header -->
+      <div class="school-tier-header">
+        <div></div>
+        <div class="tier-label elem" lang-en>Elementary</div>
+        <div class="tier-label elem hidden zh" lang-zh>小学</div>
+        <div class="tier-label hs" lang-en>Secondary</div>
+        <div class="tier-label hs hidden zh" lang-zh>中学</div>
+        <div></div>
+      </div>
+
+      <!-- Grade number axis -->
+      <div class="grade-axis" id="grade-axis">
+        <div></div>
+        <div class="grade-cell-header" data-grade-col="0">K</div>
+        <div class="grade-cell-header" data-grade-col="1">1</div>
+        <div class="grade-cell-header" data-grade-col="2">2</div>
+        <div class="grade-cell-header" data-grade-col="3">3</div>
+        <div class="grade-cell-header" data-grade-col="4">4</div>
+        <div class="grade-cell-header" data-grade-col="5">5</div>
+        <div class="grade-cell-header" data-grade-col="6">6</div>
+        <div class="grade-cell-header" data-grade-col="7">7</div>
+        <div class="grade-cell-header" data-grade-col="8">8</div>
+        <div class="grade-cell-header" data-grade-col="9">9</div>
+        <div class="grade-cell-header" data-grade-col="10">10</div>
+        <div class="grade-cell-header" data-grade-col="11">11</div>
+        <div class="grade-cell-header" data-grade-col="12">12</div>
+      </div>
+
+      <!-- Service rows — built by JS -->
+      <div id="service-rows"></div>
+
+      <!-- Personalized impact summary — shows after grade selected -->
+      <div class="impact-summary" id="impact-summary">
+        <h4 id="impact-title" lang-en>What a student in Grade X loses from here</h4>
+        <ul class="impact-list" id="impact-list"></ul>
+      </div>
+    </div>
+
+    <!-- Downstream consequences -->
+    <div class="downstream">
+      <div class="wrap">
+        <div class="downstream-title" lang-en>Why this compounds · not just one bad year</div>
+        <div class="downstream-title hidden zh" lang-zh>为什么影响会累积 · 不仅仅是糟糕的一年</div>
+        <h3 lang-en>A cut today becomes a crisis at graduation.</h3>
+        <h3 class="hidden zh" lang-zh>今天的削减，到高中毕业时就成了危机。</h3>
+
+        <div class="cascade">
+          <div class="cascade-card">
+            <div class="cascade-year" lang-en>Year 1 · Elementary</div>
+            <div class="cascade-year hidden zh" lang-zh>第一年 · 小学</div>
+            <h5 lang-en>EA reduced. Reading support delayed.</h5>
+            <h5 class="hidden zh" lang-zh>EA减员，阅读干预延迟。</h5>
+            <p lang-en>A Grade 2 reader who needed 3 hours/week of intervention now gets 1. Early literacy gaps compound — each year a child stays behind, catching up gets harder.</p>
+            <p class="hidden zh" lang-zh>一个2年级学生原本每周需要3小时阅读干预，现在只能拿到1小时。早期识字差距会累积——每多落后一年，追上就越难。</p>
+          </div>
+          <div class="cascade-card">
+            <div class="cascade-year" lang-en>Years 3–5 · Middle years</div>
+            <div class="cascade-year hidden zh" lang-zh>第三到五年 · 中段年级</div>
+            <h5 lang-en>Counsellor time cut. Mental health flags missed.</h5>
+            <h5 class="hidden zh" lang-zh>辅导员时间减少，心理健康信号被遗漏。</h5>
+            <p lang-en>When counsellor ratios stretch thin, early warning signs of anxiety, learning differences, and family stress go unaddressed. By high school, what was a short conversation becomes a crisis referral.</p>
+            <p class="hidden zh" lang-zh>辅导员人员紧张时，焦虑、学习差异、家庭压力的早期信号被忽略。到了高中，原本一次简单谈话能解决的，变成危机转介。</p>
+          </div>
+          <div class="cascade-card">
+            <div class="cascade-year" lang-en>High school · Year 8+</div>
+            <div class="cascade-year hidden zh" lang-zh>高中 · 第八年以后</div>
+            <h5 lang-en>Fewer electives. Thinner post-secondary profile.</h5>
+            <h5 class="hidden zh" lang-zh>选修课减少，升学竞争力下降。</h5>
+            <p lang-en>Advanced learning, band, specialty languages, and enrichment electives are the first to go. These are what build a post-secondary application — scholarships, specialty admissions, UBC co-op eligibility. A thinner high school transcript has real career consequences.</p>
+            <p class="hidden zh" lang-zh>Advanced learning、乐队、特色语言、拓展选修课是最先被砍的。这些正是升学申请的基础——奖学金、专业录取、UBC co-op资格。一份单薄的高中成绩单有实质的职业后果。</p>
+          </div>
+        </div>
+
+        <p style="margin-top: 32px; font-family: 'Söhne', 'Inter', sans-serif; font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 620px;" lang-en>The Province told the Burnaby Board of Education that the 2026-27 liability is "more than double" the 2025-26 cut of $4.2M. Last year's cuts were real. The cuts coming are bigger.</p>
+        <p class="hidden zh" lang-zh style="margin-top: 32px; font-family: 'Söhne', 'Inter', sans-serif; font-size: 14px; color: var(--muted); line-height: 1.6; max-width: 620px;">省府告诉Burnaby学区董事会，2026-27的缺口是2025-26的$4.2M的"两倍多"。去年的削减是真实的，接下来的削减会更大。</p>
+
+        <div style="margin-top: 28px;">
+          <a href="#act" class="primary" lang-en>I've seen enough — sign now →</a>
+          <a href="#act" class="primary hidden zh" lang-zh>我看够了——现在签名 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DUAL-TRACK ACTION -->
+<section class="action" id="act">
+  <div class="wrap-wide">
+    <div class="action-intro">
+      <div class="facts-header" lang-en>Your action, two ways it counts</div>
+      <div class="facts-header hidden zh" lang-zh>您的行动，两种效果</div>
+      <h2 class="section-title" lang-en>Sign. Send. Both matter — for different reasons.</h2>
+      <h2 class="section-title hidden zh" lang-zh>签名。发送。两者都重要——理由不同。</h2>
+      <p lang-en>When you fill in this form, two things happen at once. You add your name to a public petition that will be delivered in person to the Minister of Education and to Burnaby's five MLAs. And you send — from your own email account — a constituent letter to those same representatives. Together they create pressure the Ministry cannot dismiss as noise: a named, counted collective AND individually-sent constituent mail.</p>
+      <p class="hidden zh" lang-zh>当您填写本表格，两件事同时发生。您的名字加入一份公开请愿书，将亲手递交给教育厅长和Burnaby的5位MLA。同时，通过您自己的邮箱账户向同一批代表发送一封选民信件。两者结合产生的压力是省府无法作为"噪音"忽略的：一份有名有姓有计数的集体请愿，加上独立发送的选民邮件。</p>
+    </div>
+
+    <div class="dual-track">
+
+      <!-- TRACK 1: SIGN -->
+      <div class="track track-1">
+        <div class="track-label" lang-en>Track 1 · Petition</div>
+        <div class="track-label hidden zh" lang-zh>轨道 1 · 请愿</div>
+        <h3 lang-en>Add your name to the public record.</h3>
+        <h3 class="hidden zh" lang-zh>将您的名字加入公开记录。</h3>
+        <p class="track-desc" lang-en>Your name, school, and neighbourhood appear in the live petition below. This becomes a political object we print, count, and hand-deliver.</p>
+        <p class="track-desc hidden zh" lang-zh>您的姓名、学校、社区将显示在下方的公开请愿名单中。这会成为一份我们打印、计数并亲手递交的政治文件。</p>
+      </div>
+
+      <!-- TRACK 2: SEND -->
+      <div class="track track-2">
+        <div class="track-label" lang-en>Track 2 · Constituent email</div>
+        <div class="track-label hidden zh" lang-zh>轨道 2 · 选民邮件</div>
+        <h3 lang-en>Send a letter from your own email.</h3>
+        <h3 class="hidden zh" lang-zh>从您自己的邮箱发送一封信件。</h3>
+        <p class="track-desc" lang-en>We pre-fill the letter, including your school and postal code. You click to open your mail app — and send. Ministry treats constituent mail differently from a petition.</p>
+        <p class="track-desc hidden zh" lang-zh>我们已预先填好信件内容，包含您的学校和邮编。您点击后即可在邮箱应用中打开并发送。省府对选民邮件的处理与请愿不同。</p>
+      </div>
+    </div>
+
+    <!-- ONE UNIFIED FORM BELOW -->
+    <div id="form-container" style="margin-top: 32px; background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 40px;">
+      <div id="form-pre-submit">
+        <h3 style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 22px; font-weight: 500; margin-bottom: 8px; letter-spacing: -0.01em;" lang-en>Do both in 60 seconds</h3>
+        <h3 class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 22px; font-weight: 500; margin-bottom: 8px; letter-spacing: -0.01em;">60秒完成两项</h3>
+        <p style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 14px; color: var(--muted); margin-bottom: 28px;" lang-en>Required fields marked <span style="color: var(--warm); font-weight: 600;">*</span>. We never collect your child's name or personal information.</p>
+        <p class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 14px; color: var(--muted); margin-bottom: 28px;">带 <span style="color: var(--warm); font-weight: 600;">*</span> 的为必填项。我们不收集您孩子的姓名或个人信息。</p>
+
+        <form id="action-form" onsubmit="return false;">
+          <div class="row2">
+            <div class="form-field">
+              <label lang-en>First name <span style="color: var(--warm);">*</span></label>
+              <label class="hidden zh" lang-zh>名字 <span style="color: var(--warm);">*</span></label>
+              <input type="text" id="firstname" maxlength="40" required>
+            </div>
+            <div class="form-field">
+              <label lang-en>Last name (or initial) <span style="color: var(--warm);">*</span></label>
+              <label class="hidden zh" lang-zh>姓氏（可只填缩写）<span style="color: var(--warm);">*</span></label>
+              <input type="text" id="lastname" maxlength="40" required>
+              <div class="hint" lang-en>"L." is fine if you prefer less public exposure.</div>
+              <div class="hint hidden zh" lang-zh>如不希望完全公开，可只填一个字母，如"L."。</div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label lang-en>Email address <span style="color: var(--warm);">*</span></label>
+            <label class="hidden zh" lang-zh>邮箱地址 <span style="color: var(--warm);">*</span></label>
+            <input type="email" id="email" required>
+            <div class="hint" lang-en>We send one confirmation right after you submit, then a short update every two weeks on this and future Burnaby kids issues.</div>
+            <div class="hint hidden zh" lang-zh>提交后立即发送一封确认邮件，之后每两周一封简短更新——涵盖本议题和未来的Burnaby孩子相关议题。</div>
+          </div>
+
+          <div class="row2">
+            <div class="form-field">
+              <label lang-en>Your child's school <span style="color: var(--warm);">*</span></label>
+              <label class="hidden zh" lang-zh>孩子就读学校 <span style="color: var(--warm);">*</span></label>
+              <select id="school" required>
+                <option value="" disabled selected>— Choose —</option>
+                <optgroup label="Elementary schools">
+                  <option>Armstrong</option><option>Aubrey</option><option>Brantford</option><option>Buckingham</option>
+                  <option>Cameron</option><option>Capitol Hill</option><option>Cascade Heights</option><option>Chaffey-Burke</option>
+                  <option>Clinton</option><option>Confederation Park</option><option>Douglas Road</option><option>Edmonds</option>
+                  <option>Forest Grove</option><option>Gilmore</option><option>Glenwood</option><option>Inman</option>
+                  <option>Kitchener</option><option>Lakeview</option><option>Lochdale</option><option>Lyndhurst</option>
+                  <option>Marlborough</option><option>Maywood</option><option>Morley</option><option>Nelson</option>
+                  <option>Parkcrest</option><option>Seaforth</option><option>Second Street</option><option>Sperling</option>
+                  <option>Stoney Creek</option><option>Stride Avenue</option><option>Suncrest</option><option>Taylor Park</option>
+                  <option>Twelfth Avenue</option><option>University Highlands</option><option>Westridge</option><option>Windsor</option>
+                </optgroup>
+                <optgroup label="Secondary schools">
+                  <option>Alpha</option><option>Burnaby Central</option><option>Burnaby Mountain</option>
+                  <option>Burnaby North</option><option>Burnaby South</option><option>Byrne Creek</option>
+                  <option>Cariboo Hill</option><option>Moscrop</option>
+                </optgroup>
+                <optgroup label="Other">
+                  <option>South Slope / BC School for the Deaf</option>
+                  <option>Other / Prefer not to say</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="form-field">
+              <label lang-en>Grade <span style="color: var(--warm);">*</span></label>
+              <label class="hidden zh" lang-zh>年级 <span style="color: var(--warm);">*</span></label>
+              <select id="grade" required>
+                <option value="" disabled selected>— Choose —</option>
+                <option>K</option><option>1</option><option>2</option><option>3</option>
+                <option>4</option><option>5</option><option>6</option><option>7</option>
+                <option>8</option><option>9</option><option>10</option><option>11</option><option>12</option>
+                <option lang-en value="Multiple">Multiple children</option>
+                <option lang-en value="Future student">Future student (not yet in school)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label lang-en>Postal code <span style="color: var(--warm);">*</span></label>
+            <label class="hidden zh" lang-zh>邮政编码 <span style="color: var(--warm);">*</span></label>
+            <input type="text" id="postal" maxlength="7" placeholder="V5B 3X6" required>
+            <div class="hint" lang-en>Used to route your letter to the correct MLA. Never published.</div>
+            <div class="hint hidden zh" lang-zh>用于将您的信件路由到正确的MLA。不会公开。</div>
+          </div>
+
+          <div class="consent">
+            <label>
+              <input type="checkbox" id="consent-public" required>
+              <span lang-en><span class="required">Required.</span> I consent to my first name, last initial, school, and neighbourhood (derived from postal code) being shown publicly on this petition. My email address and full postal code will not be displayed.</span>
+              <span class="hidden zh" lang-zh><span class="required">必填。</span> 我同意我的名字、姓氏缩写、学校、以及社区（来自邮编）在本请愿中公开显示。邮箱地址和完整邮编不会公开。</span>
+            </label>
+            <label>
+              <input type="checkbox" id="consent-updates">
+              <span lang-en>Optional. I want to receive short updates by email on this campaign and on future Burnaby Kids First advocacy (about one email every two weeks). I can unsubscribe at any time.</span>
+              <span class="hidden zh" lang-zh>可选。我希望通过邮件接收本次行动以及未来Burnaby Kids First倡导的简短更新（每两周约一封）。可随时退订。</span>
+            </label>
+            <label>
+              <input type="checkbox" id="consent-letter" checked>
+              <span lang-en>Send the pre-filled email on my behalf. <em>This opens your email client — you review and send from your own account.</em> Your email is never sent automatically.</span>
+              <span class="hidden zh" lang-zh>同时发送预填好的邮件。<em>这会打开您的邮箱客户端——您自行审阅并发送。</em>我们不会自动替您发送。</span>
+            </label>
+          </div>
+
+          <div class="err-msg" id="err-msg"></div>
+
+          <button class="action-btn" style="background: var(--accent-deep);" onclick="handleSubmit()" lang-en>Sign the petition and prepare my email →</button>
+          <button class="action-btn hidden zh" lang-zh style="background: var(--accent-deep);" onclick="handleSubmit()">签名并准备我的邮件 →</button>
+
+          <p style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 12px; color: var(--muted); margin-top: 18px; line-height: 1.6;" lang-en>This form is covered by our <a href="#privacy" onclick="document.getElementById('q-privacy').setAttribute('open', 'true')" style="color: var(--accent-deep); text-decoration: underline;">privacy statement</a>. Collection of personal information is governed by BC's Personal Information Protection Act. You can request deletion of your record any time by replying to any confirmation email.</p>
+          <p class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 12px; color: var(--muted); margin-top: 18px; line-height: 1.6;">本表格遵守我们的<a href="#privacy" onclick="document.getElementById('q-privacy').setAttribute('open', 'true')" style="color: var(--accent-deep); text-decoration: underline;">隐私声明</a>。个人信息的收集受BC省《个人信息保护法》（PIPA）保护。您可随时回复任何确认邮件以要求删除记录。</p>
+        </form>
+      </div>
+
+      <div id="form-post-submit" class="hidden">
+        <div class="success-state">
+          <div class="big-num">#<span id="signature-position">—</span></div>
+          <div class="success-label" lang-en>You are now signatory</div>
+          <div class="success-label hidden zh" lang-zh>您已成为签名人</div>
+          <h4 lang-en>Signed. Now send.</h4>
+          <h4 class="hidden zh" lang-zh>已签名。现在发送邮件。</h4>
+          <p lang-en>Your signature is live on the petition below. Click the button to open your email client with the letter pre-filled. Review it, add any personal detail if you'd like, and hit send.</p>
+          <p class="hidden zh" lang-zh>您的签名已显示在下方请愿列表。点击下方按钮，您的邮件客户端会打开并显示已预填的信件。审阅后（可添加任何个人细节），点击发送即可。</p>
+          <a href="#" id="mailto-link" class="next-step" onclick="markEmailSent()" lang-en>Open my pre-filled email →</a>
+          <a href="#" id="mailto-link-zh" class="hidden zh next-step" onclick="markEmailSent()" lang-zh>打开我的预填邮件 →</a>
+          <p style="margin-top: 20px; font-size: 13px;" lang-en><a href="#" onclick="resetForm(); return false;" style="color: var(--muted);">Sign another — my other child goes to a different school</a></p>
+          <p class="hidden zh" lang-zh style="margin-top: 20px; font-size: 13px;"><a href="#" onclick="resetForm(); return false;" style="color: var(--muted);">再签一次——我另一个孩子在不同的学校</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PUBLIC SIGNATORIES -->
+<section class="signatories" id="signatories">
+  <div class="wrap-wide">
+    <div class="label" lang-en>The public record · <span id="sig-count-top">0</span> Burnaby parents</div>
+    <div class="label hidden zh" lang-zh>公开记录 · <span id="sig-count-top-zh">0</span> 位Burnaby家长</div>
+    <h2 lang-en>Every name below is a constituent who will not stay quiet about this.</h2>
+    <h2 class="hidden zh" lang-zh>下方每一个名字，都是一位不愿沉默的选区居民。</h2>
+    <div class="sig-flow" id="sig-flow">
+      <div class="sig-pill" style="opacity: 0.5;" lang-en>Be the first to sign →</div>
+      <div class="sig-pill hidden zh" lang-zh style="opacity: 0.5;">成为第一个签名的人 →</div>
+    </div>
+    <div class="sig-count" id="sig-count-bottom" lang-en>Showing most recent 60. Full list delivered in person to the Minister's office.</div>
+    <div class="sig-count hidden zh" lang-zh>显示最近60位。完整名单将亲手递交给厅长办公室。</div>
+  </div>
+</section>
+
+<!-- MLA scorecard -->
+<section class="mlas">
+  <div class="wrap">
+    <div class="facts-header" lang-en>Your representatives · updated weekly</div>
+    <div class="facts-header hidden zh" lang-zh>您的代表 · 每周更新</div>
+    <h2 class="section-title" lang-en>Who has responded?</h2>
+    <h2 class="section-title hidden zh" lang-zh>谁已经回应？</h2>
+    <div class="mla-grid">
+      <div class="mla-row">
+        <div><div class="mla-name">Hon. Lisa Beare</div><div class="mla-riding" lang-en>Minister of Education and Child Care</div><div class="mla-riding hidden zh" lang-zh>教育及儿童保育厅长</div></div>
+        <div class="mla-status status-awaiting" lang-en>Awaiting response</div>
+      </div>
+      <div class="mla-row">
+        <div><div class="mla-name">Hon. Brenda Bailey</div><div class="mla-riding" lang-en>Minister of Finance</div><div class="mla-riding hidden zh" lang-zh>财政厅长</div></div>
+        <div class="mla-status status-awaiting" lang-en>Awaiting response</div>
+      </div>
+      <div class="mla-row">
+        <div><div class="mla-name">Anne Kang</div><div class="mla-riding">Burnaby-Edmonds</div></div>
+        <div class="mla-status status-awaiting" lang-en>Awaiting response</div>
+      </div>
+      <div class="mla-row">
+        <div><div class="mla-name">Rohini Arora</div><div class="mla-riding">Burnaby North</div></div>
+        <div class="mla-status status-awaiting" lang-en>Awaiting response</div>
+      </div>
+      <div class="mla-row">
+        <div><div class="mla-name">Janet Routledge</div><div class="mla-riding">Burnaby-Willingdon</div></div>
+        <div class="mla-status status-awaiting" lang-en>Awaiting response</div>
+      </div>
+      <div class="mla-row">
+        <div><div class="mla-name">Paul Choi</div><div class="mla-riding">Burnaby East</div></div>
+        <div class="mla-status status-awaiting" lang-en>Awaiting response</div>
+      </div>
+      <div class="mla-row">
+        <div><div class="mla-name">Raj Chouhan</div><div class="mla-riding">Burnaby-Lougheed</div></div>
+        <div class="mla-status status-awaiting" lang-en>Awaiting response</div>
+      </div>
+    </div>
+    <p style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; color: var(--muted); margin-top: 20px; line-height: 1.6;" lang-en>Status categories: <strong>Awaiting</strong> · <strong>Acknowledged</strong> · <strong>Publicly committed</strong> · <strong>Opposed</strong>. We update this page within 48 hours of any public statement or written commitment.</p>
+    <p class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; color: var(--muted); margin-top: 20px; line-height: 1.6;">状态分类： <strong>等待回应</strong> · <strong>已确认收到</strong> · <strong>公开承诺</strong> · <strong>反对</strong>。我们会在任何公开声明或书面承诺后48小时内更新。</p>
+  </div>
+</section>
+
+<!-- COALITION -->
+<section class="coalition" id="coalition">
+  <div class="wrap">
+    <div class="coalition-header">
+      <div>
+        <div class="facts-header" lang-en>School PAC coalition · growing</div>
+        <div class="facts-header hidden zh" lang-zh>学校PAC联盟 · 持续壮大</div>
+        <h2 class="section-title" style="margin-bottom: 12px;" lang-en>Schools standing together.</h2>
+        <h2 class="section-title hidden zh" lang-zh style="margin-bottom: 12px;">共同发声的学校。</h2>
+      </div>
+      <div class="coalition-stats">
+        <span lang-en><strong id="pac-count">0</strong> PACs · representing <strong id="pac-students">0</strong> students</span>
+        <span lang-zh class="zh hidden"><strong id="pac-count-zh">0</strong> 个PAC · 代表 <strong id="pac-students-zh">0</strong> 名学生</span>
+      </div>
+    </div>
+
+    <p style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 15px; line-height: 1.65; color: var(--ink-soft); max-width: 640px; margin-bottom: 28px;" lang-en>Every school PAC that joins this coalition adds institutional weight to the ask. A single parent's email is a signal. A PAC's endorsement is evidence that the school community has decided, through its own process, that this is worth saying publicly.</p>
+    <p class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 15px; line-height: 1.65; color: var(--ink-soft); max-width: 640px; margin-bottom: 28px;">每一个加入联盟的学校PAC都为这个诉求增加了组织分量。单个家长的邮件是一个信号。一个PAC的正式背书是证据——证明这个学校社群通过自己的流程决定公开发出这个声音。</p>
+
+    <div class="pac-grid" id="pac-grid">
+      <div class="pac-empty">
+        <em lang-en>No PACs have joined yet — be the first.</em>
+        <em lang-zh class="zh hidden">尚未有PAC加入——成为第一个。</em><br>
+        <span style="font-size: 13px; display: block; margin-top: 6px;" lang-en>If you are a PAC chair, see below how your PAC can add its voice.</span>
+        <span lang-zh class="zh hidden" style="font-size: 13px; display: block; margin-top: 6px;">如果您是PAC主席，请看下方了解如何加入。</span>
+      </div>
+    </div>
+
+    <div class="coalition-cta">
+      <h3 lang-en>Are you a PAC chair? Your school can join this coalition.</h3>
+      <h3 class="hidden zh" lang-zh>您是PAC主席？您的学校可以加入这个联盟。</h3>
+      <p lang-en>Joining takes one standard motion at your next PAC meeting. We've written the briefing, the motion wording, and a short FAQ so you don't have to build materials from scratch. PACs remain fully independent — this is an endorsement, not a merger.</p>
+      <p class="hidden zh" lang-zh>加入只需要在下次PAC会议上通过一个标准动议。我们已经写好了简报、动议措辞和简短的FAQ，您不用从零准备材料。PAC保持完全独立——这是背书，不是合并。</p>
+      <div class="coalition-cta-buttons">
+        <button class="btn-outline" onclick="showPacKit()" lang-en>Open PAC Endorsement Kit →</button>
+        <button class="btn-outline hidden zh" lang-zh onclick="showPacKit()">打开PAC背书工具包 →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER / ABOUT -->
+<section class="founder" id="about">
+  <div class="wrap">
+    <div class="founder-card">
+      <div class="founder-avatar">BZ</div>
+      <div class="founder-body">
+        <div class="label" lang-en>Who is behind this</div>
+        <div class="label hidden zh" lang-zh>谁在做这件事</div>
+        <h3>Ben Zhou</h3>
+        <p lang-en>Burnaby parent with two daughters; founder of Expeta Technologies, a Burnaby-based research company. I've published academic work on AI alignment and on the boundary conditions of cognitive systems — the same analytical habits that applied to the BC Budget 2026 documents and the arbitration ruling.</p>
+        <p class="hidden zh" lang-zh>Burnaby家长，有两个女儿；Expeta Technologies（设在Burnaby的研究公司）创始人。在AI alignment和认知系统边界条件方面发表过学术工作——就是用同样的分析习惯读完了BC Budget 2026的预算文件和仲裁裁决。</p>
+        <p lang-en>This site started because I read the arbitration ruling carefully and realized the Province's own Contingencies Vote already covers this exact case. The public record shouldn't have to be a form letter. It should be precise. That's what this campaign is trying to be.</p>
+        <p class="hidden zh" lang-zh>做这个网站的起因：我认真读完仲裁裁决后发现——省府自己的应急基金本就覆盖这种情况。公开的诉求不应该只是一封模板信。它应该是精确的。这就是这次活动试图做到的。</p>
+        <p style="font-size: 13px; color: var(--muted); margin-top: 10px;" lang-en>Contact: <a href="mailto:ben@fundburnabykids.ca">ben@fundburnabykids.ca</a></p>
+        <p class="hidden zh" lang-zh style="font-size: 13px; color: var(--muted); margin-top: 10px;">联系: <a href="mailto:ben@fundburnabykids.ca">ben@fundburnabykids.ca</a></p>
+      </div>
+    </div>
+
+    <!-- About Burnaby Kids First umbrella -->
+    <div class="founder-card" style="margin-top: 24px; grid-template-columns: 1fr;">
+      <div class="founder-body">
+        <div class="label" lang-en>About the coalition</div>
+        <div class="label hidden zh" lang-zh>关于联盟</div>
+        <h3 style="font-size: 18px;" lang-en>Burnaby Kids First</h3>
+        <h3 class="hidden zh" lang-zh style="font-size: 18px;">Burnaby Kids First 联盟</h3>
+        <p lang-en>Burnaby Kids First is the parent-led coalition behind this campaign. It exists to give Burnaby parents a durable, non-partisan voice on issues affecting local children — from school budgets today to whatever comes next: class sizes, seismic upgrades, mental health support, playground and transportation safety, after-school access.</p>
+        <p class="hidden zh" lang-zh>Burnaby Kids First 是这次行动背后的家长联盟。它存在的意义是让Burnaby家长在影响本地孩子的议题上有一个持久、无党派的声音——从今天的学校预算，到未来可能的任何议题：班级规模、抗震改造、心理健康支持、游乐场和交通安全、课后服务。</p>
+        <p lang-en>Campaigns come and go. The coalition persists. If you've signed this petition, you're already part of it.</p>
+        <p class="hidden zh" lang-zh>运动会来会走。联盟会持续存在。如果您已经签署了这份请愿，您已经是其中一员。</p>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="wrap">
+    <div class="facts-header" lang-en>Common questions</div>
+    <div class="facts-header hidden zh" lang-zh>常见问题</div>
+    <h2 class="section-title" lang-en>What you probably want to ask.</h2>
+    <h2 class="section-title hidden zh" lang-zh>您可能想问的问题。</h2>
+
+    <details class="q" id="q-privacy">
+      <summary lang-en>Is my personal information safe?</summary>
+      <summary class="hidden zh" lang-zh>我的个人信息安全吗？</summary>
+      <div class="answer" lang-en>
+        <p>We take the minimum information needed and show even less publicly. Collected: first name, last name (or initial), email, school, grade, postal code, plus your three consent choices. Publicly displayed: first name + last initial + school + neighbourhood (derived from first 3 digits of postal code, never the full code). Your email and full postal code are never shown.</p>
+        <p>Collection and use are governed by BC's <em>Personal Information Protection Act</em> (PIPA). You can request full deletion at any time by replying to any email from us. We retain consent records for three years per CRTC guidance, then delete them.</p>
+        <p>We never sell, trade, or share your data with any third party. Hosting is in Canada.</p>
+      </div>
+      <div class="answer hidden zh" lang-zh>
+        <p>我们只收集必要的最少信息，公开显示的更少。收集内容：名字、姓氏（或首字母）、邮箱、学校、年级、邮编、以及您的三个同意选项。公开显示内容：名字+姓氏首字母+学校+社区（由邮编前3位推导，绝不显示完整邮编）。您的邮箱和完整邮编从不显示。</p>
+        <p>信息收集与使用受BC省《个人信息保护法》(PIPA)保护。您可随时回复任何邮件要求完全删除。根据CRTC指引，同意记录保留3年后删除。</p>
+        <p>我们从不出售、交易或与第三方共享您的数据。所有数据托管在加拿大。</p>
+      </div>
+    </details>
+
+    <details class="q">
+      <summary lang-en>Who runs this? Is it DPAC or the school district?</summary>
+      <summary class="hidden zh" lang-zh>这是谁在运营？DPAC还是学区？</summary>
+      <div class="answer" lang-en>
+        <p>This site was founded and is operated by <strong>Ben Zhou</strong>, a Burnaby parent with two daughters and founder of Expeta Technologies (a Burnaby-based research company). Ben takes full public responsibility for this campaign, including strategy, content, and operations. See the <a href="#about">About section</a> for more.</p>
+        <p><strong>Fund Burnaby Kids</strong> is the current campaign of <strong>Burnaby Kids First</strong> — a parent-led coalition built to give Burnaby parents a durable voice on issues affecting local children. Fund Burnaby Kids is urgent and specific ($9.4M, by May 27). Burnaby Kids First is the longer-term coalition that will exist after this campaign ends.</p>
+        <p>Burnaby DPAC and the school board have publicly advocated for the same position — the Province must fully fund the $9.4M. This campaign is independent but aligned with their stance. We move faster than DPAC's monthly cycle allows; DPAC endorsements and school PAC coalition members are listed on the page as they join.</p>
+        <p>No public funds are used. No political party is endorsed. No candidate is named.</p>
+      </div>
+      <div class="answer hidden zh" lang-zh>
+        <p>本网站由 <strong>Ben Zhou（周子颜）</strong> 创立并运营。他是一位Burnaby家长，有两个女儿，同时是Expeta Technologies（设在Burnaby的研究公司）的创始人。Ben对此活动承担完全的公开责任，包括策略、内容和运营。详见 <a href="#about">About部分</a>。</p>
+        <p><strong>Fund Burnaby Kids</strong> 是 <strong>Burnaby Kids First</strong> 联盟目前的运动——后者是一个家长主导的联盟，旨在为Burnaby家长在影响本地孩子的议题上提供持久的声音。Fund Burnaby Kids 是紧迫而具体的（$9.4M，5月27日之前）。Burnaby Kids First 是在本次运动结束后仍会存续的长期联盟。</p>
+        <p>Burnaby DPAC和学区董事会已公开支持相同立场——省府必须全额资助$9.4M。本活动独立运营但与他们立场一致。我们比DPAC的月度周期更快行动；DPAC背书和加入的学校PAC联盟成员加入时会显示在页面上。</p>
+        <p>未使用任何公共资金。不支持任何政党。不提及任何候选人。</p>
+      </div>
+    </details>
+
+    <details class="q">
+      <summary lang-en>What does it mean when a PAC joins the coalition?</summary>
+      <summary class="hidden zh" lang-zh>PAC加入联盟意味着什么？</summary>
+      <div class="answer" lang-en>
+        <p>A PAC joining means the PAC has passed a motion at one of its meetings endorsing this campaign's ask (fund the $9.4M from the Contingencies Vote). The PAC's name and school appear publicly on this page. The PAC does not give up any independence, contribute any money, endorse any political party, or take on any legal liability. It is a public endorsement of a specific ask — nothing more.</p>
+        <p>If you are a PAC chair and want to propose this at your next meeting, see the <a href="#coalition">PAC Endorsement Kit</a> — we've written the motion wording, the briefing, and an FAQ so you don't have to start from scratch.</p>
+      </div>
+      <div class="answer hidden zh" lang-zh>
+        <p>PAC加入意味着该PAC在一次会议上通过了支持此活动诉求的动议（从应急基金中资助$9.4M）。PAC的名称和学校会公开显示在此页面。PAC不放弃任何独立性、不出钱、不支持任何政党、不承担任何法律责任。这只是对一个具体诉求的公开背书——仅此而已。</p>
+        <p>如果您是PAC主席，想在下次会议上提议此事，请查看<a href="#coalition">PAC背书工具包</a>——我们已写好动议措辞、简报和FAQ，您不用从零开始。</p>
+      </div>
+    </details>
+
+    <details class="q">
+      <summary lang-en>Will sending an email really change anything?</summary>
+      <summary class="hidden zh" lang-zh>发一封邮件真的能改变什么吗？</summary>
+      <div class="answer" lang-en>
+        <p>Ministerial Correspondence Units sort incoming mail by postal code. When Burnaby MLAs receive dozens of identical-subject emails in the same week from their own constituents, that becomes a political signal that reaches caucus. The Province has already confirmed they are "actively engaged" on this file — that means the decision is open.</p>
+        <p>The petition serves a different purpose: it creates a named collective object that can be printed, counted, and physically delivered. Emails are volume; petitions are weight. We need both.</p>
+      </div>
+      <div class="answer hidden zh" lang-zh>
+        <p>省府厅长通信单位按邮编分类处理邮件。当Burnaby的MLA在同一周内收到数十封来自本选区居民的相同主题邮件，这就成为一个会传达到党团的政治信号。省府已确认他们正在"积极处理"此事——这意味着决定尚未做出，仍在讨论中。</p>
+        <p>请愿有不同作用：它形成一个可打印、可计数、可亲手递交的有名有姓的集体文件。邮件是数量，请愿是重量。两者都需要。</p>
+      </div>
+    </details>
+
+    <details class="q">
+      <summary lang-en>Can I sign without sending an email?</summary>
+      <summary class="hidden zh" lang-zh>我能只签名不发邮件吗？</summary>
+      <div class="answer" lang-en><p>Yes. Uncheck the third box in the consent section before submitting. Your name will still appear on the petition. We recommend doing both — they reach different parts of government — but signing alone is fully valid.</p></div>
+      <div class="answer hidden zh" lang-zh><p>可以。提交前取消勾选同意区的第三个选项。您的名字仍会出现在请愿中。我们建议两者都做——它们触达政府的不同部分——但只签名也完全有效。</p></div>
+    </details>
+
+    <details class="q">
+      <summary lang-en>What about CASL — do your emails comply?</summary>
+      <summary class="hidden zh" lang-zh>CASL呢——你们的邮件合规吗？</summary>
+      <div class="answer" lang-en>
+        <p>CASL covers "commercial electronic messages." Political advocacy emails fall outside that definition (see Industry Canada guidance and leading non-profit legal analysis). Even so, we follow CASL best practice: we obtain express opt-in consent for updates, every email has a one-click unsubscribe, every email identifies us with a physical address, and we honour unsubscribes within 10 days — well under the statutory requirement.</p>
+      </div>
+      <div class="answer hidden zh" lang-zh>
+        <p>CASL仅监管"商业电子信息"。政治倡导类邮件不属于该定义（见加拿大产业部指引及主要非营利组织的法律分析）。即便如此，我们仍遵循CASL最佳实践：明确获取订阅同意、每封邮件含一键退订、每封邮件包含实体地址、退订请求在10天内处理——远低于法定要求。</p>
+      </div>
+    </details>
+
+    <details class="q">
+      <summary lang-en>Who sees my email after I sign?</summary>
+      <summary class="hidden zh" lang-zh>我签名后谁会看到我的邮件？</summary>
+      <div class="answer" lang-en>
+        <p>When you click "Open my pre-filled email," your email client (Apple Mail, Gmail, Outlook) opens with the recipients, subject, and body already filled in. You review and click send — from your own account. We never see the email leave your machine, and we never receive a copy. The Ministry and MLAs see the letter came from your personal address, which is what makes it a constituent letter.</p>
+      </div>
+      <div class="answer hidden zh" lang-zh>
+        <p>点击"打开我的预填邮件"时，您的邮件客户端（Apple Mail、Gmail、Outlook）会打开，收件人、主题和正文都已预填好。您审阅后点击发送——从您自己的账户。我们看不到邮件离开您的设备，也不会收到副本。省府和MLA看到的是来自您个人地址的邮件，这正是它成为"选民邮件"的关键。</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap-wide">
+    <div class="cols">
+      <div>
+        <h4>Fund Burnaby Kids</h4>
+        <p><strong>Fund Burnaby Kids</strong> is a campaign of <strong>Burnaby Kids First</strong> — a parent-led coalition founded by Ben Zhou to advocate for Burnaby children across schools, safety, and policy issues. Our current campaign is asking the Province of British Columbia to fully fund the $9.4M arbitration liability affecting Burnaby School District 41.</p>
+        <p style="margin-top: 8px;">Mailing address:<br>{{MAILING_ADDRESS — to be set}}<br>Burnaby, BC</p>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <p>Ben Zhou, founder:<br><a href="mailto:ben@fundburnabykids.ca">ben@fundburnabykids.ca</a></p>
+        <p style="margin-top: 8px;">General inquiries:<br><a href="mailto:hello@fundburnabykids.ca">hello@fundburnabykids.ca</a></p>
+        <p style="margin-top: 8px;">Privacy / data deletion:<br><a href="mailto:privacy@fundburnabykids.ca">privacy@fundburnabykids.ca</a></p>
+      </div>
+      <div>
+        <h4>Sources</h4>
+        <p><a href="https://burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/" target="_blank" rel="noopener">SD41 official statement</a></p>
+        <p><a href="https://www.bcbudget.gov.bc.ca/2026/" target="_blank" rel="noopener">BC Budget 2026</a></p>
+        <p><a href="https://www.cbc.ca/news/canada/british-columbia/burnaby-school-district-millions-shortfall-9.7169146" target="_blank" rel="noopener">CBC coverage</a></p>
+        <p style="margin-top: 8px;"><a href="#about">About Ben Zhou →</a></p>
+      </div>
+    </div>
+    <div class="fine">
+      © 2026 Burnaby Kids First. Fund Burnaby Kids is a campaign of Burnaby Kids First, founded and operated by Ben Zhou, a Burnaby parent. Not a registered political entity. No partisan endorsements. All claims are sourced from primary government and mainstream media reporting — see "Sources" above. Data collection governed by BC <em>Personal Information Protection Act</em>; email practices follow CASL best practice.
+    </div>
+  </div>
+</footer>
+
+<!-- Confirmation modal -->
+<div class="modal-backdrop" id="email-modal">
+  <div class="modal">
+    <h3 lang-en>One more step — send the email</h3>
+    <h3 class="hidden zh" lang-zh>再一步——发送邮件</h3>
+    <p lang-en>We've pre-filled your letter below. When you click send, your email client will open. Review the letter, add a personal detail if you'd like, and send from your own account.</p>
+    <p class="hidden zh" lang-zh>我们已为您预填好信件。点击发送后，您的邮件客户端会打开。审阅并可添加个人细节，然后从您自己的账户发送。</p>
+    <div class="preview" id="email-preview"></div>
+    <div class="modal-actions">
+      <button class="confirm" id="modal-send" lang-en>Open my email client →</button>
+      <button class="confirm hidden zh" lang-zh id="modal-send-zh">打开邮件客户端 →</button>
+      <button onclick="closeModal()" lang-en>Not now</button>
+      <button class="hidden zh" lang-zh onclick="closeModal()">暂不</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAC Endorsement Kit modal -->
+<div class="modal-backdrop pac-modal" id="pac-modal">
+  <div class="modal">
+    <div class="pac-modal-header">
+      <h3 lang-en>PAC Endorsement Kit</h3>
+      <h3 class="hidden zh" lang-zh>PAC背书工具包</h3>
+      <p class="sub" lang-en>Everything your PAC needs to vote on joining the coalition — takes one agenda item.</p>
+      <p class="sub hidden zh" lang-zh>您的PAC投票加入联盟所需的所有材料——占用一个议程项目。</p>
+    </div>
+
+    <div class="pac-modal-body">
+
+      <h4 lang-en>What endorsing means</h4>
+      <h4 class="hidden zh" lang-zh>背书的含义</h4>
+
+      <div class="do-dont">
+        <div class="do">
+          <strong lang-en>Your PAC does:</strong>
+          <strong class="hidden zh" lang-zh>您的PAC会做：</strong>
+          <ul style="padding-left: 18px; margin: 0;">
+            <li lang-en>Appear publicly on fundburnabykids.ca</li>
+            <li class="hidden zh" lang-zh>公开显示在fundburnabykids.ca上</li>
+            <li lang-en>Share the campaign with your school families (via your existing channels)</li>
+            <li class="hidden zh" lang-zh>通过您现有渠道向学校家庭分享活动</li>
+            <li lang-en>Be counted in aggregate when we deliver to the Minister</li>
+            <li class="hidden zh" lang-zh>当我们向厅长递交时被计入总数</li>
+          </ul>
+        </div>
+        <div class="dont">
+          <strong lang-en>Your PAC does NOT:</strong>
+          <strong class="hidden zh" lang-zh>您的PAC不会：</strong>
+          <ul style="padding-left: 18px; margin: 0;">
+            <li lang-en>Give up any independence or decision-making authority</li>
+            <li class="hidden zh" lang-zh>放弃任何独立性或决策权</li>
+            <li lang-en>Contribute money or resources</li>
+            <li class="hidden zh" lang-zh>出钱或贡献资源</li>
+            <li lang-en>Endorse any political party or candidate</li>
+            <li class="hidden zh" lang-zh>支持任何政党或候选人</li>
+            <li lang-en>Take on any legal liability</li>
+            <li class="hidden zh" lang-zh>承担任何法律责任</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4 lang-en>Standard motion to propose at your PAC meeting</h4>
+      <h4 class="hidden zh" lang-zh>在PAC会议上提议的标准动议</h4>
+
+      <div class="motion-block">
+        <strong lang-en>Motion text (English)</strong>
+        <strong class="hidden zh" lang-zh>动议措辞（英文）</strong>
+        <span lang-en>"That the [School Name] PAC endorse the Fund Burnaby Kids parent coalition calling on the Province of British Columbia to fully fund the $9.4 million arbitration liability affecting Burnaby School District 41 from the Budget 2026 Contingencies Vote, and that the PAC chair be authorized to submit this endorsement on behalf of the PAC."</span>
+        <span lang-zh class="zh hidden">"[学校名称] PAC 在此背书 Fund Burnaby Kids 家长联盟，呼吁BC省政府从2026预算应急基金中全额资助影响Burnaby 41学区的$9.4M仲裁责任，并授权PAC主席代表PAC提交此背书。"</span>
+      </div>
+
+      <h4 lang-en>The two-minute briefing (to read at your PAC meeting)</h4>
+      <h4 class="hidden zh" lang-zh>两分钟简报（在PAC会议上朗读）</h4>
+      <ul>
+        <li lang-en>SD41 faces a $9.4 million unfunded liability from a 2022 salary arbitration.</li>
+        <li class="hidden zh" lang-zh>SD41面临$9.4M的无资金缺口，来自2022年薪资仲裁。</li>
+        <li lang-en>BCPSEA — the Province's own bargaining agent — has acknowledged the cost would have been funded in 2022 if they had interpreted the agreement correctly.</li>
+        <li class="hidden zh" lang-zh>BCPSEA——省府自己的谈判代表——已承认如果他们2022年正确解读协议，这笔钱本就会被资助。</li>
+        <li lang-en>Last year, SD41 already cut $4.2M. This year's pressure is more than double.</li>
+        <li class="hidden zh" lang-zh>去年SD41已削减$4.2M。今年的压力是其两倍多。</li>
+        <li lang-en>Budget 2026's $5 billion Contingencies Vote is explicitly described as covering "collective bargaining mandate costs" — exactly this.</li>
+        <li class="hidden zh" lang-zh>2026预算的$5B应急基金明确说明涵盖"集体谈判授权成本"——正是此类情况。</li>
+        <li lang-en>The SD41 budget will be adopted on May 27. We have a narrow window.</li>
+        <li class="hidden zh" lang-zh>SD41预算将于5月27日通过。窗口期很短。</li>
+      </ul>
+
+      <h4 lang-en>Answers to questions your PAC members might ask</h4>
+      <h4 class="hidden zh" lang-zh>PAC成员可能提出的问题的回答</h4>
+      <ul>
+        <li lang-en><strong>"Is this partisan?"</strong> — No. The campaign does not name any political party or candidate. The ask (apply the Contingencies Vote) is a technical budget request that any government of any party could do.</li>
+        <li class="hidden zh" lang-zh><strong>"这是党派行为吗？"</strong> — 不是。活动不提任何政党或候选人。诉求（应用应急基金）是一个技术性预算请求，任何党派的政府都可以做。</li>
+        <li lang-en><strong>"Is DPAC behind this?"</strong> — DPAC has publicly advocated for the same position. This coalition is parent-led and aligned with DPAC's stance, but organizationally independent so it can move faster than DPAC's monthly cycle allows.</li>
+        <li class="hidden zh" lang-zh><strong>"DPAC在后面吗？"</strong> — DPAC已公开支持同一立场。此联盟由家长主导，与DPAC立场一致，但组织上独立，能比DPAC的月度周期更快行动。</li>
+        <li lang-en><strong>"What if we endorse and the Province funds it — was it worth it?"</strong> — Yes. If funding happens, the coalition and the signatures were evidence that moved the needle. If funding doesn't happen, the list becomes the foundation for next year's harder campaign.</li>
+        <li class="hidden zh" lang-zh><strong>"如果我们背书后省府拨款了——值得吗？"</strong> — 值得。如果资金到位，联盟和签名就是推动了改变的证据。如果资金未到位，这份名单将成为来年更艰难活动的基础。</li>
+      </ul>
+
+      <h4 lang-en>After your PAC votes</h4>
+      <h4 class="hidden zh" lang-zh>您的PAC投票后</h4>
+      <ul>
+        <li lang-en>Fill in the form below. We verify the endorsement with the PAC chair's email, then add your school to the public list within 24 hours.</li>
+        <li class="hidden zh" lang-zh>填写下方表单。我们会通过PAC主席邮箱确认背书，然后24小时内将您的学校加入公开名单。</li>
+        <li lang-en>You'll receive a short "coalition update" email every two weeks with what has happened and what to share next.</li>
+        <li class="hidden zh" lang-zh>您会每两周收到一封简短的"联盟更新"邮件，告知进展和下一步分享内容。</li>
+      </ul>
+    </div>
+
+    <div class="pac-form">
+      <h4 lang-en>Submit your PAC endorsement</h4>
+      <h4 class="hidden zh" lang-zh>提交您的PAC背书</h4>
+      <p class="form-hint" lang-en>We only accept submissions from verified PAC chairs. We'll email to confirm before publishing.</p>
+      <p class="hidden zh" lang-zh class="form-hint">我们只接受经验证的PAC主席提交。发布前会邮件确认。</p>
+
+      <form id="pac-endorsement-form" name="pac-endorsement" method="POST" data-netlify="true" netlify-honeypot="pac-bot" onsubmit="return submitPacEndorsement(event)">
+        <input type="hidden" name="form-name" value="pac-endorsement">
+        <p class="hidden" aria-hidden="true"><label>Leave empty: <input name="pac-bot"/></label></p>
+
+        <div class="row">
+          <div>
+            <label style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;" lang-en>School name *</label>
+            <label class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;">学校名称 *</label>
+            <input type="text" name="pac-school" required maxlength="80">
+          </div>
+          <div>
+            <label style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;" lang-en>Approximate student count *</label>
+            <label class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;">学生人数（约） *</label>
+            <input type="number" name="pac-students" required min="1" max="3000">
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;" lang-en>PAC chair name *</label>
+            <label class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;">PAC主席姓名 *</label>
+            <input type="text" name="pac-chair-name" required maxlength="60">
+          </div>
+          <div>
+            <label style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;" lang-en>PAC chair email *</label>
+            <label class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;">PAC主席邮箱 *</label>
+            <input type="email" name="pac-chair-email" required>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 10px;">
+          <label style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;" lang-en>Date the PAC approved this endorsement</label>
+          <label class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 13px; font-weight: 500; display: block; margin-bottom: 6px;">PAC通过此背书的日期</label>
+          <input type="date" name="pac-approval-date">
+          <p style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 12px; color: var(--muted); margin-top: 4px;" lang-en>Optional — can be left blank if approval is coming at an upcoming meeting.</p>
+          <p class="hidden zh" lang-zh style="font-family: 'Söhne', 'Inter', sans-serif; font-size: 12px; color: var(--muted); margin-top: 4px;">可选——如果是在即将召开的会议上通过，可留空。</p>
+        </div>
+
+        <div class="consent" style="margin-top: 14px;">
+          <label>
+            <input type="checkbox" name="pac-consent" required>
+            <span style="font-size: 13px;" lang-en>I confirm I am the PAC chair (or an authorized PAC executive) and that this endorsement reflects the PAC's decision or intended motion. I understand my PAC's name, school, and aggregate student count will be displayed publicly. My email will not be displayed.</span>
+            <span class="hidden zh" lang-zh style="font-size: 13px;">我确认我是PAC主席（或经授权的PAC执行成员），此背书反映PAC的决定或即将提出的动议。我理解PAC名称、学校和学生总数将公开显示。我的邮箱不会被显示。</span>
+          </label>
+          <label style="margin-top: 10px;">
+            <input type="checkbox" name="pac-future-interest">
+            <span style="font-size: 13px;" lang-en>Optional. Our PAC is open to being informed about future Burnaby Kids First campaigns on other issues (class sizes, safety, policy) as they arise. Each future campaign would require separate endorsement — this is not a pre-commitment.</span>
+            <span class="hidden zh" lang-zh style="font-size: 13px;">可选。当未来Burnaby Kids First涉及其他议题（班级规模、安全、政策）时，欢迎告知我们PAC。每个未来活动都需要单独背书——这不是预先承诺。</span>
+          </label>
+        </div>
+
+        <button type="submit" class="submit-pac" lang-en>Submit endorsement for verification →</button>
+        <button type="submit" class="submit-pac hidden zh" lang-zh>提交背书以供核实 →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ==========================================================================
+  // State + storage
+  // ==========================================================================
+  const STORAGE_SIGNATURES = 'fbk_signatures';
+  const STORAGE_COUNT = 'fbk_count';
+  const MLA_EMAILS = [
+    'anne.kang.MLA@leg.bc.ca',
+    'rohini.arora.MLA@leg.bc.ca',
+    'janet.routledge.MLA@leg.bc.ca',
+    'paul.choi.MLA@leg.bc.ca',
+    'raj.chouhan.MLA@leg.bc.ca',
+    'FIN.Minister@gov.bc.ca'
+  ].join(',');
+  const TO_EMAIL = 'ECC.Minister@gov.bc.ca';
+
+  // Postal code prefix → neighbourhood approximation (high-level)
+  const POSTAL_NEIGHBOURHOODS = {
+    'V3J': 'North Burnaby',
+    'V3N': 'Edmonds',
+    'V5A': 'Burnaby Mountain',
+    'V5B': 'Brentwood',
+    'V5C': 'Willingdon Heights',
+    'V5E': 'Big Bend',
+    'V5G': 'Central Burnaby',
+    'V5H': 'Metrotown',
+    'V5J': 'South Burnaby',
+    'V3N': 'Edmonds'
+  };
+
+  // Simple storage shim — uses window.storage if available, else localStorage
+  const store = {
+    async get(key) {
+      if (window.storage && window.storage.get) {
+        try { const r = await window.storage.get(key, true); return r ? r.value : null; }
+        catch { return null; }
+      }
+      return localStorage.getItem(key);
+    },
+    async set(key, value) {
+      if (window.storage && window.storage.set) {
+        try { await window.storage.set(key, value, true); return; } catch {}
+      }
+      localStorage.setItem(key, value);
+    }
+  };
+
+  // ==========================================================================
+  // Language toggle
+  // ==========================================================================
+  function setLang(lang) {
+    document.querySelectorAll('[lang-en]').forEach(el => {
+      el.classList.toggle('hidden', lang !== 'en');
+    });
+    document.querySelectorAll('[lang-zh]').forEach(el => {
+      el.classList.toggle('hidden', lang !== 'zh');
+    });
+    document.querySelectorAll('.lang-toggle button').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.lang-toggle button[onclick*="'${lang}'"]`).classList.add('active');
+    document.documentElement.lang = lang;
+    if (lang === 'zh') document.body.style.fontFamily = "'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif";
+    else document.body.style.fontFamily = "";
+    // Rebuild journey viz in new language
+    if (typeof buildServiceRows === 'function') {
+      buildServiceRows();
+      if (currentGrade !== null) renderImpactSummary(currentGrade);
+    }
+    // Re-render active persona panel in new language
+    if (typeof activePersona !== 'undefined' && activePersona !== null) {
+      const current = activePersona;
+      activePersona = null; // reset so selectPersona doesn't toggle off
+      selectPersona(current);
+    }
+  }
+
+  // ==========================================================================
+  // Counter + signatures
+  // ==========================================================================
+  async function loadSignatures() {
+    const raw = await store.get(STORAGE_SIGNATURES);
+    return raw ? (typeof raw === 'string' ? JSON.parse(raw) : raw) : [];
+  }
+
+  async function renderCounter() {
+    const sigs = await loadSignatures();
+    const count = sigs.length;
+    document.getElementById('counter-display').textContent = count.toLocaleString();
+    document.getElementById('sig-count-top').textContent = count.toLocaleString();
+    const topZh = document.getElementById('sig-count-top-zh');
+    if (topZh) topZh.textContent = count.toLocaleString();
+  }
+
+  async function renderSignatures() {
+    const sigs = await loadSignatures();
+    const flow = document.getElementById('sig-flow');
+    if (sigs.length === 0) return; // keep placeholder
+
+    const recent = sigs.slice(-60).reverse();
+    flow.innerHTML = recent.map(s => {
+      const display = `${escapeHtml(s.firstName)} ${escapeHtml(s.lastInitial)}. · ${escapeHtml(s.school)}${s.neighbourhood ? ' · ' + escapeHtml(s.neighbourhood) : ''}`;
+      return `<div class="sig-pill">${display}</div>`;
+    }).join('');
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c]);
+  }
+
+  // ==========================================================================
+  // Email letter construction
+  // ==========================================================================
+  function buildEmail(firstName, lastName, school, grade, postalCode) {
+    const subject = `Please fund Burnaby's $9.4M arbitration from Budget 2026 Contingencies`;
+    const body = [
+      `Dear Minister Beare,`,
+      ``,
+      `I am writing as a parent of a student at ${school} in Burnaby School District 41. My child is in Grade ${grade}, and I live at postal code ${postalCode.toUpperCase()}.`,
+      ``,
+      `I am asking the Province to fully fund the $9.4 million arbitration liability facing SD41 by drawing on the $5 billion Contingencies Vote in Budget 2026. The budget documents explicitly describe that allocation as covering "current collective bargaining mandate costs" — which is precisely what this liability is.`,
+      ``,
+      `Three reasons this matters:`,
+      ``,
+      `1. The cost is not SD41's fault. BCPSEA has publicly acknowledged that the cost would have been fully funded in 2022 had they correctly interpreted the salary grid. SD41 was not a party to that negotiation.`,
+      ``,
+      `2. The district has no cushion left. Last year, SD41 cut $4.2 million from the operating budget, including counsellors, custodians, the Grade 7 band program affecting 1,200 students, and advanced learning programs. Unrestricted reserves sit at roughly $4.3 million — less than half the arbitration liability.`,
+      ``,
+      `3. This is a specific funding source, not a general ask. The $5 billion Contingencies Vote exists precisely for costs like this — unforeseen, arising from collective bargaining, uncertain at budget time. $9.4M represents 0.19% of that allocation.`,
+      ``,
+      `I would appreciate a written response on whether the Province will fund the $9.4M from the Contingencies Vote before SD41 adopts its budget on May 27, 2026.`,
+      ``,
+      `Sincerely,`,
+      `${firstName} ${lastName}`,
+      `Parent, ${school}`,
+      `Postal code: ${postalCode.toUpperCase()}`
+    ].join('\n');
+
+    return { subject, body };
+  }
+
+  function buildMailto(email) {
+    return `mailto:${TO_EMAIL}?cc=${encodeURIComponent(MLA_EMAILS)}&subject=${encodeURIComponent(email.subject)}&body=${encodeURIComponent(email.body)}`;
+  }
+
+  // ==========================================================================
+  // Form handling
+  // ==========================================================================
+  let currentSubmission = null;
+
+  async function handleSubmit() {
+    const firstName = document.getElementById('firstname').value.trim();
+    const lastName = document.getElementById('lastname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const school = document.getElementById('school').value;
+    const grade = document.getElementById('grade').value;
+    const postal = document.getElementById('postal').value.trim().toUpperCase();
+    const consentPublic = document.getElementById('consent-public').checked;
+    const wantUpdates = document.getElementById('consent-updates').checked;
+    const wantLetter = document.getElementById('consent-letter').checked;
+
+    const err = document.getElementById('err-msg');
+    err.classList.remove('show');
+    err.textContent = '';
+
+    // Validation
+    const probs = [];
+    if (!firstName) probs.push('first name');
+    if (!lastName) probs.push('last name');
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) probs.push('valid email');
+    if (!school) probs.push('school');
+    if (!grade) probs.push('grade');
+    if (!postal || !/^V[0-9][A-Z]\s?[0-9][A-Z][0-9]$/i.test(postal)) probs.push('valid Burnaby postal code');
+    if (!consentPublic) probs.push('consent to public display (required)');
+
+    if (probs.length) {
+      err.textContent = 'Please complete: ' + probs.join(', ') + '.';
+      err.classList.add('show');
+      return;
+    }
+
+    // Derive neighbourhood
+    const prefix = postal.substring(0, 3);
+    const neighbourhood = POSTAL_NEIGHBOURHOODS[prefix] || 'Burnaby';
+
+    // Build signature record
+    const sigs = await loadSignatures();
+    const record = {
+      firstName: firstName,
+      lastInitial: lastName.charAt(0).toUpperCase(),
+      fullLastName: lastName, // kept internally, not displayed
+      school: school,
+      grade: grade,
+      neighbourhood: neighbourhood,
+      postal: postal,
+      email: email,
+      wantUpdates: wantUpdates,
+      signedAt: new Date().toISOString()
+    };
+    sigs.push(record);
+    await store.set(STORAGE_SIGNATURES, JSON.stringify(sigs));
+
+    currentSubmission = {
+      record: record,
+      emailContent: buildEmail(firstName, lastName, school, grade, postal),
+      position: sigs.length
+    };
+
+    // Show success state
+    document.getElementById('form-pre-submit').classList.add('hidden');
+    document.getElementById('form-post-submit').classList.remove('hidden');
+    document.getElementById('signature-position').textContent = sigs.length;
+
+    // Set up mailto
+    const mailtoUrl = buildMailto(currentSubmission.emailContent);
+    document.getElementById('mailto-link').href = mailtoUrl;
+    const linkZh = document.getElementById('mailto-link-zh');
+    if (linkZh) linkZh.href = mailtoUrl;
+
+    // Re-render public displays
+    await renderCounter();
+    await renderSignatures();
+
+    showToast('✓ Signed. You are signatory #' + sigs.length);
+
+    // If they want the letter, open confirm modal
+    if (wantLetter) {
+      setTimeout(() => showEmailModal(), 300);
+    }
+
+    // Scroll to success
+    document.getElementById('form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showEmailModal() {
+    const preview = document.getElementById('email-preview');
+    preview.textContent = `To: ${TO_EMAIL}\nCC: 6 Burnaby representatives + Finance Minister\nSubject: ${currentSubmission.emailContent.subject}\n\n${currentSubmission.emailContent.body}`;
+    const mailtoUrl = buildMailto(currentSubmission.emailContent);
+    document.getElementById('modal-send').onclick = () => {
+      window.location.href = mailtoUrl;
+      markEmailSent();
+      closeModal();
+    };
+    const btnZh = document.getElementById('modal-send-zh');
+    if (btnZh) btnZh.onclick = document.getElementById('modal-send').onclick;
+    document.getElementById('email-modal').classList.add('active');
+  }
+
+  function closeModal() {
+    document.getElementById('email-modal').classList.remove('active');
+  }
+
+  function markEmailSent() {
+    showToast('✓ Email opened in your mail app. Review and send.');
+  }
+
+  function resetForm() {
+    document.getElementById('form-post-submit').classList.add('hidden');
+    document.getElementById('form-pre-submit').classList.remove('hidden');
+    document.getElementById('action-form').reset();
+    document.getElementById('consent-letter').checked = true;
+    document.getElementById('form-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visible');
+    setTimeout(() => t.classList.remove('visible'), 3200);
+  }
+
+  // ==========================================================================
+  // Close modal on backdrop click
+  // ==========================================================================
+  document.getElementById('email-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'email-modal') closeModal();
+  });
+
+  // ==========================================================================
+  // Journey visualization
+  // ==========================================================================
+  // Service data — 'have' = funded and available, 'lost' = cut in 2025-26,
+  // 'risk' = at risk in 2026-27 if $9.4M unfunded, 'gone' = likely fully eliminated
+  // Grade indices: 0=K, 1=G1, ... 12=G12
+  const SERVICES = [
+    {
+      id: 'ea',
+      name: { en: 'Classroom EA (support aide)', zh: '课堂助教 (EA)' },
+      tooltip: {
+        en: ['Full EA support', 'Thinning', 'Hours reduced', 'Major reduction'],
+        zh: ['全员EA支持', '逐步减少', '小时数削减', '大幅减少']
+      },
+      row: ['have','have','have','have','have','have','have','have','have','risk','risk','risk','risk'],
+      cuts2026: 'risk', // what intensifies
+      note: { en: 'EAs support students with IEPs, behavioural needs, and early literacy. Reductions disproportionately affect the students who need the most.',
+              zh: 'EA为IEP学生、行为需求和早期识字困难的学生提供支持。削减对最需要帮助的学生影响最大。' }
+    },
+    {
+      id: 'counsellor-elem',
+      name: { en: 'Elementary counsellor', zh: '小学辅导员' },
+      tooltip: {
+        en: ['Weekly access', 'Weekly access', 'Weekly access', 'Weekly access', 'Weekly access', 'Weekly access', 'Weekly access', 'Weekly access', '—', '—', '—', '—', '—'],
+        zh: ['每周可见', '每周可见', '每周可见', '每周可见', '每周可见', '每周可见', '每周可见', '每周可见', '—', '—', '—', '—', '—']
+      },
+      row: ['have','have','have','have','have','have','have','have',null,null,null,null,null],
+      note: { en: 'Elementary counsellors catch early mental health and learning concerns. Already stretched thin — reduction ratios vary by school.',
+              zh: '小学辅导员负责发现早期心理健康和学习问题。已经捉襟见肘——各校削减比例不同。' }
+    },
+    {
+      id: 'counsellor-hs',
+      name: { en: 'High school counsellor', zh: '高中辅导员' },
+      tooltip: {
+        en: ['—','—','—','—','—','—','—','—','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26'],
+        zh: ['—','—','—','—','—','—','—','—','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减']
+      },
+      row: [null,null,null,null,null,null,null,null,'lost','lost','lost','lost','lost'],
+      note: { en: 'High school counsellor positions were cut in the 2025-26 budget. Already impacts post-secondary planning, mental health referrals, and crisis response times.',
+              zh: '高中辅导员岗位在2025-26预算中已被削减。已影响升学规划、心理健康转介和危机响应。' }
+    },
+    {
+      id: 'band',
+      name: { en: 'Grade 7 band program', zh: '7年级乐队课' },
+      tooltip: {
+        en: ['—','—','—','—','—','—','—','Cut 25-26 (1,200 students)','—','—','—','—','—'],
+        zh: ['—','—','—','—','—','—','—','2025-26已砍 (1,200学生)','—','—','—','—','—']
+      },
+      row: [null,null,null,null,null,null,null,'lost',null,null,null,null,null],
+      note: { en: 'Grade 7 band served 1,200 students before being eliminated in 2025-26. Feeder programs into high school music are now disrupted.',
+              zh: '7年级乐队原本服务1,200名学生，在2025-26年被取消。高中音乐项目的生源通道被破坏。' }
+    },
+    {
+      id: 'mandarin',
+      name: { en: 'Mandarin language program', zh: '中文课程' },
+      tooltip: {
+        en: ['—','—','—','—','Cut 25-26','Cut 25-26','Cut 25-26','Cut 25-26','Reduced','Reduced','Reduced','Reduced','Reduced'],
+        zh: ['—','—','—','—','2025-26已砍','2025-26已砍','2025-26已砍','2025-26已砍','已削减','已削减','已削减','已削减','已削减']
+      },
+      row: [null,null,null,null,'lost','lost','lost','lost','risk','risk','risk','risk','risk'],
+      note: { en: 'Mandarin program reduced in 2025-26. Further cuts in 2026-27 likely given the scale of pressure.',
+              zh: '中文项目在2025-26年被削减。鉴于2026-27年的压力规模，可能进一步削减。' }
+    },
+    {
+      id: 'advanced',
+      name: { en: 'Advanced / enrichment learning', zh: 'Advanced Learning 拓展课程' },
+      tooltip: {
+        en: ['—','—','—','—','Cut 25-26','Cut 25-26','Cut 25-26','Cut 25-26','Reduced','Reduced','Reduced','Reduced','Reduced'],
+        zh: ['—','—','—','—','2025-26已砍','2025-26已砍','2025-26已砍','2025-26已砍','已削减','已削减','已削减','已削减','已削减']
+      },
+      row: [null,null,null,null,'lost','lost','lost','lost','risk','risk','risk','risk','risk'],
+      note: { en: 'Advanced Learning streams were cut for 2025-26. These programs are how strong students build a competitive post-secondary profile.',
+              zh: 'Advanced Learning 课程在2025-26年被取消。这些课程是学生打造有竞争力升学背景的关键。' }
+    },
+    {
+      id: 'library',
+      name: { en: 'Teacher-librarian time', zh: '图书管理员课时' },
+      tooltip: {
+        en: ['Stretched','Stretched','Stretched','Stretched','Stretched','Stretched','Stretched','Stretched','Stretched','Stretched','Stretched','Stretched','Stretched'],
+        zh: ['紧张','紧张','紧张','紧张','紧张','紧张','紧张','紧张','紧张','紧张','紧张','紧张','紧张']
+      },
+      row: ['risk','risk','risk','risk','risk','risk','risk','risk','risk','risk','risk','risk','risk'],
+      note: { en: 'Teacher-librarian positions are historically among the first to be reduced in budget pressure. Research literacy and inquiry skills suffer across all grades.',
+              zh: '图书管理员是预算压力下最早被削减的岗位之一。所有年级的研究能力和探究技能都会受影响。' }
+    },
+    {
+      id: 'electives',
+      name: { en: 'High school electives', zh: '高中选修课' },
+      tooltip: {
+        en: ['—','—','—','—','—','—','—','—','Narrowing','Narrowing','Narrowing','Narrowing','Narrowing'],
+        zh: ['—','—','—','—','—','—','—','—','减少中','减少中','减少中','减少中','减少中']
+      },
+      row: [null,null,null,null,null,null,null,null,'risk','risk','risk','risk','risk'],
+      note: { en: 'Electives like specialty sciences, arts streams, and language options get cut when course allocations drop. Directly affects university admissions.',
+              zh: '当课时分配减少，专业科学、艺术、语言选修课被砍。直接影响大学录取。' }
+    },
+    {
+      id: 'custodial',
+      name: { en: 'Daily cleaning & upkeep', zh: '日常清洁维护' },
+      tooltip: {
+        en: ['Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26','Reduced 25-26'],
+        zh: ['2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减','2025-26已削减']
+      },
+      row: ['lost','lost','lost','lost','lost','lost','lost','lost','lost','lost','lost','lost','lost'],
+      note: { en: 'Custodial positions reduced in 2025-26. Schools are less clean; maintenance issues accumulate. Affects health and learning environment for everyone.',
+              zh: '清洁岗位在2025-26年减少。学校环境变差，维护问题累积。影响所有人的健康和学习环境。' }
+    },
+    {
+      id: 'class-size',
+      name: { en: 'Class size & composition', zh: '班级规模与组成' },
+      tooltip: {
+        en: ['Pressure','Pressure','Pressure','Pressure','Pressure','Pressure','Pressure','Pressure','Pressure','Pressure','Pressure','Pressure','Pressure'],
+        zh: ['持续压力','持续压力','持续压力','持续压力','持续压力','持续压力','持续压力','持续压力','持续压力','持续压力','持续压力','持续压力','持续压力']
+      },
+      row: ['risk','risk','risk','risk','risk','risk','risk','risk','risk','risk','risk','risk','risk'],
+      note: { en: 'Without the $9.4M funded, class sizes in Burnaby are projected to grow. Every student feels this — but students with IEPs or high needs feel it most.',
+              zh: '如果$9.4M不到位，Burnaby的班级规模预计扩大。每个学生都会感受到——但IEP学生和高需求学生感受最深。' }
+    }
+  ];
+
+  let currentGrade = null; // -1=pre-K, 0=K, 1-12
+
+  function buildServiceRows() {
+    const container = document.getElementById('service-rows');
+    const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+    let html = '';
+    for (const svc of SERVICES) {
+      html += `<div class="service-row" data-service="${svc.id}">`;
+      html += `<div class="service-name">${svc.name[lang]}</div>`;
+      for (let g = 0; g < 13; g++) {
+        const state = svc.row[g];
+        if (!state) {
+          html += `<div class="grade-cell" style="background: transparent;"></div>`;
+        } else {
+          const tt = svc.tooltip[lang][g] || '';
+          html += `<div class="grade-cell ${state}" data-grade-col="${g}" data-tooltip="${tt}"></div>`;
+        }
+      }
+      html += '</div>';
+    }
+    container.innerHTML = html;
+  }
+
+  function selectGrade(gradeIdx) {
+    currentGrade = gradeIdx;
+    document.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('selected'));
+    const btn = document.querySelector(`.grade-btn[data-grade="${gradeIdx}"]`);
+    if (btn) btn.classList.add('selected');
+
+    // Highlight column
+    document.querySelectorAll('.grade-cell-header').forEach(h => h.classList.remove('highlighted'));
+    document.querySelectorAll('.grade-cell').forEach(c => c.classList.remove('highlighted-col'));
+
+    // For pre-K (future student), highlight the whole K-12 as "what's coming"
+    if (gradeIdx >= 0 && gradeIdx <= 12) {
+      const header = document.querySelector(`.grade-cell-header[data-grade-col="${gradeIdx}"]`);
+      if (header) header.classList.add('highlighted');
+      document.querySelectorAll(`.grade-cell[data-grade-col="${gradeIdx}"]`).forEach(c => c.classList.add('highlighted-col'));
+    }
+
+    renderImpactSummary(gradeIdx);
+  }
+
+  function renderImpactSummary(gradeIdx) {
+    const box = document.getElementById('impact-summary');
+    const title = document.getElementById('impact-title');
+    const list = document.getElementById('impact-list');
+    const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+
+    // Compute: for this grade's remaining years in school, what services are lost/at risk?
+    // We look at grades from gradeIdx onwards.
+    const startIdx = Math.max(0, gradeIdx); // pre-K treated as 0 for remaining journey
+    const affected = {
+      lostNow: [],  // already cut
+      atRisk: [],   // at risk from 2026-27
+    };
+
+    for (const svc of SERVICES) {
+      let hasLost = false, hasRisk = false;
+      for (let g = startIdx; g < 13; g++) {
+        const s = svc.row[g];
+        if (s === 'lost') hasLost = true;
+        if (s === 'risk') hasRisk = true;
+      }
+      if (hasLost) affected.lostNow.push(svc);
+      if (hasRisk) affected.atRisk.push(svc);
+    }
+
+    // Build title
+    const gradeLabel = gradeIdx === -1
+      ? (lang === 'zh' ? '学前' : 'Pre-K')
+      : gradeIdx === 0
+        ? (lang === 'zh' ? '幼儿园' : 'Kindergarten')
+        : (lang === 'zh' ? gradeIdx + '年级' : 'Grade ' + gradeIdx);
+
+    const yearsLeft = 13 - Math.max(0, gradeIdx);
+    if (lang === 'zh') {
+      title.textContent = `${gradeLabel}学生：接下来${yearsLeft}年要走的路`;
+    } else {
+      title.textContent = `A student in ${gradeLabel}: ${yearsLeft} school years ahead`;
+    }
+
+    // Build list
+    const items = [];
+    if (affected.lostNow.length > 0) {
+      const heading = lang === 'zh' ? '<strong>已经失去的（2025-26削减）：</strong>' : '<strong>Already lost (2025-26 cuts):</strong>';
+      items.push(`<li>${heading}</li>`);
+      for (const svc of affected.lostNow) {
+        items.push(`<li style="padding-left: 40px;">${svc.name[lang]} — <span style="color: var(--ink-soft);">${svc.note[lang]}</span></li>`);
+      }
+    }
+    if (affected.atRisk.length > 0) {
+      const heading = lang === 'zh' ? '<strong>如$9.4M不funded，下一轮面临风险：</strong>' : '<strong>At risk if $9.4M not funded in 2026-27:</strong>';
+      items.push(`<li>${heading}</li>`);
+      for (const svc of affected.atRisk) {
+        items.push(`<li style="padding-left: 40px;">${svc.name[lang]} — <span style="color: var(--ink-soft);">${svc.note[lang]}</span></li>`);
+      }
+    }
+
+    if (items.length === 0) {
+      items.push(`<li>${lang === 'zh' ? '该年级未有直接影响的服务。' : 'No directly affected services at this grade point.'}</li>`);
+    }
+
+    list.innerHTML = items.join('');
+    box.classList.add('visible');
+  }
+
+  // ==========================================================================
+  // PERSONA SELECTOR
+  // ==========================================================================
+  let activePersona = null;
+
+  // SVG visualizations — separate EN and ZH versions to avoid bilingual mixing
+  const SVG_RESPONSIBILITY_EN = `<svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id="p_arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#1A1A1A"/></marker>
+      <marker id="p_arrowBack" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#C8531A"/></marker>
+    </defs>
+    <rect x="10" y="20" width="190" height="70" rx="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1.5"/>
+    <text x="105" y="39" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="10.5" font-weight="700" fill="#1A1A1A">THE PROVINCE</text>
+    <text x="105" y="55" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555">via BCPSEA — the Province's</text>
+    <text x="105" y="67" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555">own bargaining agent</text>
+    <text x="105" y="82" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" font-weight="600" fill="#C8531A">Misread salary grid, 2022</text>
+    <line x1="203" y1="55" x2="245" y2="55" stroke="#1A1A1A" stroke-width="2" marker-end="url(#p_arrow1)"/>
+    <rect x="250" y="20" width="190" height="70" rx="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1.5"/>
+    <text x="345" y="39" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="10.5" font-weight="700" fill="#1A1A1A">2022 ARBITRATION</text>
+    <text x="345" y="55" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555">Orders SD41 to pay</text>
+    <text x="345" y="67" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555">800+ teachers retroactive</text>
+    <text x="345" y="82" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" font-weight="600" fill="#1A1A1A">$9.4M by 2026-27</text>
+    <line x1="443" y1="55" x2="485" y2="55" stroke="#1A1A1A" stroke-width="2" marker-end="url(#p_arrow1)"/>
+    <rect x="490" y="20" width="200" height="70" rx="4" fill="#FFF3E0" stroke="#C8531A" stroke-width="2"/>
+    <text x="590" y="39" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="10.5" font-weight="700" fill="#1A1A1A">SD41 STUDENTS PAY</text>
+    <text x="590" y="55" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555">Cuts to counsellors, EAs,</text>
+    <text x="590" y="67" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555">programs — to cover the gap</text>
+    <text x="590" y="82" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" font-weight="600" fill="#C8531A">Borne by students</text>
+    <path d="M 490 120 Q 300 155 105 120" fill="none" stroke="#C8531A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#p_arrowBack)"/>
+    <rect x="175" y="108" width="350" height="42" rx="3" fill="#FFFFFF" stroke="#C8531A" stroke-width="1"/>
+    <text x="350" y="124" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" font-weight="600" fill="#C8531A">BCPSEA PUBLICLY ADMITS:</text>
+    <text x="350" y="138" text-anchor="middle" font-family="'Charter', Georgia, serif" font-size="9" font-style="italic" fill="#1A1A1A">"Would have been funded in 2022 if interpreted correctly."</text>
+  </svg>`;
+
+  const SVG_RESPONSIBILITY_ZH = `<svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <marker id="p_arrow1z" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#1A1A1A"/></marker>
+      <marker id="p_arrowBackz" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#C8531A"/></marker>
+    </defs>
+    <rect x="10" y="20" width="190" height="70" rx="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1.5"/>
+    <text x="105" y="39" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="11" font-weight="700" fill="#1A1A1A">省府</text>
+    <text x="105" y="57" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" fill="#555">通过BCPSEA</text>
+    <text x="105" y="71" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" fill="#555">（省府自己的谈判代表）</text>
+    <text x="105" y="86" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="600" fill="#C8531A">2022年薪资分级误读</text>
+    <line x1="203" y1="55" x2="245" y2="55" stroke="#1A1A1A" stroke-width="2" marker-end="url(#p_arrow1z)"/>
+    <rect x="250" y="20" width="190" height="70" rx="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1.5"/>
+    <text x="345" y="39" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="11" font-weight="700" fill="#1A1A1A">2022年仲裁</text>
+    <text x="345" y="57" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" fill="#555">裁定SD41补发</text>
+    <text x="345" y="71" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" fill="#555">800+教师追溯工资</text>
+    <text x="345" y="86" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="600" fill="#1A1A1A">到2026-27累计 $9.4M</text>
+    <line x1="443" y1="55" x2="485" y2="55" stroke="#1A1A1A" stroke-width="2" marker-end="url(#p_arrow1z)"/>
+    <rect x="490" y="20" width="200" height="70" rx="4" fill="#FFF3E0" stroke="#C8531A" stroke-width="2"/>
+    <text x="590" y="39" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="11" font-weight="700" fill="#1A1A1A">SD41学生承担</text>
+    <text x="590" y="57" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" fill="#555">削减辅导员、EA、</text>
+    <text x="590" y="71" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" fill="#555">课程——来填补缺口</text>
+    <text x="590" y="86" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="600" fill="#C8531A">从孩子身上扣</text>
+    <path d="M 490 120 Q 300 155 105 120" fill="none" stroke="#C8531A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#p_arrowBackz)"/>
+    <rect x="175" y="108" width="350" height="42" rx="3" fill="#FFFFFF" stroke="#C8531A" stroke-width="1"/>
+    <text x="350" y="124" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="10" font-weight="600" fill="#C8531A">BCPSEA 公开承认：</text>
+    <text x="350" y="140" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9.5" font-style="italic" fill="#1A1A1A">"如果2022年正确解读，这笔钱本应由省府拨款。"</text>
+  </svg>`;
+
+  const SVG_MONEY_EN = `<svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <rect x="10" y="20" width="680" height="100" rx="4" fill="#EEF1F8" stroke="#1C3F8F" stroke-width="2"/>
+    <text x="20" y="40" font-family="'Söhne', sans-serif" font-size="11" font-weight="700" fill="#1C3F8F">BC BUDGET 2026 — CONTINGENCIES VOTE</text>
+    <text x="20" y="55" font-family="'Söhne', sans-serif" font-size="10" font-weight="600" fill="#1A1A1A">$5,000,000,000 per year</text>
+    <text x="20" y="68" font-family="'Charter', Georgia, serif" font-size="9" font-style="italic" fill="#444">"for collective bargaining mandate costs" — Treasury Board's own description</text>
+    <rect x="15" y="95" width="3" height="18" fill="#C8531A"/>
+    <line x1="18" y1="104" x2="80" y2="135" stroke="#C8531A" stroke-width="1"/>
+    <text x="85" y="132" font-family="'Söhne', sans-serif" font-size="9" font-weight="700" fill="#C8531A">$9.4M · 0.19%</text>
+    <text x="85" y="143" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555">What Burnaby is asking for</text>
+    <text x="690" y="138" text-anchor="end" font-family="'Söhne', sans-serif" font-size="9" font-weight="600" fill="#1A1A1A">Not new money. Existing money for its stated purpose.</text>
+  </svg>`;
+
+  const SVG_MONEY_ZH = `<svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <rect x="10" y="20" width="680" height="100" rx="4" fill="#EEF1F8" stroke="#1C3F8F" stroke-width="2"/>
+    <text x="20" y="40" font-family="'Söhne', sans-serif" font-size="11.5" font-weight="700" fill="#1C3F8F">BC 2026预算 · 应急基金 (Contingencies Vote)</text>
+    <text x="20" y="56" font-family="'Söhne', sans-serif" font-size="10.5" font-weight="600" fill="#1A1A1A">每年 $5,000,000,000</text>
+    <text x="20" y="70" font-family="'Söhne', sans-serif" font-size="9.5" font-style="italic" fill="#444">用途：涵盖"集体谈判相关支出" —— 省财政部自己的描述</text>
+    <rect x="15" y="95" width="3" height="18" fill="#C8531A"/>
+    <line x1="18" y1="104" x2="80" y2="135" stroke="#C8531A" stroke-width="1"/>
+    <text x="85" y="132" font-family="'Söhne', sans-serif" font-size="10" font-weight="700" fill="#C8531A">$9.4M · 仅0.19%</text>
+    <text x="85" y="144" font-family="'Söhne', sans-serif" font-size="9" fill="#555">Burnaby所请求的金额</text>
+    <text x="690" y="138" text-anchor="end" font-family="'Söhne', sans-serif" font-size="10" font-weight="600" fill="#1A1A1A">不是新钱——是现有资金用于本来的用途。</text>
+  </svg>`;
+
+  const SVG_SCALE_EN = `<svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <text x="10" y="45" font-family="'Söhne', sans-serif" font-size="10" font-weight="700" fill="#1A1A1A">2025–26</text>
+    <text x="10" y="57" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666">shortfall</text>
+    <text x="10" y="110" font-family="'Söhne', sans-serif" font-size="10" font-weight="700" fill="#C8531A">2026–27</text>
+    <text x="10" y="122" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666">projected</text>
+    <rect x="75" y="30" width="178" height="30" fill="#E5E0D5" stroke="#888" stroke-width="1"/>
+    <text x="263" y="50" font-family="'Söhne', sans-serif" font-size="11" font-weight="700" fill="#1A1A1A">$4.2M</text>
+    <text x="75" y="80" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444"><tspan font-weight="600">What was cut:</tspan> high school counsellors · custodians · Grade 7 band (1,200 students)</text>
+    <text x="75" y="91" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">Mandarin program · Advanced Learning</text>
+    <rect x="75" y="100" width="400" height="30" fill="#C8531A" stroke="#8B3A12" stroke-width="1"/>
+    <text x="485" y="120" font-family="'Söhne', sans-serif" font-size="12" font-weight="700" fill="#C8531A">$9.4M · 2.2×</text>
+    <text x="570" y="50" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555" font-style="italic">Last year already cut</text>
+    <text x="570" y="61" font-family="'Söhne', sans-serif" font-size="8.5" fill="#555" font-style="italic">the obvious things.</text>
+    <text x="570" y="120" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">This year reaches</text>
+    <text x="570" y="131" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">EAs, class sizes,</text>
+    <text x="570" y="142" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">elementary support.</text>
+  </svg>`;
+
+  const SVG_SCALE_ZH = `<svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <text x="10" y="45" font-family="'Söhne', sans-serif" font-size="10" font-weight="700" fill="#1A1A1A">2025–26</text>
+    <text x="10" y="58" font-family="'Söhne', sans-serif" font-size="9" fill="#666">缺口</text>
+    <text x="10" y="110" font-family="'Söhne', sans-serif" font-size="10" font-weight="700" fill="#C8531A">2026–27</text>
+    <text x="10" y="123" font-family="'Söhne', sans-serif" font-size="9" fill="#666">预计</text>
+    <rect x="75" y="30" width="178" height="30" fill="#E5E0D5" stroke="#888" stroke-width="1"/>
+    <text x="263" y="50" font-family="'Söhne', sans-serif" font-size="11" font-weight="700" fill="#1A1A1A">$4.2M</text>
+    <text x="75" y="80" font-family="'Söhne', sans-serif" font-size="9" fill="#444"><tspan font-weight="600">已削减：</tspan>高中辅导员 · 清洁员 · 7年级乐队（1,200学生）</text>
+    <text x="75" y="92" font-family="'Söhne', sans-serif" font-size="9" fill="#444">中文课程 · Advanced Learning 拓展课程</text>
+    <rect x="75" y="100" width="400" height="30" fill="#C8531A" stroke="#8B3A12" stroke-width="1"/>
+    <text x="485" y="120" font-family="'Söhne', sans-serif" font-size="12" font-weight="700" fill="#C8531A">$9.4M · 2.2倍</text>
+    <text x="570" y="50" font-family="'Söhne', sans-serif" font-size="9" fill="#555" font-style="italic">去年已经砍了</text>
+    <text x="570" y="62" font-family="'Söhne', sans-serif" font-size="9" fill="#555" font-style="italic">最明显的项目</text>
+    <text x="570" y="120" font-family="'Söhne', sans-serif" font-size="9" fill="#C8531A" font-weight="600">今年波及</text>
+    <text x="570" y="132" font-family="'Söhne', sans-serif" font-size="9" fill="#C8531A" font-weight="600">EA、班级规模、</text>
+    <text x="570" y="144" font-family="'Söhne', sans-serif" font-size="9" fill="#C8531A" font-weight="600">小学层面</text>
+  </svg>`;
+
+  const SVG_CASCADE_EN = `<svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <defs><marker id="p_tline" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#1C3F8F"/></marker></defs>
+    <line x1="30" y1="40" x2="670" y2="40" stroke="#1C3F8F" stroke-width="2" marker-end="url(#p_tline)"/>
+    <circle cx="100" cy="40" r="6" fill="#1C3F8F"/>
+    <text x="100" y="25" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" font-weight="700" fill="#1C3F8F">TODAY</text>
+    <text x="100" y="15" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="7.5" fill="#666">Grades K–3</text>
+    <text x="35" y="62" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="600" fill="#1A1A1A">EA hours cut</text>
+    <text x="35" y="75" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">Reading support:</text>
+    <text x="35" y="87" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">3 hrs/wk → 1 hr/wk</text>
+    <text x="35" y="103" font-family="'Söhne', sans-serif" font-size="8" fill="#666" font-style="italic">Early literacy gap</text>
+    <text x="35" y="114" font-family="'Söhne', sans-serif" font-size="8" fill="#666" font-style="italic">begins to compound</text>
+    <circle cx="330" cy="40" r="6" fill="#1C3F8F"/>
+    <text x="330" y="25" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" font-weight="700" fill="#1C3F8F">YEARS 3–5</text>
+    <text x="330" y="15" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="7.5" fill="#666">Grades 4–7</text>
+    <text x="245" y="62" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="600" fill="#1A1A1A">Counsellor time thin</text>
+    <text x="245" y="75" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">Anxiety, learning-</text>
+    <text x="245" y="87" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">difference flags missed</text>
+    <text x="245" y="103" font-family="'Söhne', sans-serif" font-size="8" fill="#666" font-style="italic">What was a conversation</text>
+    <text x="245" y="114" font-family="'Söhne', sans-serif" font-size="8" fill="#666" font-style="italic">becomes a crisis referral</text>
+    <circle cx="570" cy="40" r="6" fill="#C8531A"/>
+    <text x="570" y="25" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9" font-weight="700" fill="#C8531A">YEAR 8+</text>
+    <text x="570" y="15" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="7.5" fill="#666">Grades 10–12</text>
+    <text x="485" y="62" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="600" fill="#C8531A">Application is thin</text>
+    <text x="485" y="75" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">Advanced Learning gone,</text>
+    <text x="485" y="87" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">electives narrowed,</text>
+    <text x="485" y="99" font-family="'Söhne', sans-serif" font-size="8.5" fill="#444">counsellor access limited</text>
+    <text x="485" y="115" font-family="'Söhne', sans-serif" font-size="8" fill="#C8531A" font-style="italic">UBC, scholarships,</text>
+    <text x="485" y="126" font-family="'Söhne', sans-serif" font-size="8" fill="#C8531A" font-style="italic">specialty admissions:</text>
+    <text x="485" y="137" font-family="'Söhne', sans-serif" font-size="8" fill="#C8531A" font-style="italic">real competitive disadvantage</text>
+    <line x1="30" y1="160" x2="670" y2="160" stroke="#E5E0D5" stroke-width="1"/>
+    <text x="350" y="175" text-anchor="middle" font-family="'Charter', Georgia, serif" font-size="9.5" font-style="italic" fill="#1A1A1A">A child entering Grade 2 today graduates Grade 12 in 2037. Every year without intervention compounds.</text>
+  </svg>`;
+
+  const SVG_CASCADE_ZH = `<svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+    <defs><marker id="p_tlinez" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#1C3F8F"/></marker></defs>
+    <line x1="30" y1="40" x2="670" y2="40" stroke="#1C3F8F" stroke-width="2" marker-end="url(#p_tlinez)"/>
+    <circle cx="100" cy="40" r="6" fill="#1C3F8F"/>
+    <text x="100" y="25" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="700" fill="#1C3F8F">今天</text>
+    <text x="100" y="14" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8" fill="#666">幼儿园到3年级</text>
+    <text x="35" y="62" font-family="'Söhne', sans-serif" font-size="10" font-weight="600" fill="#1A1A1A">EA课时被削减</text>
+    <text x="35" y="76" font-family="'Söhne', sans-serif" font-size="9" fill="#444">阅读干预时间：</text>
+    <text x="35" y="89" font-family="'Söhne', sans-serif" font-size="9" fill="#444">每周3小时 → 1小时</text>
+    <text x="35" y="105" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666" font-style="italic">早期识字差距</text>
+    <text x="35" y="117" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666" font-style="italic">开始累积</text>
+    <circle cx="330" cy="40" r="6" fill="#1C3F8F"/>
+    <text x="330" y="25" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="700" fill="#1C3F8F">3-5年后</text>
+    <text x="330" y="14" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8" fill="#666">4到7年级</text>
+    <text x="245" y="62" font-family="'Söhne', sans-serif" font-size="10" font-weight="600" fill="#1A1A1A">辅导员时间紧张</text>
+    <text x="245" y="76" font-family="'Söhne', sans-serif" font-size="9" fill="#444">焦虑、学习差异</text>
+    <text x="245" y="89" font-family="'Söhne', sans-serif" font-size="9" fill="#444">的早期信号被忽略</text>
+    <text x="245" y="105" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666" font-style="italic">原本简单的谈话</text>
+    <text x="245" y="117" font-family="'Söhne', sans-serif" font-size="8.5" fill="#666" font-style="italic">变成危机转介</text>
+    <circle cx="570" cy="40" r="6" fill="#C8531A"/>
+    <text x="570" y="25" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="9.5" font-weight="700" fill="#C8531A">第8年以后</text>
+    <text x="570" y="14" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="8" fill="#666">10到12年级</text>
+    <text x="485" y="62" font-family="'Söhne', sans-serif" font-size="10" font-weight="600" fill="#C8531A">升学申请薄弱</text>
+    <text x="485" y="76" font-family="'Söhne', sans-serif" font-size="9" fill="#444">Advanced Learning 没了、</text>
+    <text x="485" y="89" font-family="'Söhne', sans-serif" font-size="9" fill="#444">选修课减少、</text>
+    <text x="485" y="101" font-family="'Söhne', sans-serif" font-size="9" fill="#444">辅导员难预约</text>
+    <text x="485" y="117" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-style="italic">UBC、奖学金、</text>
+    <text x="485" y="129" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-style="italic">专业录取：</text>
+    <text x="485" y="141" font-family="'Söhne', sans-serif" font-size="8.5" fill="#C8531A" font-style="italic">真实的竞争劣势</text>
+    <line x1="30" y1="160" x2="670" y2="160" stroke="#E5E0D5" stroke-width="1"/>
+    <text x="350" y="175" text-anchor="middle" font-family="'Söhne', sans-serif" font-size="10" font-style="italic" fill="#1A1A1A">今天上2年级的孩子在2037年高中毕业。每一年没有干预，差距都会累积。</text>
+  </svg>`;
+
+  // Helper to pick right-language SVG
+  function pickSvg(svgKey) {
+    const lang = document.documentElement.lang === 'zh' ? 'ZH' : 'EN';
+    const map = {
+      responsibility: lang === 'ZH' ? SVG_RESPONSIBILITY_ZH : SVG_RESPONSIBILITY_EN,
+      money: lang === 'ZH' ? SVG_MONEY_ZH : SVG_MONEY_EN,
+      scale: lang === 'ZH' ? SVG_SCALE_ZH : SVG_SCALE_EN,
+      cascade: lang === 'ZH' ? SVG_CASCADE_ZH : SVG_CASCADE_EN
+    };
+    return map[svgKey] || '';
+  }
+
+  // Persona content: which visuals + what CTAs
+  const PERSONAS = {
+    parent: {
+      icon: '👪',
+      title_en: "What your child actually loses",
+      title_zh: "您的孩子实际会失去什么",
+      visuals: [
+        {
+          kicker_en: "Your child's journey · K to 12",
+          kicker_zh: "您孩子的学业之路 · K到12",
+          head_en: "A cut today becomes a crisis at graduation.",
+          head_zh: "今天的削减，会在高中毕业时变成危机。",
+          svgKey: 'cascade',
+          take_en: "<strong>Take-away:</strong> This is not a one-year budget story. A $9.4M gap today is an invisible competitive disadvantage for Burnaby children applying to university in 2037. Cuts ratchet. They don't reverse. Scroll down to the journey visualization to see what specifically gets cut at your child's grade.",
+          take_zh: "<strong>关键:</strong> 这不是一年的预算问题。今天的$9.4M缺口，是2037年Burnaby孩子申请大学时看不见的竞争劣势。削减会累积，不会逆转。滚动到下方journey visualization，看具体您孩子所在年级会失去什么。"
+        },
+        {
+          kicker_en: "Last year vs. this year",
+          kicker_zh: "去年 vs. 今年",
+          head_en: "Last year's cuts were real. This year is 2.2× worse.",
+          head_zh: "去年的削减是真的。今年是2.2倍。",
+          svgKey: 'scale',
+          take_en: "<strong>Take-away:</strong> The cuts your family felt last year — band, counsellors, Mandarin — came from a $4.2M gap. This year's unfunded liability is more than double. There is nothing \"low-impact\" left to cut.",
+          take_zh: "<strong>关键:</strong> 您家庭去年已经感受到的削减（乐队、辅导员、中文）来自$4.2M缺口。今年无资金缺口超过两倍。已经没有\"低影响\"的项目可以再砍了。"
+        }
+      ],
+      cta_label_en: "Sign & send email — 60 seconds",
+      cta_label_zh: "签署并发送邮件 · 60秒",
+      cta_href: "#act",
+      secondary_label_en: "See full grade-by-grade impact",
+      secondary_label_zh: "查看完整年级影响",
+      secondary_href: "#journey"
+    },
+
+    pac: {
+      icon: '🏫',
+      title_en: "What your school loses — and what a PAC can do",
+      title_zh: "您学校会失去什么——PAC能做什么",
+      visuals: [
+        {
+          kicker_en: "Scale comparison",
+          kicker_zh: "规模对比",
+          head_en: "Last year's cuts were real. This year is 2.2× worse.",
+          head_zh: "去年的削减是真的。今年是2.2倍。",
+          svgKey: 'scale',
+          take_en: "<strong>Take-away:</strong> Every school in SD41 absorbed last year's $4.2M in cuts — fewer counsellors, reduced custodial, Grade 7 band gone. This year's $9.4M reaches EAs, elementary counsellor time, class size ratios. No school is untouched.",
+          take_zh: "<strong>关键:</strong> SD41的每所学校都吸收了去年$4.2M的削减——辅导员减少、清洁员减少、7年级乐队没了。今年的$9.4M会削减EA、小学辅导员课时、班级比例。没有学校能独善其身。"
+        },
+        {
+          kicker_en: "Responsibility flow",
+          kicker_zh: "责任流程",
+          head_en: "The Province made the mistake. Schools absorb the cost.",
+          head_zh: "省府犯的错，学校来承担。",
+          svgKey: 'responsibility',
+          take_en: "<strong>Take-away:</strong> This isn't a Burnaby operational problem or a negotiation failure. BCPSEA — the Province's own agent — has admitted the error. The question for every PAC: do we absorb the Province's mistake quietly, or do we organize as a coalition?",
+          take_zh: "<strong>关键:</strong> 这不是Burnaby的运营问题，也不是谈判失败。BCPSEA——省府自己的代表——已经承认错误。每个PAC面临的问题：我们是默默承担省府的错，还是作为联盟组织起来？"
+        }
+      ],
+      cta_label_en: "Open PAC Endorsement Kit →",
+      cta_label_zh: "打开PAC背书工具包 →",
+      cta_onclick: "showPacKit(); closePersona();",
+      secondary_label_en: "See coalition members",
+      secondary_label_zh: "查看联盟成员",
+      secondary_href: "#coalition"
+    },
+
+    decision: {
+      icon: '🏛️',
+      title_en: "The structural case",
+      title_zh: "结构性论点",
+      visuals: [
+        {
+          kicker_en: "Fiscal solvability",
+          kicker_zh: "财政可行性",
+          head_en: "The money already exists. Province calls it the Contingencies Vote.",
+          head_zh: "钱已经有了。省府叫它应急基金。",
+          svgKey: 'money',
+          take_en: "<strong>Take-away:</strong> The Province's own $5B Contingencies Vote — described by Treasury Board as covering exactly this kind of liability — is 500× larger than Burnaby's ask. This is not a funding-priorities question; it is a question of applying a fund to what it was designed for. Primary source: BC Budget 2026, Estimates Vote 50.",
+          take_zh: "<strong>关键:</strong> 省府自己的$5B应急基金——财政部自己描述为覆盖正是此类责任——是Burnaby请求金额的500倍。这不是拨款优先级问题，是把基金用于其设计用途的问题。原始资料：BC Budget 2026, Estimates Vote 50。"
+        },
+        {
+          kicker_en: "Responsibility & admission",
+          kicker_zh: "责任与承认",
+          head_en: "The Province's own agent admits the error.",
+          head_zh: "省府自己的代表承认了错误。",
+          svgKey: 'responsibility',
+          take_en: "<strong>Take-away:</strong> BCPSEA is the Province's bargaining agent, not a union and not SD41. Their public acknowledgment that the cost would have been funded under a correct 2022 interpretation removes the standard government defence of \"district mismanagement\". The admission shifts responsibility to the Province — what remains is whether the Province corrects its own error.",
+          take_zh: "<strong>关键:</strong> BCPSEA是省府的谈判代表，不是工会也不是SD41。他们公开承认如果2022年正确解读，这笔钱本会被拨款——这消除了政府通常的\"学区管理不善\"辩护。承认把责任归于省府——剩下的只是省府是否纠正自己的错。"
+        }
+      ],
+      cta_label_en: "Contact Ben directly",
+      cta_label_zh: "直接联系Ben",
+      cta_href: "mailto:ben@fundburnabykids.ca",
+      secondary_label_en: "See primary sources",
+      secondary_label_zh: "查看原始资料",
+      secondary_href: "#why"
+    }
+  };
+
+  function selectPersona(key) {
+    const persona = PERSONAS[key];
+    if (!persona) return;
+    const lang = document.documentElement.lang === 'zh' ? 'zh' : 'en';
+
+    // Toggle: if same persona clicked again, close
+    if (activePersona === key) {
+      closePersona();
+      return;
+    }
+    activePersona = key;
+
+    // Update card states
+    document.querySelectorAll('.persona-card').forEach(c => {
+      c.classList.remove('active');
+      c.classList.add('inactive');
+    });
+    document.getElementById(`persona-${key}-card`).classList.remove('inactive');
+    document.getElementById(`persona-${key}-card`).classList.add('active');
+
+    // Build panel content
+    const title = lang === 'zh' ? persona.title_zh : persona.title_en;
+
+    let vizHtml = '';
+    for (const v of persona.visuals) {
+      vizHtml += `
+        <div class="persona-viz">
+          <h4>${lang === 'zh' ? v.kicker_zh : v.kicker_en}</h4>
+          <div class="viz-head">${lang === 'zh' ? v.head_zh : v.head_en}</div>
+          ${pickSvg(v.svgKey)}
+          <div class="viz-take">${lang === 'zh' ? v.take_zh : v.take_en}</div>
+        </div>`;
+    }
+
+    const ctaLabel = lang === 'zh' ? persona.cta_label_zh : persona.cta_label_en;
+    const secLabel = lang === 'zh' ? persona.secondary_label_zh : persona.secondary_label_en;
+    const closeLabel = lang === 'zh' ? '关闭' : 'Close';
+
+    let ctaHtml = '<div class="persona-cta">';
+    if (persona.cta_onclick) {
+      ctaHtml += `<button class="primary" onclick="${persona.cta_onclick}">${ctaLabel}</button>`;
+    } else {
+      ctaHtml += `<a class="primary" href="${persona.cta_href}">${ctaLabel}</a>`;
+    }
+    if (persona.secondary_href) {
+      ctaHtml += `<a class="secondary" href="${persona.secondary_href}" onclick="closePersona()">${secLabel}</a>`;
+    }
+    ctaHtml += '</div>';
+
+    const innerHtml = `
+      <div class="persona-panel-header">
+        <span class="persona-icon">${persona.icon}</span>
+        <h3>${title}</h3>
+        <button class="persona-panel-close" onclick="closePersona()" aria-label="${closeLabel}">×</button>
+      </div>
+      ${vizHtml}
+      ${ctaHtml}
+    `;
+
+    document.getElementById('persona-panel-inner').innerHTML = innerHtml;
+    const panel = document.getElementById('persona-panel');
+    panel.classList.add('open');
+
+    // Smooth scroll to reveal panel
+    setTimeout(() => {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }
+
+  function closePersona() {
+    activePersona = null;
+    document.getElementById('persona-panel').classList.remove('open');
+    document.querySelectorAll('.persona-card').forEach(c => {
+      c.classList.remove('active');
+      c.classList.remove('inactive');
+    });
+  }
+
+  // ==========================================================================
+  // PAC COALITION
+  // ==========================================================================
+  // For launch: PAC list is stored client-side (localStorage) as a demo.
+  // In production: fetch from Supabase `pac_endorsements` table where verified=true.
+  const PAC_STORAGE_KEY = 'fbk_pacs_demo';
+
+  async function loadPacs() {
+    // Production: return await fetch('/api/pacs').then(r => r.json());
+    // Demo: localStorage
+    try {
+      const raw = localStorage.getItem(PAC_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch { return []; }
+  }
+
+  async function renderPacs() {
+    const pacs = await loadPacs();
+    const grid = document.getElementById('pac-grid');
+    const count = pacs.length;
+    const totalStudents = pacs.reduce((sum, p) => sum + (parseInt(p.students) || 0), 0);
+
+    document.getElementById('pac-count').textContent = count;
+    document.getElementById('pac-students').textContent = totalStudents.toLocaleString();
+    const cZh = document.getElementById('pac-count-zh');
+    const sZh = document.getElementById('pac-students-zh');
+    if (cZh) cZh.textContent = count;
+    if (sZh) sZh.textContent = totalStudents.toLocaleString();
+
+    if (count === 0) return; // keep the empty-state message
+
+    grid.innerHTML = pacs.map(p => {
+      const students = parseInt(p.students) || 0;
+      return `<div class="pac-card">
+        <div class="pac-name">${escapeHtml(p.school)} PAC</div>
+        <div class="pac-meta">${students.toLocaleString()} students · endorsed ${escapeHtml(p.approved || 'recently')}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function showPacKit() {
+    document.getElementById('pac-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closePacKit() {
+    document.getElementById('pac-modal').classList.remove('active');
+    document.body.style.overflow = '';
+  }
+
+  async function submitPacEndorsement(event) {
+    event.preventDefault();
+    const form = document.getElementById('pac-endorsement-form');
+    const school = form.querySelector('[name=pac-school]').value.trim();
+    const students = form.querySelector('[name=pac-students]').value.trim();
+    const chairName = form.querySelector('[name=pac-chair-name]').value.trim();
+    const chairEmail = form.querySelector('[name=pac-chair-email]').value.trim();
+    const approvalDate = form.querySelector('[name=pac-approval-date]').value.trim();
+    const consent = form.querySelector('[name=pac-consent]').checked;
+
+    if (!school || !students || !chairName || !chairEmail || !consent) {
+      showToast('Please complete all required fields.');
+      return false;
+    }
+
+    // DEMO: save locally. PRODUCTION: POST to Netlify Form, which webhooks to function that stores pending verification.
+    try {
+      const formData = new FormData(form);
+      const encoded = new URLSearchParams(formData).toString();
+      // Submit to Netlify Forms (will work once deployed with data-netlify="true")
+      try {
+        await fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: encoded
+        });
+      } catch {
+        // Ignore fetch errors in demo mode
+      }
+
+      // DEMO: show the PAC immediately (pending verification in production)
+      const pacs = await loadPacs();
+      pacs.push({
+        school: school,
+        students: students,
+        chairName: chairName,
+        chairEmail: chairEmail,
+        approved: approvalDate || 'pending meeting'
+      });
+      localStorage.setItem(PAC_STORAGE_KEY, JSON.stringify(pacs));
+
+      await renderPacs();
+      closePacKit();
+      form.reset();
+      showToast('✓ Endorsement submitted — we\'ll verify with the PAC chair and publish within 24h.');
+    } catch (err) {
+      console.error(err);
+      showToast('Something went wrong. Please try again or email ben@fundburnabykids.ca');
+    }
+    return false;
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('pac-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'pac-modal') closePacKit();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closePacKit();
+      closeModal();
+    }
+  });
+
+  // ==========================================================================
+  // Init
+  // ==========================================================================
+  (async function init() {
+    await renderCounter();
+    await renderSignatures();
+    buildServiceRows();
+    await renderPacs();
+  })();
+</script>
+
+</body>
+</html>

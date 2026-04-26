@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PAC Endorsement Kit — Fund Burnaby Kids</title>
+<style>
+  @page {
+    size: Letter;
+    margin: 0.45in 0.55in 0.45in 0.55in;
+  }
+
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: 'Charter', 'Iowan Old Style', Georgia, serif;
+    font-size: 10.5pt;
+    line-height: 1.4;
+    color: #1A1A1A;
+    margin: 0;
+    padding: 0;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  @media screen {
+    body { padding: 40px 60px; background: #FAF7F2; }
+  }
+
+  /* ==== HEADER ==== */
+  .kit-header {
+    border-bottom: 2px solid #1C3F8F;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+  }
+  .kit-brand {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1C3F8F;
+    margin-bottom: 1px;
+  }
+  .kit-brand .umbrella {
+    color: #888;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    font-size: 7.5pt;
+    margin-left: 6px;
+  }
+  .kit-title {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 18pt;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    color: #1A1A1A;
+    margin: 0 0 2px 0;
+    line-height: 1.1;
+  }
+  .kit-subtitle {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 9.5pt;
+    color: #666;
+    margin: 0;
+  }
+
+  h2 {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #1C3F8F;
+    margin: 14px 0 5px 0;
+    padding-bottom: 3px;
+    border-bottom: 1px solid #E5E0D5;
+  }
+  h2:first-of-type { margin-top: 10px; }
+
+  p { margin: 3px 0 6px 0; }
+  ul, ol { margin: 3px 0 6px 0; padding-left: 18px; }
+  li { margin-bottom: 3px; }
+  strong { font-weight: 600; color: #1A1A1A; }
+
+  /* ==== PAGE 1 — VISUALS ==== */
+
+  .visuals-intro {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 9pt;
+    color: #555;
+    font-style: italic;
+    margin: 8px 0 10px 0;
+  }
+
+  .viz {
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+  }
+  .viz-header {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .viz-num {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8pt;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #C8531A;
+    background: #FFF3E0;
+    padding: 2px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .viz-title {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 11pt;
+    font-weight: 600;
+    color: #1A1A1A;
+    letter-spacing: -0.005em;
+  }
+  .viz-sub {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    color: #666;
+    font-style: italic;
+  }
+  .viz svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+  }
+  .viz-caption {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    color: #444;
+    margin-top: 3px;
+    line-height: 1.35;
+  }
+
+  /* ==== PAGE 2 ==== */
+
+  .page-break { page-break-before: always; }
+
+  .facts-box {
+    background: #F3EFE5;
+    border-left: 3px solid #C8531A;
+    padding: 9px 12px;
+    margin: 6px 0 9px 0;
+    font-size: 9.5pt;
+  }
+
+  .do-dont {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 5px 0 9px 0;
+  }
+  .do-dont > div {
+    padding: 8px 10px;
+    font-size: 9pt;
+    line-height: 1.3;
+  }
+  .do-dont .do {
+    background: #E8F4EC;
+    border-left: 3px solid #22A853;
+  }
+  .do-dont .dont {
+    background: #FFF3E0;
+    border-left: 3px solid #D97706;
+  }
+  .do-dont strong {
+    display: block;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    font-weight: 600;
+    margin-bottom: 3px;
+    color: #1A1A1A;
+  }
+  .do-dont ul { padding-left: 14px; margin: 0; }
+  .do-dont li { margin-bottom: 1px; font-size: 9pt; }
+
+  .motion {
+    background: #EEF1F8;
+    border-left: 3px solid #1C3F8F;
+    padding: 10px 14px;
+    margin: 5px 0 9px 0;
+    font-family: 'Charter', 'Iowan Old Style', Georgia, serif;
+    font-size: 10pt;
+    font-style: italic;
+    line-height: 1.45;
+    color: #1A1A1A;
+  }
+  .motion .motion-label {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 7.5pt;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #1C3F8F;
+    font-style: normal;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .sources {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8pt;
+    line-height: 1.4;
+    color: #333;
+  }
+  .sources li { margin-bottom: 2px; }
+  .sources a { color: #1C3F8F; word-break: break-all; }
+
+  .faq-q {
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-weight: 600;
+    font-size: 9.5pt;
+    color: #1A1A1A;
+    margin-top: 6px;
+    margin-bottom: 1px;
+  }
+  .faq-a {
+    font-size: 9.5pt;
+    line-height: 1.38;
+    margin: 0 0 3px 0;
+    color: #2A2A2A;
+  }
+
+  .kit-footer {
+    border-top: 1px solid #E5E0D5;
+    padding-top: 8px;
+    margin-top: 12px;
+    font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+    font-size: 8.5pt;
+    color: #555;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .kit-footer strong { color: #1A1A1A; }
+  .kit-footer .website { text-align: right; }
+
+  /* Screen-only banner */
+  .print-instruction {
+    display: none;
+  }
+  @media screen {
+    .print-instruction {
+      display: block;
+      background: #FEF3C7;
+      border: 1px solid #D97706;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      font-family: 'Söhne', 'Inter', Helvetica, sans-serif;
+      font-size: 11pt;
+      color: #92400E;
+      border-radius: 4px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-instruction">
+  <strong>To print:</strong> Press <kbd>Ctrl+P</kbd> / <kbd>Cmd+P</kbd>. 
+  Choose "Save as PDF" or your printer. 
+  Disable "Headers and footers" in print settings. 
+  Should print to exactly 2 pages.
+</div>
+
+<!-- ============ PAGE 1: VISUAL CASE ============ -->
+
+<div class="kit-header">
+  <div class="kit-brand">PAC Endorsement Kit <span class="umbrella">· A Burnaby Kids First campaign</span></div>
+  <h1 class="kit-title">Fund Burnaby Kids</h1>
+  <p class="kit-subtitle">A proposal for your next PAC meeting — $9.4M arbitration liability, BC Budget 2026-27</p>
+</div>
+
+<p class="visuals-intro">Four visuals for your PAC conversation. Each makes one point. Detailed motion, FAQ, and sources on page 2.</p>
+
+<!-- ============ VISUAL 1: RESPONSIBILITY MISMATCH ============ -->
+
+<div class="viz">
+  <div class="viz-header">
+    <span class="viz-num">1 · WHO</span>
+    <span class="viz-title">The Province made the mistake. Burnaby students get the bill.</span>
+  </div>
+
+<svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <marker id="arrow1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#1A1A1A"/>
+    </marker>
+    <marker id="arrowBack" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#C8531A"/>
+    </marker>
+  </defs>
+
+  <!-- Box 1: Province -->
+  <rect x="10" y="20" width="190" height="70" rx="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1.5"/>
+  <text x="105" y="39" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="10.5" font-weight="700" fill="#1A1A1A">THE PROVINCE</text>
+  <text x="105" y="55" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555">via BCPSEA — the Province's</text>
+  <text x="105" y="67" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555">own bargaining agent</text>
+  <text x="105" y="82" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="600" fill="#C8531A">Misread salary grid, 2022</text>
+
+  <!-- Arrow 1 -->
+  <line x1="203" y1="55" x2="245" y2="55" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow1)"/>
+
+  <!-- Box 2: Arbitration -->
+  <rect x="250" y="20" width="190" height="70" rx="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="1.5"/>
+  <text x="345" y="39" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="10.5" font-weight="700" fill="#1A1A1A">2022 ARBITRATION</text>
+  <text x="345" y="55" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555">Orders SD41 to pay</text>
+  <text x="345" y="67" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555">800+ teachers retroactive</text>
+  <text x="345" y="82" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="600" fill="#1A1A1A">$9.4M by 2026-27</text>
+
+  <!-- Arrow 2 -->
+  <line x1="443" y1="55" x2="485" y2="55" stroke="#1A1A1A" stroke-width="2" marker-end="url(#arrow1)"/>
+
+  <!-- Box 3: Students -->
+  <rect x="490" y="20" width="200" height="70" rx="4" fill="#FFF3E0" stroke="#C8531A" stroke-width="2"/>
+  <text x="590" y="39" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="10.5" font-weight="700" fill="#1A1A1A">SD41 STUDENTS PAY</text>
+  <text x="590" y="55" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555">Cuts to counsellors, EAs,</text>
+  <text x="590" y="67" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555">programs — to cover the gap</text>
+  <text x="590" y="82" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="600" fill="#C8531A">Borne by students</text>
+
+  <!-- Curved arrow back from students to Province with admission text -->
+  <path d="M 490 120 Q 300 155 105 120" fill="none" stroke="#C8531A" stroke-width="1.5" stroke-dasharray="4 3" marker-end="url(#arrowBack)"/>
+  <rect x="175" y="108" width="350" height="42" rx="3" fill="#FFFFFF" stroke="#C8531A" stroke-width="1"/>
+  <text x="350" y="124" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="600" fill="#C8531A">BCPSEA PUBLICLY ADMITS:</text>
+  <text x="350" y="138" text-anchor="middle" font-family="'Charter', Georgia, serif" font-size="9" font-style="italic" fill="#1A1A1A">"Would have been funded in 2022 if interpreted correctly."</text>
+</svg>
+
+  <p class="viz-caption"><strong>Take-away:</strong> This is not a dispute over whether the money is owed. The Province's own agent admits the error. The only question is who pays — the Province who made the mistake, or the students who didn't.</p>
+</div>
+
+<!-- ============ VISUAL 2: THE MONEY EXISTS ============ -->
+
+<div class="viz">
+  <div class="viz-header">
+    <span class="viz-num">2 · HOW</span>
+    <span class="viz-title">The money already exists. Province calls it the Contingencies Vote.</span>
+  </div>
+
+<svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Big rectangle representing $5B Contingencies Vote -->
+  <rect x="10" y="20" width="680" height="100" rx="4" fill="#EEF1F8" stroke="#1C3F8F" stroke-width="2"/>
+
+  <!-- Label for big rectangle at top -->
+  <text x="20" y="40" font-family="'Söhne', Inter, sans-serif" font-size="11" font-weight="700" fill="#1C3F8F">BC BUDGET 2026 — CONTINGENCIES VOTE</text>
+  <text x="20" y="55" font-family="'Söhne', Inter, sans-serif" font-size="10" font-weight="600" fill="#1A1A1A">$5,000,000,000 per year</text>
+  <text x="20" y="68" font-family="'Charter', Georgia, serif" font-size="9" font-style="italic" fill="#444">"for collective bargaining mandate costs" — Treasury Board's own description</text>
+
+  <!-- Tiny rectangle representing $9.4M within -->
+  <!-- 9.4M / 5000M = 0.188% = 0.188 * 680 = 1.28px width. Make it 3px for visibility with a pointer. -->
+  <rect x="15" y="95" width="3" height="18" fill="#C8531A"/>
+
+  <!-- Pointer line and label -->
+  <line x1="18" y1="104" x2="80" y2="135" stroke="#C8531A" stroke-width="1"/>
+  <text x="85" y="132" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="700" fill="#C8531A">$9.4M · 0.19%</text>
+  <text x="85" y="143" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555">What Burnaby is asking for</text>
+
+  <!-- Right side annotation -->
+  <text x="690" y="138" text-anchor="end" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="600" fill="#1A1A1A">Not new money. Existing money for its stated purpose.</text>
+</svg>
+
+  <p class="viz-caption"><strong>Take-away:</strong> The Province's own $5 billion contingency fund — described by the Treasury Board as covering exactly this kind of liability — is 500 times bigger than what Burnaby is asking for. This is not a question of funding priorities; it's a question of applying a fund to what it was designed for.</p>
+</div>
+
+<!-- ============ VISUAL 3: PAIN DOUBLES ============ -->
+
+<div class="viz">
+  <div class="viz-header">
+    <span class="viz-num">3 · SCALE</span>
+    <span class="viz-title">Last year's cuts were real. This year is 2.2× worse.</span>
+  </div>
+
+<svg viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <!-- Year labels on left -->
+  <text x="10" y="45" font-family="'Söhne', Inter, sans-serif" font-size="10" font-weight="700" fill="#1A1A1A">2025–26</text>
+  <text x="10" y="57" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#666">shortfall</text>
+
+  <text x="10" y="110" font-family="'Söhne', Inter, sans-serif" font-size="10" font-weight="700" fill="#C8531A">2026–27</text>
+  <text x="10" y="122" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#666">projected</text>
+
+  <!-- Bar 1: $4.2M -->
+  <!-- Scale: $9.4M = 400 pixels. $4.2M = 178.7 pixels -->
+  <rect x="75" y="30" width="178" height="30" fill="#E5E0D5" stroke="#888" stroke-width="1"/>
+  <text x="263" y="50" font-family="'Söhne', Inter, sans-serif" font-size="11" font-weight="700" fill="#1A1A1A">$4.2M</text>
+  <text x="75" y="80" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">
+    <tspan font-weight="600">What was cut:</tspan> high school counsellors · custodians · Grade 7 band (1,200 students)
+  </text>
+  <text x="75" y="91" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">Mandarin program · Advanced Learning</text>
+
+  <!-- Bar 2: $9.4M -->
+  <rect x="75" y="100" width="400" height="30" fill="#C8531A" stroke="#8B3A12" stroke-width="1"/>
+  <text x="485" y="120" font-family="'Söhne', Inter, sans-serif" font-size="12" font-weight="700" fill="#C8531A">$9.4M · 2.2×</text>
+
+  <!-- Callout arrow showing the gap -->
+  <text x="570" y="50" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555" font-style="italic">Last year already cut</text>
+  <text x="570" y="61" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#555" font-style="italic">the obvious things.</text>
+
+  <text x="570" y="120" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">This year reaches</text>
+  <text x="570" y="131" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">EAs, class sizes,</text>
+  <text x="570" y="142" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#C8531A" font-weight="600">elementary support.</text>
+</svg>
+
+  <p class="viz-caption"><strong>Take-away:</strong> The cuts your families already felt last year — band, counsellors, Mandarin — came from a $4.2M gap. This year's unfunded liability is more than double. There is nothing "low-impact" left to cut.</p>
+</div>
+
+<!-- ============ VISUAL 4: CASCADING EFFECTS ============ -->
+
+<div class="viz">
+  <div class="viz-header">
+    <span class="viz-num">4 · CONSEQUENCES</span>
+    <span class="viz-title">A cut today becomes a crisis at graduation.</span>
+  </div>
+
+<svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <marker id="tline" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#1C3F8F"/>
+    </marker>
+  </defs>
+
+  <!-- Timeline axis -->
+  <line x1="30" y1="40" x2="670" y2="40" stroke="#1C3F8F" stroke-width="2" marker-end="url(#tline)"/>
+
+  <!-- Stage 1: Elementary (today) -->
+  <circle cx="100" cy="40" r="6" fill="#1C3F8F"/>
+  <text x="100" y="25" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="700" fill="#1C3F8F">TODAY</text>
+  <text x="100" y="15" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="7.5" fill="#666">Grades K–3</text>
+
+  <text x="35" y="62" font-family="'Söhne', Inter, sans-serif" font-size="9.5" font-weight="600" fill="#1A1A1A">EA hours cut</text>
+  <text x="35" y="75" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">Reading support:</text>
+  <text x="35" y="87" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">3 hrs/wk → 1 hr/wk</text>
+  <text x="35" y="103" font-family="'Söhne', Inter, sans-serif" font-size="8" fill="#666" font-style="italic">Early literacy gap</text>
+  <text x="35" y="114" font-family="'Söhne', Inter, sans-serif" font-size="8" fill="#666" font-style="italic">begins to compound</text>
+
+  <!-- Stage 2: Middle (3-5 years) -->
+  <circle cx="330" cy="40" r="6" fill="#1C3F8F"/>
+  <text x="330" y="25" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="700" fill="#1C3F8F">YEARS 3–5</text>
+  <text x="330" y="15" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="7.5" fill="#666">Grades 4–7</text>
+
+  <text x="245" y="62" font-family="'Söhne', Inter, sans-serif" font-size="9.5" font-weight="600" fill="#1A1A1A">Counsellor time thin</text>
+  <text x="245" y="75" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">Anxiety, learning-</text>
+  <text x="245" y="87" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">difference flags missed</text>
+  <text x="245" y="103" font-family="'Söhne', Inter, sans-serif" font-size="8" fill="#666" font-style="italic">What was a conversation</text>
+  <text x="245" y="114" font-family="'Söhne', Inter, sans-serif" font-size="8" fill="#666" font-style="italic">becomes a crisis referral</text>
+
+  <!-- Stage 3: High school (8+ years) -->
+  <circle cx="570" cy="40" r="6" fill="#C8531A"/>
+  <text x="570" y="25" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="9" font-weight="700" fill="#C8531A">YEAR 8+</text>
+  <text x="570" y="15" text-anchor="middle" font-family="'Söhne', Inter, sans-serif" font-size="7.5" fill="#666">Grades 10–12</text>
+
+  <text x="485" y="62" font-family="'Söhne', Inter, sans-serif" font-size="9.5" font-weight="600" fill="#C8531A">Application is thin</text>
+  <text x="485" y="75" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">Advanced Learning gone,</text>
+  <text x="485" y="87" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">electives narrowed,</text>
+  <text x="485" y="99" font-family="'Söhne', Inter, sans-serif" font-size="8.5" fill="#444">counsellor access limited</text>
+  <text x="485" y="115" font-family="'Söhne', Inter, sans-serif" font-size="8" fill="#C8531A" font-style="italic">UBC, scholarships,</text>
+  <text x="485" y="126" font-family="'Söhne', Inter, sans-serif" font-size="8" fill="#C8531A" font-style="italic">specialty admissions:</text>
+  <text x="485" y="137" font-family="'Söhne', Inter, sans-serif" font-size="8" fill="#C8531A" font-style="italic">real competitive disadvantage</text>
+
+  <!-- Bottom summary line -->
+  <line x1="30" y1="160" x2="670" y2="160" stroke="#E5E0D5" stroke-width="1"/>
+  <text x="350" y="175" text-anchor="middle" font-family="'Charter', Georgia, serif" font-size="9.5" font-style="italic" fill="#1A1A1A">
+    A child entering Grade 2 today graduates Grade 12 in 2037. Every year without intervention compounds.
+  </text>
+</svg>
+
+  <p class="viz-caption"><strong>Take-away:</strong> This is not a one-year budget story. A $9.4M gap today is an invisible competitive disadvantage for Burnaby children applying to university in 2037. Cuts ratchet. They don't reverse.</p>
+</div>
+
+<!-- ============ PAGE 2: DETAILED TEXT ============ -->
+<div class="page-break"></div>
+
+<h2>The situation · in full</h2>
+
+<p>A provincial salary arbitration ordered Burnaby School District 41 to pay 800+ teachers retroactive wages for a grid-classification error. The compounded cost to SD41 for 2026-27 is <strong>approximately $9.4 million</strong>. This liability is <strong>not</strong> in the Province's funding formula.</p>
+
+<div class="facts-box">
+<strong>The single most important fact:</strong> BCPSEA — the BC Public School Employers' Association, which is the <em>Province's own</em> bargaining agent — has publicly acknowledged the cost would have been funded in 2022 had they interpreted the salary grid correctly. This is not a dispute about whether the money is owed. It is a dispute about who pays for the Province's own error: the Province, or Burnaby students.
+</div>
+
+<p><strong>The ask:</strong> Fund the $9.4M from BC Budget 2026's Contingencies Vote ($5B/year), which the Treasury Board itself describes as covering "collective bargaining mandate costs." $9.4M is 0.19% of that fund — not new money, existing money applied to its stated purpose.</p>
+
+<h2>What endorsing means — and doesn't mean</h2>
+
+<div class="do-dont">
+  <div class="do">
+    <strong>Your PAC does:</strong>
+    <ul>
+      <li>Appear publicly on fundburnabykids.ca</li>
+      <li>Share with your school families</li>
+      <li>Be counted when we deliver to the Minister</li>
+    </ul>
+  </div>
+  <div class="dont">
+    <strong>Your PAC does NOT:</strong>
+    <ul>
+      <li>Give up independence or authority</li>
+      <li>Contribute money or resources</li>
+      <li>Endorse any political party or candidate</li>
+      <li>Take on any legal liability</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Proposed motion</h2>
+
+<div class="motion">
+<span class="motion-label">Standard motion — verbatim</span>
+"That the [School Name] PAC endorse the Fund Burnaby Kids parent coalition calling on the Province of British Columbia to fully fund the $9.4 million arbitration liability affecting Burnaby School District 41 from the Budget 2026 Contingencies Vote, and that the PAC chair be authorized to submit this endorsement on behalf of the PAC."
+</div>
+
+<h2>Questions PAC members are likely to ask</h2>
+
+<p class="faq-q">Q: Is this partisan?</p>
+<p class="faq-a">No. The campaign names zero political parties and zero candidates. The ask is a technical budget request any government could action. MLAs are listed because they represent Burnaby ridings, regardless of party.</p>
+
+<p class="faq-q">Q: Is DPAC behind this?</p>
+<p class="faq-a">Burnaby DPAC has publicly advocated the same position. Fund Burnaby Kids is independent but aligned, operating on a faster timeline than DPAC's monthly cycle allows.</p>
+
+<p class="faq-q">Q: Who runs this?</p>
+<p class="faq-a">Ben Zhou — Burnaby parent, founder of Expeta Technologies. Fully public identity. No political career, no party affiliation. Architecture designed to outlive any single organizer.</p>
+
+<p class="faq-q">Q: What if the Province funds it — was endorsing worth it?</p>
+<p class="faq-a">Yes. If funding happens, the coalition moved the decision. If funding doesn't, the coalition becomes the foundation for next year. Either way, endorsing has value.</p>
+
+<h2>Primary sources</h2>
+
+<ul class="sources">
+  <li><strong>SD41 official statement:</strong> burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/</li>
+  <li><strong>BC Budget 2026 (Contingencies Vote, Estimates Vote 50):</strong> bcbudget.gov.bc.ca/2026/</li>
+  <li><strong>CBC — SD41 shortfall:</strong> cbc.ca/news/canada/british-columbia/burnaby-school-district-millions-shortfall-9.7169146</li>
+  <li><strong>CTV — 2025-26 cuts detail:</strong> ctvnews.ca/vancouver/article/burnaby-teachers-urging-province-to-provide-more-funding-district-facing-42m-budget-shortfall/</li>
+  <li><strong>Black Press Media — cross-district pressures:</strong> saanichnews.com/home2/bc-school-boards-forced-to-make-cuts-say-they-are-all-out-of-band-aids-8107025</li>
+</ul>
+
+<div class="kit-footer">
+  <div>
+    <strong>Ben Zhou</strong><br>
+    Founder, Fund Burnaby Kids (a Burnaby Kids First campaign)<br>
+    Burnaby parent · Founder, Expeta Technologies<br>
+    <a href="mailto:ben@fundburnabykids.ca">ben@fundburnabykids.ca</a>
+  </div>
+  <div class="website">
+    <strong>fundburnabykids.ca</strong><br>
+    <em>Budget adopts May 27, 2026</em><br>
+    Document revision: April 2026
+  </div>
+</div>
+
+</body>
+</html>
