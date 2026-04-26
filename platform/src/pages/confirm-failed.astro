@@ -1,0 +1,149 @@
+---
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+const reason = Astro.url.searchParams.get('reason') || 'unknown';
+
+const reasons: Record<string, { en: string; zh: string }> = {
+  expired: {
+    en: 'This confirmation link expired. Confirmation links are valid for 48 hours after you sign.',
+    zh: '这个确认链接已过期。确认链接在你签名后 48 小时内有效。',
+  },
+  invalid_token: {
+    en: 'We could not find this confirmation token in our records. The link may be malformed or already used.',
+    zh: '我们没找到这个确认 token。链接可能损坏，或已经使用过。',
+  },
+  server_error: {
+    en: 'Something went wrong on our side. Please try signing again.',
+    zh: '我们这边出了问题。请重新签名一次。',
+  },
+  unknown: {
+    en: 'This confirmation link could not be processed.',
+    zh: '这个确认链接无法处理。',
+  },
+};
+const reasonText = reasons[reason] ?? reasons.unknown;
+---
+
+<CampaignLayout
+  lang={lang}
+  noindex
+  title={lang === 'zh' ? '确认失败 — Fund Burnaby Kids' : 'Confirmation failed — Fund Burnaby Kids'}
+>
+  <section class="confirm-page">
+    <div class="wrap">
+      <div class="confirm-card confirm-card--error">
+        <div class="confirm-icon" aria-hidden="true">!</div>
+        <h1>
+          <I18nText
+            en="We couldn't confirm this signature."
+            zh="我们没法确认这次签名。"
+            lang={lang}
+          />
+        </h1>
+        <p class="confirm-lede">
+          <I18nText en={reasonText.en} zh={reasonText.zh} lang={lang} />
+        </p>
+
+        <div class="confirm-next">
+          <h2 class="sans">
+            <I18nText en="What to do" zh="怎么办" lang={lang} />
+          </h2>
+          <p>
+            <I18nText
+              en="Please sign again. Each new signature gets a fresh 48-hour confirmation window."
+              zh="请重新签一次名。每次签名都会拿到新的 48 小时确认窗口。"
+              lang={lang}
+            />
+          </p>
+          <p style="margin-top: 16px;">
+            <a class="btn-primary" href={localizedUrl('/#act', lang)}>
+              <I18nText en="Sign again" zh="重新签名" lang={lang} />
+            </a>
+          </p>
+        </div>
+
+        <p class="confirm-back">
+          <I18nText
+            en="If this keeps happening, email"
+            zh="如果反复出现，请邮件"
+            lang={lang}
+          />{' '}
+          <a href="mailto:hello@fundburnabykids.ca">hello@fundburnabykids.ca</a>{' '}
+          <I18nText
+            en="and we will sort it out within a day."
+            zh="，我们一天内处理。"
+            lang={lang}
+          />
+        </p>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .confirm-page {
+    padding: 64px 0;
+  }
+  .confirm-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .confirm-card--error .confirm-icon {
+    background: var(--warm-soft);
+    color: var(--warm);
+  }
+  .confirm-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .confirm-lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    margin-bottom: 32px;
+  }
+  .confirm-next {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-bottom: 24px;
+  }
+  .confirm-next h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .btn-primary {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    padding: 12px 24px;
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    transition: background 0.15s ease;
+  }
+  .btn-primary:hover { background: var(--accent-deep); color: #fff; }
+  .confirm-back {
+    color: var(--muted);
+    font-size: 14px;
+  }
+</style>

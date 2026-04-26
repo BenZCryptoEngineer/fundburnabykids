@@ -1,0 +1,27 @@
+---
+// Render a bilingual text snippet, picking the right language based on the
+// current locale. ZH falls back to EN if missing or empty.
+//
+// Usage:
+//   <I18nText en="Sign the petition" zh="签署请愿信" lang={lang} />
+//   <I18nText en="Hello" lang={lang} />            (zh omitted → renders en)
+//   <I18nText en={field.en} zh={field.zh} lang={lang} />
+
+import type { Lang } from '~/lib/i18n';
+import { t } from '~/lib/i18n';
+
+interface Props {
+  en: string;
+  zh?: string | null;
+  lang: Lang;
+  /** When `as`, wrap in that element. When omitted, renders as a text node. */
+  as?: 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'div' | 'em' | 'strong';
+  class?: string;
+}
+
+const { en, zh, lang, as, class: className } = Astro.props;
+const text = t({ en, zh: zh ?? undefined }, lang);
+const Tag = as ?? null;
+---
+
+{Tag ? <Tag class={className}>{text}</Tag> : text}

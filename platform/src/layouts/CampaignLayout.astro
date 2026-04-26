@@ -1,0 +1,206 @@
+---
+// Base layout for all campaign pages: header + footer + lang toggle.
+//
+// Pages pass: title, description, lang, optional og image url.
+// Layout handles: <head>, header brand + lang toggle, footer with mailing
+// address + privacy + sources, body[data-lang] for ZH font swap.
+
+import '~/styles/tokens.css';
+import LangToggle from '~/components/LangToggle.astro';
+import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
+import { localizedUrl, t } from '~/lib/i18n';
+import { getEntry } from 'astro:content';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang: Lang;
+  /** robots noindex flag — true for staging / pre-launch */
+  noindex?: boolean;
+  /** og image url (absolute) */
+  ogImage?: string;
+}
+
+const { title, description, lang, noindex = false, ogImage } = Astro.props;
+const pathname = Astro.url.pathname;
+
+// Note: meta.yaml's top-level `slug:` field is used by Astro's glob loader
+// as the entry id (overriding the filename). Other YAML files in this
+// collection are looked up by filename (e.g. 'facts', 'journey').
+const CAMPAIGN_SLUG = 'fund-burnaby-kids';
+const metaEntry = await getEntry('campaign', CAMPAIGN_SLUG);
+const meta = (metaEntry?.data ?? {}) as any;
+
+const founderName = meta.founder?.name ?? 'Ben Zhou';
+const campaignTitle = meta.title ? t(meta.title, lang) : 'Burnaby Kids First';
+const tagline = meta.tagline ? t(meta.tagline, lang) : '';
+const mailingAddress = import.meta.env.MAILING_ADDRESS ?? '(Mailing address being established)';
+---
+
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    {noindex && <meta name="robots" content="noindex" />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content="website" />
+    <link rel="alternate" hreflang="en" href={`https://fundburnabykids.ca${pathname.replace(/^\/zh/, '') || '/'}`} />
+    <link rel="alternate" hreflang="zh" href={`https://fundburnabykids.ca${pathname.startsWith('/zh') ? pathname : '/zh' + pathname}`} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body data-lang={lang}>
+    <header class="site-header">
+      <div class="wrap-wide site-header__inner">
+        <a class="brand" href={localizedUrl('/', lang)}>
+          <span class="brand__campaign">{campaignTitle}</span>
+          {tagline && <span class="brand__tagline sans">{tagline}</span>}
+        </a>
+        <LangToggle lang={lang} pathname={pathname} />
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap-wide site-footer__inner">
+        <div class="site-footer__col">
+          <p class="site-footer__heading sans">
+            <I18nText en="About" zh="关于" lang={lang} />
+          </p>
+          <p>
+            <strong>{campaignTitle}</strong>
+            {tagline && <><br /><span class="muted">{tagline}</span></>}
+          </p>
+          <p class="muted small">
+            <I18nText en="Founded by" zh="发起人" lang={lang} /> {founderName}.{' '}
+            <I18nText
+              en="Volunteer-run, parent-led, non-partisan."
+              zh="家长发起、志愿运营、非党派。"
+              lang={lang}
+            />
+          </p>
+        </div>
+
+        <div class="site-footer__col">
+          <p class="site-footer__heading sans">
+            <I18nText en="Contact" zh="联系" lang={lang} />
+          </p>
+          <p><a href="mailto:hello@fundburnabykids.ca">hello@fundburnabykids.ca</a></p>
+          <p>
+            <a href={localizedUrl('/privacy', lang)}>
+              <I18nText en="Privacy & your questions" zh="隐私与你的疑问" lang={lang} />
+            </a>
+          </p>
+          <p class="muted small mailing-address">{mailingAddress}</p>
+        </div>
+
+        <div class="site-footer__col">
+          <p class="site-footer__heading sans">
+            <I18nText en="Coalition" zh="联盟" lang={lang} />
+          </p>
+          <p class="muted small">
+            <I18nText
+              en="A campaign of Burnaby Kids First — a parent-led, non-partisan coalition for Burnaby families."
+              zh="Burnaby Kids First 联盟旗下的一个 campaign。本拿比家长发起，非党派立场。"
+              lang={lang}
+            />
+          </p>
+        </div>
+      </div>
+      <div class="wrap-wide site-footer__legal">
+        <p class="muted xs">
+          <I18nText
+            en="© 2026 Burnaby Kids First. Content released under CC BY-SA 4.0."
+            zh="© 2026 Burnaby Kids First. 内容采用 CC BY-SA 4.0 授权。"
+            lang={lang}
+          />
+        </p>
+      </div>
+    </footer>
+
+    <style>
+      .site-header {
+        background: var(--paper);
+        border-bottom: 1px solid var(--line);
+      }
+      .site-header__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-top: 16px;
+        padding-bottom: 16px;
+      }
+      .brand {
+        display: inline-flex;
+        flex-direction: column;
+        text-decoration: none;
+        color: var(--ink);
+      }
+      .brand__campaign {
+        font-family: var(--font-sans);
+        font-weight: 700;
+        font-size: 18px;
+        color: var(--accent);
+        line-height: 1.2;
+      }
+      .brand__tagline {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 2px;
+        letter-spacing: 0.01em;
+      }
+      main {
+        min-height: 60vh;
+      }
+      .site-footer {
+        margin-top: 80px;
+        padding: 48px 0 24px;
+        background: var(--paper);
+        border-top: 1px solid var(--line);
+        font-family: var(--font-sans);
+        font-size: 14px;
+      }
+      .site-footer__inner {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 32px;
+      }
+      @media (max-width: 700px) {
+        .site-footer__inner {
+          grid-template-columns: 1fr;
+          gap: 24px;
+        }
+      }
+      .site-footer__heading {
+        font-weight: 600;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--ink-soft);
+        margin-bottom: 8px;
+      }
+      .site-footer__col p { margin-bottom: 6px; }
+      .site-footer__legal {
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+      .muted { color: var(--muted); }
+      .small { font-size: 13px; }
+      .xs { font-size: 12px; }
+      .mailing-address {
+        font-style: italic;
+        margin-top: 8px;
+      }
+    </style>
+  </body>
+</html>

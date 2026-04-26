@@ -1,0 +1,164 @@
+---
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+const status = Astro.url.searchParams.get('status') || 'ok';
+const isAlready = status === 'already';
+---
+
+<CampaignLayout
+  lang={lang}
+  noindex
+  title={lang === 'zh' ? '签名已确认 — Fund Burnaby Kids' : 'Signature confirmed — Fund Burnaby Kids'}
+>
+  <section class="confirm-page">
+    <div class="wrap">
+      <div class="confirm-card">
+        <div class="confirm-icon" aria-hidden="true">✓</div>
+        <h1>
+          {isAlready ? (
+            <I18nText
+              en="You're already signed."
+              zh="你已经签过名了。"
+              lang={lang}
+            />
+          ) : (
+            <I18nText
+              en="Your signature is confirmed."
+              zh="你的签名已确认。"
+              lang={lang}
+            />
+          )}
+        </h1>
+        <p class="confirm-lede">
+          <I18nText
+            en="Your name is now on the public record we will show MLAs, the Minister, and reporters. Thank you."
+            zh="你的名字现在已经进入我们将向 MLA、教育部长和媒体公开的名单。谢谢。"
+            lang={lang}
+          />
+        </p>
+
+        <div class="confirm-next">
+          <h2 class="sans">
+            <I18nText en="What you can do next" zh="接下来你可以做的事" lang={lang} />
+          </h2>
+          <ul>
+            <li>
+              <strong>
+                <I18nText
+                  en="Forward this campaign to one other Burnaby parent."
+                  zh="把这个 campaign 转给一位本拿比家长。"
+                  lang={lang}
+                />
+              </strong>{' '}
+              <I18nText
+                en="The fastest path from 100 signatures to 1,000 is one parent telling another."
+                zh="从 100 个签名到 1,000 个签名最快的方法，就是一位家长告诉另一位家长。"
+                lang={lang}
+              />
+            </li>
+            <li>
+              <I18nText
+                en="If you haven't sent the pre-filled email to your MLA yet,"
+                zh="如果你还没把预填邮件发给你的 MLA，"
+                lang={lang}
+              />{' '}
+              <a href={localizedUrl('/#act', lang)}>
+                <I18nText en="open it now" zh="现在打开" lang={lang} />
+              </a>.
+            </li>
+            <li>
+              <I18nText
+                en="If your child's PAC hasn't endorsed yet,"
+                zh="如果你孩子学校的 PAC 还没正式 endorse，"
+                lang={lang}
+              />{' '}
+              <a href={localizedUrl('/#coalition', lang)}>
+                <I18nText en="here's the kit they need" zh="这里是他们需要的资料包" lang={lang} />
+              </a>.
+            </li>
+          </ul>
+        </div>
+
+        <p class="confirm-back">
+          <a href={localizedUrl('/', lang)}>
+            ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .confirm-page {
+    padding: 64px 0;
+  }
+  .confirm-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .confirm-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--success-soft);
+    color: var(--success);
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  .confirm-page h1 {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+  .confirm-lede {
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin-bottom: 32px;
+  }
+  .confirm-next {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-bottom: 24px;
+  }
+  .confirm-next h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .confirm-next ul {
+    list-style: none;
+    padding: 0;
+  }
+  .confirm-next li {
+    padding-left: 24px;
+    position: relative;
+    margin-bottom: 12px;
+    line-height: 1.6;
+  }
+  .confirm-next li::before {
+    content: "→";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+  }
+  .confirm-back a {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .confirm-back a:hover { color: var(--accent-deep); }
+</style>

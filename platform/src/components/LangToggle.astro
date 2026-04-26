@@ -1,0 +1,53 @@
+---
+// Header-position EN | 中文 toggle.
+// Always renders the OTHER language as the link target — never confuses
+// "current language" with "available switch". Persistent choice via
+// Astro's i18n routing (path prefix); no JS / cookie needed.
+
+import type { Lang } from '~/lib/i18n';
+import { LANG_LABELS, alternateLangUrl } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+  /** Current pathname; pass Astro.url.pathname from the page. */
+  pathname: string;
+}
+
+const { lang, pathname } = Astro.props;
+const otherUrl = alternateLangUrl(pathname, lang);
+const otherLabel = LANG_LABELS[lang].other;
+const currentLabel = LANG_LABELS[lang].self;
+---
+
+<div class="lang-toggle" aria-label="Language toggle">
+  <span class="lang-toggle__current" aria-current="true">{currentLabel}</span>
+  <span class="lang-toggle__sep" aria-hidden="true">|</span>
+  <a class="lang-toggle__other" href={otherUrl} hreflang={lang === 'en' ? 'zh' : 'en'}>{otherLabel}</a>
+</div>
+
+<style>
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .lang-toggle__current {
+    color: var(--ink);
+  }
+  .lang-toggle__sep {
+    color: var(--muted);
+  }
+  .lang-toggle__other {
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .lang-toggle__other:hover,
+  .lang-toggle__other:focus-visible {
+    color: var(--accent);
+  }
+</style>
