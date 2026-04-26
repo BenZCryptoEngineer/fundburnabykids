@@ -11,7 +11,6 @@ import CoalitionSection from '~/components/CoalitionSection.astro';
 import PacKitModal from '~/components/PacKitModal.astro';
 import AboutSection from '~/components/AboutSection.astro';
 import FaqAccordion from '~/components/FaqAccordion.astro';
-import I18nText from '~/components/I18nText.astro';
 
 const lang = 'zh';
 ---
@@ -47,24 +46,6 @@ const lang = 'zh';
   <FaqAccordion lang={lang} />
 
   <PacKitModal lang={lang} />
-
-  <section class="phase-note">
-    <div class="wrap">
-      <p class="kicker sans">
-        <I18nText
-          en="Coming in the next batches (Phase 5.6 - 5.7)"
-          zh="下面要补的（Phase 5.6 - 5.7）"
-          lang={lang}
-        />
-      </p>
-      <ul>
-        <li>PAC 资料包打印页（/pac-kit）</li>
-        <li>验证机制说明页（/methodology）</li>
-        <li>隐私政策（从 Phase 4A 的独立 HTML 迁过来）</li>
-        <li>最后整合 + Lighthouse pass</li>
-      </ul>
-    </div>
-  </section>
 </CampaignLayout>
 
 <style>
@@ -72,25 +53,5 @@ const lang = 'zh';
     padding: 24px 0;
     background: var(--paper);
     border-top: 1px solid var(--line);
-  }
-  .phase-note {
-    padding: 48px 0;
-    background: var(--cream);
-    border-top: 1px solid var(--line);
-  }
-  .phase-note .kicker {
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    color: var(--warm);
-    font-weight: 600;
-    margin: 0 0 12px;
-  }
-  .phase-note ul {
-    padding-left: 20px;
-    margin: 0;
-    color: var(--ink-soft);
-  }
-  .phase-note li {
-    margin-bottom: 6px;
   }
 </style>
