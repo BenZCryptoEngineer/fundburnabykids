@@ -100,7 +100,12 @@ export const handler: Handler = async (event) => {
       });
     }
 
-    return redirect(`${SITE_URL}/${persistedLocale === 'zh' ? 'zh/' : ''}confirmed?status=ok`);
+    // Surface the freshly-minted letter_token to the /confirmed page so it
+    // can render the user's shareable letter URL without an extra DB lookup.
+    const confirmedPath = persistedLocale === 'zh' ? 'zh/confirmed' : 'confirmed';
+    return redirect(
+      `${SITE_URL}/${confirmedPath}?status=ok&t=${encodeURIComponent(letterToken)}`
+    );
   } catch (err) {
     console.error('confirm-signature unhandled error:', err);
     return redirect(`${SITE_URL}/confirm-failed?reason=server_error`);

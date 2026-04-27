@@ -9,6 +9,17 @@ import { pickLang, localizedUrl } from '~/lib/i18n';
 const lang = pickLang(Astro.url.pathname);
 const status = Astro.url.searchParams.get('status') || 'ok';
 const isAlready = status === 'already';
+
+// confirm-signature redirects with ?t=<letter_token> on success so we can
+// surface the signer's shareable letter URL right here, no extra DB lookup.
+// We don't validate the token shape against the DB — wrong tokens just 404
+// on the linked page. ?t is absent for the `already` branch by design
+// (we don't expose tokens for repeat clicks).
+const letterToken = (Astro.url.searchParams.get('t') ?? '').trim();
+const safeToken = /^[A-Za-z0-9_-]{16,128}$/.test(letterToken) ? letterToken : '';
+const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? 'https://fundburnabykids.ca';
+const letterPath = lang === 'zh' ? '/zh/letters/' : '/letters/';
+const letterUrl = safeToken ? `${siteOrigin}${letterPath}${encodeURIComponent(safeToken)}` : null;
 ---
 
 <CampaignLayout
@@ -34,6 +45,36 @@ const isAlready = status === 'already';
             lang={lang}
           />
         </p>
+
+        {letterUrl && (
+          <div class="confirm-letter">
+            <h2 class="sans">
+              <I18nText en="Your letter" zh="你的信件页面" lang={lang} />
+            </h2>
+            <p class="confirm-letter__lede">
+              <I18nText
+                en="Every confirmed signer gets a permanent page that shows their letter to the MLA — share it with neighbours, post it on WeChat or Twitter."
+                zh="每位已确认签署人都有一个永久页面，展示他们写给 MLA 的信件 —— 可以分享给邻居、发到微信或 Twitter。"
+                lang={lang}
+              />
+            </p>
+            <div class="confirm-letter__row">
+              <a class="btn btn--primary btn--small" href={letterUrl} target="_blank" rel="noopener">
+                <I18nText en="Open my letter →" zh="打开我的信件页面 →" lang={lang} />
+              </a>
+              <button
+                type="button"
+                class="confirm-letter__copy"
+                data-copy-url={letterUrl}
+                data-copied={lang === 'zh' ? '已复制' : 'Copied!'}
+                data-default={lang === 'zh' ? '复制链接' : 'Copy link'}
+              >
+                <I18nText en="Copy link" zh="复制链接" lang={lang} />
+              </button>
+            </div>
+            <code class="confirm-letter__url" aria-label={lang === 'zh' ? '链接' : 'URL'}>{letterUrl}</code>
+          </div>
+        )}
 
         <div class="confirm-next">
           <h2 class="sans">
@@ -144,4 +185,97 @@ const isAlready = status === 'already';
     font-weight: 500;
   }
   .confirm-back a:hover { color: var(--accent-deep); }
+
+  .confirm-letter {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-bottom: 24px;
+  }
+  .confirm-letter h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .confirm-letter__lede {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+  .confirm-letter__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .btn--small { font-size: 14px; padding: 8px 14px; }
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+  }
+  .confirm-letter__copy {
+    background: var(--paper);
+    color: var(--accent);
+    border: 2px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 8px 14px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .confirm-letter__copy:hover { border-color: var(--accent); }
+  .confirm-letter__url {
+    display: block;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 8px 12px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    word-break: break-all;
+  }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('.confirm-letter__copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const url = btn.dataset.copyUrl ?? '';
+      const copied = btn.dataset.copied ?? 'Copied!';
+      const original = btn.dataset.default ?? btn.textContent ?? 'Copy link';
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        const code = btn.parentElement?.parentElement?.querySelector('.confirm-letter__url');
+        if (code) {
+          const range = document.createRange();
+          range.selectNodeContents(code);
+          const sel = window.getSelection();
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+        }
+      }
+      btn.textContent = copied;
+      setTimeout(() => { btn.textContent = original; }, 2000);
+    });
+  });
+</script>

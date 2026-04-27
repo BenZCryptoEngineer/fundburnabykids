@@ -25,6 +25,7 @@ type Mla = {
   id: string;
   name: string;
   riding: string;
+  riding_id: string | null;
   is_minister?: boolean;
   email: string;
   recipient_role: 'to' | 'cc';
@@ -109,6 +110,19 @@ function statusLabel(s: Status, l: Lang): string {
               </a>
             )}
           </footer>
+
+          {!m.is_minister && m.riding_id && (
+            <a
+              class="mla-card__letters sans"
+              href={lang === 'zh' ? `/zh/mla/${m.id}` : `/mla/${m.id}`}
+            >
+              <I18nText
+                en="View constituent letters →"
+                zh="查看选区来信 →"
+                lang={lang}
+              />
+            </a>
+          )}
         </article>
       ))}
     </div>
@@ -279,6 +293,17 @@ function statusLabel(s: Status, l: Lang): string {
     font-weight: 500;
   }
   .mla-card__source:hover { text-decoration: underline; }
+  .mla-card__letters {
+    display: block;
+    margin-top: 4px;
+    padding: 8px 0 0;
+    border-top: 1px solid var(--line-soft);
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .mla-card__letters:hover { text-decoration: underline; }
 
   .scorecard__legend {
     display: grid;

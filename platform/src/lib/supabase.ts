@@ -58,3 +58,26 @@ export async function fetchLetterByToken(token: string): Promise<PublicLetter | 
   }
   return (data as PublicLetter | null) ?? null;
 }
+
+export async function fetchLettersByRiding(
+  ridingId: string,
+  opts: { limit?: number; offset?: number } = {}
+): Promise<{ letters: PublicLetter[]; total: number }> {
+  const supabase = getAnonSupabase();
+  const limit = opts.limit ?? 50;
+  const offset = opts.offset ?? 0;
+  const { data, error, count } = await supabase
+    .from('public_letters')
+    .select('*', { count: 'exact' })
+    .eq('riding_id', ridingId)
+    .order('signed_at', { ascending: false })
+    .range(offset, offset + limit - 1);
+  if (error) {
+    console.error('fetchLettersByRiding error:', error);
+    return { letters: [], total: 0 };
+  }
+  return {
+    letters: (data as PublicLetter[] | null) ?? [],
+    total: count ?? 0,
+  };
+}

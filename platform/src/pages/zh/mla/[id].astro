@@ -1,0 +1,99 @@
+---
+// Per-MLA constituent letter feed (ZH). See ../../mla/[id].astro for EN.
+
+export const prerender = false;
+
+import { getEntry } from 'astro:content';
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import MlaInbox from '~/components/MlaInbox.astro';
+import I18nText from '~/components/I18nText.astro';
+import { localizedUrl } from '~/lib/i18n';
+import { fetchLettersByRiding } from '~/lib/supabase';
+
+const lang = 'zh';
+const PER_PAGE = 50;
+const id = (Astro.params.id ?? '').trim();
+const pageParam = parseInt(Astro.url.searchParams.get('page') ?? '1', 10);
+const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
+
+type Mla = {
+  id: string;
+  name: string;
+  riding: { en: string; zh: string };
+  riding_id: string | null;
+  is_minister?: boolean;
+};
+
+const mlasEntry = await getEntry('campaign', 'mlas');
+const allMlas: Mla[] = (mlasEntry?.data as any)?.mlas ?? [];
+const mla = allMlas.find((m) => m.id === id && m.riding_id) ?? null;
+
+let letters: any[] = [];
+let total = 0;
+if (mla?.riding_id) {
+  const result = await fetchLettersByRiding(mla.riding_id, {
+    limit: PER_PAGE,
+    offset: (page - 1) * PER_PAGE,
+  });
+  letters = result.letters;
+  total = result.total;
+} else {
+  Astro.response.status = 404;
+}
+
+const title = mla
+  ? `致 MLA ${mla.name} 的来信 — Fund Burnaby Kids`
+  : '未找到该 MLA — Fund Burnaby Kids';
+---
+
+<CampaignLayout lang={lang} title={title}>
+  <section class="mla-page">
+    <div class="wrap">
+      {mla ? (
+        <MlaInbox
+          mla={mla}
+          letters={letters}
+          total={total}
+          page={page}
+          perPage={PER_PAGE}
+          lang={lang}
+        />
+      ) : (
+        <div class="mla-missing">
+          <h1>
+            <I18nText en="MLA not found" zh="未找到该 MLA" lang={lang} />
+          </h1>
+          <p>
+            <I18nText
+              en="No Burnaby MLA matches that id."
+              zh="没有匹配该 id 的本拿比 MLA。"
+              lang={lang}
+            />
+          </p>
+          <p>
+            <a href={localizedUrl('/', lang)}>
+              ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .mla-page {
+    padding: 48px 0;
+  }
+  .mla-missing {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    max-width: 560px;
+    box-shadow: var(--shadow-sm);
+  }
+  .mla-missing h1 { font-size: 24px; margin-bottom: 16px; }
+  .mla-missing p { color: var(--ink-soft); line-height: 1.6; margin-bottom: 16px; }
+  .mla-missing a { color: var(--accent); font-family: var(--font-sans); font-weight: 500; }
+</style>
