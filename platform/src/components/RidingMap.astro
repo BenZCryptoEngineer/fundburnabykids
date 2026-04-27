@@ -24,9 +24,10 @@ import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
 import { t } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+// GeoJSON inlined at build time via Vite's native JSON import.
+// (Reading via fs.readFileSync at runtime fails in production because the
+//  bundled component sits in dist/chunks/, not next to src/data/.)
+import burnabyRidings from '~/data/burnaby-ridings.json';
 
 interface Props {
   lang: Lang;
@@ -36,14 +37,7 @@ const { lang } = Astro.props;
 
 // ---- Load data --------------------------------------------------------------
 
-// Read GeoJSON synchronously at build time (it's small, ~30KB).
-const geoJsonPath = path.join(
-  path.dirname(fileURLToPath(import.meta.url)),
-  '..',
-  'data',
-  'burnaby-ridings.geojson'
-);
-const geojson = JSON.parse(fs.readFileSync(geoJsonPath, 'utf-8')) as {
+const geojson = burnabyRidings as {
   type: 'FeatureCollection';
   features: Array<{
     type: 'Feature';
