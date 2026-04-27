@@ -39,12 +39,27 @@ try {
   console.error(`SvgVisual: failed to read ${svgPath}:`, err);
   svgContent = `<!-- SVG ${visual}.${lang} not found -->`;
 }
+
+// Unique id so multiple SvgVisual instances on a page each get their own dialog.
+const dialogId = `lightbox-${visual}-${lang}-${Math.random().toString(36).slice(2, 8)}`;
+const zoomLabel = lang === 'zh' ? '放大查看' : 'Open larger view';
+const closeLabel = lang === 'zh' ? '关闭' : 'Close';
 ---
 
 <figure class="svg-visual">
   {kicker && <p class="svg-visual__kicker sans">{kicker}</p>}
   {headline && <h4 class="svg-visual__headline sans">{headline}</h4>}
-  <div class="svg-visual__media" set:html={svgContent} />
+  <button
+    type="button"
+    class="svg-visual__zoom"
+    data-zoom-target={dialogId}
+    aria-label={headline ? `${zoomLabel}: ${headline}` : zoomLabel}
+  >
+    <span class="svg-visual__media" set:html={svgContent} />
+    <span class="svg-visual__zoom-hint sans" aria-hidden="true">
+      <I18nText en="Tap to enlarge" zh="点击放大" lang={lang} />
+    </span>
+  </button>
   {takeaway && (
     <figcaption class="svg-visual__takeaway">
       <span class="sans muted">
@@ -54,6 +69,49 @@ try {
     </figcaption>
   )}
 </figure>
+
+<dialog class="svg-lightbox" id={dialogId} aria-label={headline ?? zoomLabel}>
+  <button
+    type="button"
+    class="svg-lightbox__close"
+    data-zoom-close
+    aria-label={closeLabel}
+  >×</button>
+  <div class="svg-lightbox__media" set:html={svgContent} />
+</dialog>
+
+<script>
+  // Single delegated handler — Astro hoists & dedupes this across instances.
+  if (!(window as any).__svgLightboxBound) {
+    (window as any).__svgLightboxBound = true;
+
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const opener = target.closest<HTMLElement>('[data-zoom-target]');
+      if (opener) {
+        const id = opener.dataset.zoomTarget;
+        if (!id) return;
+        const dlg = document.getElementById(id) as HTMLDialogElement | null;
+        if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
+        return;
+      }
+
+      const closer = target.closest<HTMLElement>('[data-zoom-close]');
+      if (closer) {
+        const dlg = closer.closest('dialog') as HTMLDialogElement | null;
+        dlg?.close();
+        return;
+      }
+
+      // Backdrop click (event target is the dialog itself when clicking outside the SVG).
+      if (target.tagName === 'DIALOG' && target.classList.contains('svg-lightbox')) {
+        (target as HTMLDialogElement).close();
+      }
+    });
+  }
+</script>
 
 <style>
   .svg-visual {
@@ -87,6 +145,44 @@ try {
     max-width: 100%;
     height: auto;
   }
+  .svg-visual__zoom {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    padding: 0;
+    margin: 0;
+    cursor: zoom-in;
+    font: inherit;
+    color: inherit;
+    text-align: center;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .svg-visual__zoom:hover,
+  .svg-visual__zoom:focus-visible {
+    border-color: var(--line);
+    background: var(--cream);
+  }
+  .svg-visual__zoom:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .svg-visual__zoom-hint {
+    display: inline-block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    padding: 4px 8px;
+    margin: 0 0 8px;
+    opacity: 0.7;
+  }
+  .svg-visual__zoom:hover .svg-visual__zoom-hint,
+  .svg-visual__zoom:focus-visible .svg-visual__zoom-hint {
+    opacity: 1;
+    color: var(--accent);
+  }
   .svg-visual__takeaway {
     font-size: 14px;
     color: var(--ink-soft);
@@ -96,4 +192,63 @@ try {
     border-top: 1px solid var(--line);
   }
   .muted { color: var(--muted); }
+
+  /* Lightbox dialog — fullscreen-ish modal at native SVG resolution. */
+  .svg-lightbox {
+    width: 90vw;
+    max-width: 1200px;
+    max-height: 90vh;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+  .svg-lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  .svg-lightbox__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+  }
+  .svg-lightbox__close:hover {
+    background: var(--cream);
+    color: var(--accent);
+  }
+  .svg-lightbox__media {
+    width: 100%;
+    height: 100%;
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+  .svg-lightbox__media :global(svg) {
+    width: 100%;
+    height: auto;
+    max-height: calc(90vh - 64px);
+  }
+  @media (max-width: 560px) {
+    .svg-lightbox {
+      width: 96vw;
+      max-height: 94vh;
+    }
+    .svg-lightbox__media { padding: 16px; }
+  }
 </style>
