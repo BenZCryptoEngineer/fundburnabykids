@@ -1,0 +1,94 @@
+---
+// Per-signer public letter page (EN). Mode A of TODO.md item 2.
+//
+// SSR: opted out of static pre-rendering — the token isn't known at build
+// time, so this route runs as a Netlify Function on demand. The /zh
+// variant lives at src/pages/zh/letters/[token].astro.
+//
+// Privacy: see LetterRender.astro — emails are never read here, full
+// surnames are never rendered.
+
+export const prerender = false;
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import LetterRender from '~/components/LetterRender.astro';
+import I18nText from '~/components/I18nText.astro';
+import { localizedUrl } from '~/lib/i18n';
+import { fetchLetterByToken } from '~/lib/supabase';
+
+const lang = 'en';
+const token = (Astro.params.token ?? '').trim();
+
+let letter = token.length >= 16 && token.length <= 128
+  ? await fetchLetterByToken(token)
+  : null;
+
+if (!letter) {
+  Astro.response.status = 404;
+}
+
+const shareUrl = `${Astro.site?.toString().replace(/\/$/, '') ?? 'https://fundburnabykids.ca'}/letters/${encodeURIComponent(token)}`;
+
+const title = letter
+  ? `${letter.first_name} ${letter.last_initial}. — Fund Burnaby Kids`
+  : 'Letter not found — Fund Burnaby Kids';
+const description = letter
+  ? `A confirmed letter from a Burnaby parent calling on the BC Province to fund SD41's $9.4M arbitration before May 27.`
+  : undefined;
+---
+
+<CampaignLayout lang={lang} title={title} description={description} noindex>
+  <section class="letter-page">
+    <div class="wrap">
+      {letter ? (
+        <LetterRender letter={letter} lang={lang} shareUrl={shareUrl} />
+      ) : (
+        <div class="letter-missing">
+          <h1>
+            <I18nText en="Letter not found" zh="未找到该信件" lang={lang} />
+          </h1>
+          <p>
+            <I18nText
+              en="This letter URL is not valid, or the signer asked us to remove their letter from public view."
+              zh="此链接无效，或签署人已请求将其信件从公开页面移除。"
+              lang={lang}
+            />
+          </p>
+          <p>
+            <a href={localizedUrl('/', lang)}>
+              ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .letter-page {
+    padding: 48px 0;
+  }
+  .letter-missing {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    max-width: 560px;
+    box-shadow: var(--shadow-sm);
+  }
+  .letter-missing h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  .letter-missing p {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .letter-missing a {
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+</style>

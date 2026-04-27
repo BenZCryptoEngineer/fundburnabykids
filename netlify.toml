@@ -18,7 +18,12 @@
 [build]
   # No `base` — keep build at repo root so Functions can resolve root deps.
   publish = "platform/dist/"
-  command = "npm install --prefix platform && (cd platform && npm run build)"
+  # Astro's @astrojs/netlify adapter (used for the SSR routes /letters/[token]
+  # and /mla/[id]) writes its function bundle to platform/.netlify/v1/. Netlify
+  # Build only auto-discovers .netlify/v1/ at the repo root, so we copy after
+  # the Astro build. The repo-root .netlify/ is regenerated each build —
+  # delete first to avoid stale function leftovers from a previous build.
+  command = "npm install --prefix platform && (cd platform && npm run build) && rm -rf .netlify && cp -r platform/.netlify ."
 
 [build.environment]
   NODE_VERSION = "20"

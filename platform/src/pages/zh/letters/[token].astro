@@ -1,0 +1,89 @@
+---
+// Per-signer public letter page (ZH). See ../../letters/[token].astro for
+// the EN variant and the privacy contract — this file is intentionally a
+// near-duplicate to keep Astro's i18n routing predictable.
+
+export const prerender = false;
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import LetterRender from '~/components/LetterRender.astro';
+import I18nText from '~/components/I18nText.astro';
+import { localizedUrl } from '~/lib/i18n';
+import { fetchLetterByToken } from '~/lib/supabase';
+
+const lang = 'zh';
+const token = (Astro.params.token ?? '').trim();
+
+let letter = token.length >= 16 && token.length <= 128
+  ? await fetchLetterByToken(token)
+  : null;
+
+if (!letter) {
+  Astro.response.status = 404;
+}
+
+const shareUrl = `${Astro.site?.toString().replace(/\/$/, '') ?? 'https://fundburnabykids.ca'}/zh/letters/${encodeURIComponent(token)}`;
+
+const title = letter
+  ? `${letter.first_name} ${letter.last_initial}. — Fund Burnaby Kids`
+  : '未找到该信件 — Fund Burnaby Kids';
+const description = letter
+  ? '一封来自本拿比家长的已确认请愿信，呼吁 BC 省政府在 5 月 27 日前为 SD41 的 940 万元仲裁裁决拨款。'
+  : undefined;
+---
+
+<CampaignLayout lang={lang} title={title} description={description} noindex>
+  <section class="letter-page">
+    <div class="wrap">
+      {letter ? (
+        <LetterRender letter={letter} lang={lang} shareUrl={shareUrl} />
+      ) : (
+        <div class="letter-missing">
+          <h1>
+            <I18nText en="Letter not found" zh="未找到该信件" lang={lang} />
+          </h1>
+          <p>
+            <I18nText
+              en="This letter URL is not valid, or the signer asked us to remove their letter from public view."
+              zh="此链接无效，或签署人已请求将其信件从公开页面移除。"
+              lang={lang}
+            />
+          </p>
+          <p>
+            <a href={localizedUrl('/', lang)}>
+              ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .letter-page {
+    padding: 48px 0;
+  }
+  .letter-missing {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    max-width: 560px;
+    box-shadow: var(--shadow-sm);
+  }
+  .letter-missing h1 {
+    font-size: 24px;
+    margin-bottom: 16px;
+  }
+  .letter-missing p {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  .letter-missing a {
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+</style>
