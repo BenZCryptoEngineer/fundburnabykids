@@ -35,15 +35,21 @@ source credentials.env
 # re-run the whole file (idempotent). Re-running is safe.
 ```
 
-### 2. OG-image / Twitter card for `/letters/<token>`
+### 2. PNG fallback for the OG card (only if WeChat / Facebook previews matter)
 
-TODO mockup called for "a generic OG-image / Twitter card so it previews
-on WeChat / WhatsApp / Twitter / Facebook." Currently the page emits
-`<meta property="og:title">` from `CampaignLayout` but no `og:image`.
+Static SVG OG cards now ship at `public/og/letter.{en,zh}.svg` (1200×630,
+brand colour) and the letter pages set `ogImage` to the absolute URL.
+`CampaignLayout` emits `og:image:width/height/type` + `twitter:card:
+summary_large_image`, so LinkedIn / Twitter / Slack / Discord / iMessage
+all preview correctly.
 
-Cheapest path: add a single static OG image at `public/og/letter.png`
-(800×420) and have `letters/[token].astro` set `ogImage` to the absolute
-URL. Skip per-signer dynamic OG until growth justifies it.
+**Open question**: WeChat and Facebook are stricter about SVG `og:image`
+and may show no thumbnail. If WeChat previews are mission-critical for
+the Chinese-language share path, export each SVG to PNG via
+`rsvg-convert` or any vector editor and replace the `.svg` URL in
+`platform/src/pages/{letters,zh/letters}/[token].astro` with the `.png`.
+The card design itself is intentionally signer-agnostic so one PNG per
+locale serves every letter.
 
 ### 3. `letter.yaml` template tokens for the public-letter page
 

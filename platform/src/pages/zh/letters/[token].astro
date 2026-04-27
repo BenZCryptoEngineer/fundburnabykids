@@ -23,6 +23,7 @@ if (!letter) {
 }
 
 const shareUrl = `${Astro.site?.toString().replace(/\/$/, '') ?? 'https://fundburnabykids.ca'}/zh/letters/${encodeURIComponent(token)}`;
+const ogImage = `${Astro.site?.toString().replace(/\/$/, '') ?? 'https://fundburnabykids.ca'}/og/letter.zh.svg`;
 
 const title = letter
   ? `${letter.first_name} ${letter.last_initial}. — Fund Burnaby Kids`
@@ -32,7 +33,7 @@ const description = letter
   : undefined;
 ---
 
-<CampaignLayout lang={lang} title={title} description={description} noindex>
+<CampaignLayout lang={lang} title={title} description={description} ogImage={letter ? ogImage : undefined} noindex>
   <section class="letter-page">
     <div class="wrap">
       {letter ? (
