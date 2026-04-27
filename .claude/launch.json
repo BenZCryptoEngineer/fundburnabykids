@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "samples",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "samples", "-p", "4321", "-c-1", "--silent"],
+      "port": 4321
+    },
+    {
+      "name": "platform",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "platform", "--", "--port", "4322"],
+      "port": 4322
+    }
+  ]
+}

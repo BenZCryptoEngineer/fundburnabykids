@@ -1,9 +1,24 @@
+# MLA registry — Fund Burnaby Kids campaign.
+#
+# Riding names follow the 2024 redistribution (post-2023 Electoral Boundaries
+# Commission) which is in effect for the 43rd Parliament. The riding_id matches
+# the Elections BC ED_ABBREVIATION (BNC/BNE/BNN/BNO/BNS) so the map view can
+# join on it. Email + name verified against
+# https://www.leg.bc.ca/contact-us/mla-contact-information on 2026-04-26.
+#
+# Note on Rohini Arora: the legislature uses her formal first name "Rohini"
+# in official records and email; she campaigns publicly as "Reah Arora".
+# We mirror the legislature's naming for outbound mail correctness.
+
 mlas:
+  # ---- Provincial cabinet recipients (always TO/CC the same two ministers) ----
+
   - id: beare
     name: "Hon. Lisa Beare"
     riding:
       en: "Minister of Education and Child Care"
       zh: "教育及儿童保育厅长"
+    riding_id: null
     is_minister: true
     email: "ECC.Minister@gov.bc.ca"
     recipient_role: "to"
@@ -19,6 +34,7 @@ mlas:
     riding:
       en: "Minister of Finance"
       zh: "财政厅长"
+    riding_id: null
     is_minister: true
     email: "FIN.Minister@gov.bc.ca"
     recipient_role: "cc"
@@ -29,11 +45,14 @@ mlas:
       source_date: null
     last_updated: 2026-04-26
 
+  # ---- Five Burnaby ridings (43rd Parliament, post-2024 redistribution) ----
+
   - id: kang
     name: "Anne Kang"
     riding:
-      en: "Burnaby-Edmonds"
-      zh: "Burnaby-Edmonds"
+      en: "Burnaby Centre"
+      zh: "Burnaby Centre"
+    riding_id: BNC
     is_minister: false
     email: "anne.kang.MLA@leg.bc.ca"
     recipient_role: "cc"
@@ -47,10 +66,27 @@ mlas:
   - id: arora
     name: "Rohini Arora"
     riding:
-      en: "Burnaby North"
-      zh: "Burnaby North"
+      en: "Burnaby East"
+      zh: "Burnaby East"
+    riding_id: BNE
     is_minister: false
     email: "rohini.arora.MLA@leg.bc.ca"
+    recipient_role: "cc"
+    status: "awaiting"
+    status_evidence:
+      quote: ""
+      source_url: ""
+      source_date: null
+    last_updated: 2026-04-26
+
+  - id: chouhan
+    name: "Raj Chouhan"
+    riding:
+      en: "Burnaby-New Westminster"
+      zh: "Burnaby-New Westminster"
+    riding_id: BNN
+    is_minister: false
+    email: "raj.chouhan.MLA@leg.bc.ca"
     recipient_role: "cc"
     status: "awaiting"
     status_evidence:
@@ -62,8 +98,9 @@ mlas:
   - id: routledge
     name: "Janet Routledge"
     riding:
-      en: "Burnaby-Willingdon"
-      zh: "Burnaby-Willingdon"
+      en: "Burnaby North"
+      zh: "Burnaby North"
+    riding_id: BNO
     is_minister: false
     email: "janet.routledge.MLA@leg.bc.ca"
     recipient_role: "cc"
@@ -77,25 +114,11 @@ mlas:
   - id: choi
     name: "Paul Choi"
     riding:
-      en: "Burnaby East"
-      zh: "Burnaby East"
+      en: "Burnaby South-Metrotown"
+      zh: "Burnaby South-Metrotown"
+    riding_id: BNS
     is_minister: false
     email: "paul.choi.MLA@leg.bc.ca"
-    recipient_role: "cc"
-    status: "awaiting"
-    status_evidence:
-      quote: ""
-      source_url: ""
-      source_date: null
-    last_updated: 2026-04-26
-
-  - id: chouhan
-    name: "Raj Chouhan"
-    riding:
-      en: "Burnaby-Lougheed"
-      zh: "Burnaby-Lougheed"
-    is_minister: false
-    email: "raj.chouhan.MLA@leg.bc.ca"
     recipient_role: "cc"
     status: "awaiting"
     status_evidence:

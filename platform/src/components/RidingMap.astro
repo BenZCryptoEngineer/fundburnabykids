@@ -1,0 +1,591 @@
+---
+// Burnaby riding choropleth — signatures by provincial electoral district.
+//
+// Pattern modeled on the UK Parliament petition map (Unboxed):
+// https://petitionmap.unboxedconsulting.com/
+//
+// Visual choices documented:
+//   - Choropleth fill (region color = data) over 3D bars: cartography
+//     literature (Wilke, Axis Maps) discourages 3D for 1D quantities.
+//   - 5-class ColorBrewer Purples ramp: avoids BC party-color associations
+//     (red BC NDP, blue BC Cons, orange BC NDP banner, green BC Greens).
+//   - geoIdentity().reflectY(true) projection: planar treatment is fine
+//     for Burnaby's ~10km extent and sidesteps GeoJSON ring-winding issues.
+//
+// Data flow:
+//   - SSR: fetch signatures_by_riding view from Supabase, pre-render counts
+//   - Client: poll same view every 30s, recolor + re-bind tooltips
+//
+// Joining: the riding GeoJSON's `abbrev` property matches mlas.yaml
+// `riding_id` (Elections BC ED_ABBREVIATION: BNC/BNE/BNN/BNO/BNS).
+
+import * as d3 from 'd3-geo';
+import { getEntry } from 'astro:content';
+import I18nText from '~/components/I18nText.astro';
+import { t } from '~/lib/i18n';
+import type { Lang } from '~/lib/i18n';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+// ---- Load data --------------------------------------------------------------
+
+// Read GeoJSON synchronously at build time (it's small, ~30KB).
+const geoJsonPath = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+  'data',
+  'burnaby-ridings.geojson'
+);
+const geojson = JSON.parse(fs.readFileSync(geoJsonPath, 'utf-8')) as {
+  type: 'FeatureCollection';
+  features: Array<{
+    type: 'Feature';
+    properties: { id: string; name: string; abbrev: string };
+    geometry: any;
+  }>;
+};
+
+// MLA scorecard data — used for tooltip status
+const mlasEntry = await getEntry('campaign', 'mlas');
+const allMlas = ((mlasEntry?.data as any)?.mlas ?? []) as Array<{
+  id: string;
+  name: string;
+  riding: { en: string; zh?: string };
+  riding_id: string | null;
+  is_minister: boolean;
+  status: string;
+}>;
+const mlaByRiding: Record<string, { name: string; status: string }> = {};
+for (const m of allMlas) {
+  if (m.riding_id && !m.is_minister) {
+    mlaByRiding[m.riding_id] = { name: m.name, status: m.status };
+  }
+}
+
+// Per-riding goal — uniform default. Pulled from thresholds.yaml total / 5
+// so a future change to overall goal flows through.
+const thresholdsEntry = await getEntry('campaign', 'thresholds');
+const totalGoal: number = (thresholdsEntry?.data as any)?.goal ?? 2000;
+const PER_RIDING_GOAL = Math.round(totalGoal / 5);
+
+// SSR initial counts via Supabase REST. If env not set, render empty (counts=0).
+const supaUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supaKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
+const initialCounts: Record<string, number> = {};
+if (supaUrl && supaKey) {
+  try {
+    const res = await fetch(
+      `${supaUrl}/rest/v1/public_signatures_by_riding?select=riding_id,count`,
+      { headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` } }
+    );
+    if (res.ok) {
+      const rows = (await res.json()) as Array<{ riding_id: string; count: number }>;
+      for (const r of rows) initialCounts[r.riding_id] = r.count;
+    }
+  } catch { /* leave empty */ }
+}
+
+// ---- Project once at build time ---------------------------------------------
+
+const W = 800;
+const H = 500;
+const projection = d3.geoIdentity().reflectY(true).fitExtent(
+  [[20, 20], [W - 20, H - 60]],
+  geojson as any
+);
+const pathFn = d3.geoPath(projection as any);
+
+const features = geojson.features.map((f) => {
+  const id = f.properties.abbrev;
+  const d = pathFn(f as any) || '';
+  const centroid = pathFn.centroid(f as any);
+  return {
+    id,
+    name: f.properties.name,
+    d,
+    cx: centroid[0],
+    cy: centroid[1],
+    initialCount: initialCounts[id] ?? 0,
+    mla: mlaByRiding[id] || { name: '—', status: 'awaiting' },
+  };
+});
+
+// ColorBrewer Purples 5-class
+const PURPLES = ['#f2f0f7', '#cbc9e2', '#9e9ac8', '#756bb1', '#54278f'];
+
+function bucketByGoal(count: number): number {
+  const r = count / PER_RIDING_GOAL;
+  if (r < 0.25) return 0;
+  if (r < 0.5) return 1;
+  if (r < 0.75) return 2;
+  if (r < 1.0) return 3;
+  return 4;
+}
+---
+
+<section class="riding-map" id="riding-map">
+  <div class="wrap-wide">
+    <p class="kicker sans">
+      <I18nText
+        en="WHERE BURNABY IS SIGNING"
+        zh="本拿比签名分布"
+        lang={lang}
+      />
+    </p>
+    <h2 class="riding-map__heading">
+      <I18nText
+        en="Each riding's signature count, live."
+        zh="每个选区的实时签名数。"
+        lang={lang}
+      />
+    </h2>
+    <p class="riding-map__sub">
+      <I18nText
+        en={`MLAs respond to their own constituents. Sign by riding, delivered to that riding's MLA. Per-riding goal: ${PER_RIDING_GOAL.toLocaleString()}.`}
+        zh={`MLA 只对自己选区的选民负政治责任。签名按选区汇总，分别递送对应 MLA。每选区目标：${PER_RIDING_GOAL.toLocaleString()}。`}
+        lang={lang}
+      />
+    </p>
+
+    <div class="riding-map__toggle" role="tablist">
+      <button class="active" data-mode="goal" role="tab">
+        <I18nText en="% of riding goal" zh="按选区目标进度" lang={lang} />
+      </button>
+      <button data-mode="raw" role="tab">
+        <I18nText en="Signature count rank" zh="按签名数排名" lang={lang} />
+      </button>
+    </div>
+
+    <div class="riding-map__map-wrap"
+         data-supabase-url={supaUrl}
+         data-supabase-key={supaKey}
+         data-poll-ms="30000"
+         data-per-riding-goal={PER_RIDING_GOAL}>
+      <svg viewBox={`0 0 ${W} ${H}`}
+           class="riding-map__svg"
+           role="img"
+           aria-label={t({ en: 'Burnaby riding choropleth', zh: 'Burnaby 选区分布图' }, lang)}>
+        <g class="riding-map__regions">
+          {features.map((f) => (
+            <path
+              d={f.d}
+              class="riding-map__region"
+              data-riding={f.id}
+              data-mla-name={f.mla.name}
+              data-mla-status={f.mla.status}
+              data-initial-count={f.initialCount}
+              fill={PURPLES[bucketByGoal(f.initialCount)]}
+              stroke="#ffffff"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+              tabindex="0"
+            />
+          ))}
+        </g>
+        <g class="riding-map__labels">
+          {features.map((f) => {
+            const b = bucketByGoal(f.initialCount);
+            const dark = b >= 2;
+            return (
+              <g class="riding-map__label" transform={`translate(${f.cx}, ${f.cy})`}
+                 data-riding={f.id}>
+                <text class="riding-map__name"
+                      y="-6"
+                      text-anchor="middle"
+                      fill={dark ? '#ffffff' : '#1a2238'}>{f.name}</text>
+                <text class="riding-map__num"
+                      y="14"
+                      text-anchor="middle"
+                      fill={dark ? '#ffffff' : '#1a2238'}>{f.initialCount}</text>
+              </g>
+            );
+          })}
+        </g>
+      </svg>
+
+      <div class="riding-map__tooltip" id="riding-map-tooltip" role="status" aria-live="polite"></div>
+    </div>
+
+    <div class="riding-map__legend">
+      <span class="riding-map__legend-caption" data-legend-caption>
+        <I18nText en="% of per-riding goal:" zh="按选区目标进度：" lang={lang} />
+      </span>
+      <div>
+        <div class="riding-map__legend-bar">
+          {PURPLES.map((c) => <div style={`background:${c}`}></div>)}
+        </div>
+        <div class="riding-map__legend-ticks" data-legend-ticks>
+          <span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span><span>100%+</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="riding-map__source sans">
+      <I18nText en="Map data: " zh="地图数据来源：" lang={lang} />
+      <a href="https://catalogue.data.gov.bc.ca/dataset/1cba4b16-263f-4d42-8d84-f5fecaa03d1a"
+         target="_blank" rel="noopener">
+        <I18nText
+          en="Elections BC · 2023 Electoral Boundaries Redistribution"
+          zh="Elections BC · 2023 选区重划"
+          lang={lang}
+        />
+      </a>
+      {' '}(<I18nText en="BC Data Catalogue" zh="BC 数据目录" lang={lang} />,
+      <I18nText
+        en={` retrieved ${new Date().toISOString().slice(0, 10)}`}
+        zh={` 获取于 ${new Date().toISOString().slice(0, 10)}`}
+        lang={lang}
+      />).
+      {' '}<I18nText en="Released under the" zh="许可：" lang={lang} />{' '}
+      <a href="https://www.elections.bc.ca/docs/EBC-Open-Data-Licence.pdf"
+         target="_blank" rel="noopener">Elections BC Open Data Licence</a>.
+      {' '}<I18nText
+        en="Color ramp: "
+        zh="配色："
+        lang={lang}
+      />
+      <a href="https://colorbrewer2.org/#type=sequential&scheme=Purples&n=5"
+         target="_blank" rel="noopener">ColorBrewer Purples (5-class)</a>.
+      {' '}<I18nText
+        en="Postal-code → riding mapping is approximate at FSA boundaries; not for voter eligibility."
+        zh="按邮编 FSA 派生选区是近似（FSA 跨选区），不可用于选民资格判断。"
+        lang={lang}
+      />
+    </p>
+  </div>
+</section>
+
+<script>
+  type RidingDatum = {
+    id: string;
+    name: string;
+    count: number;
+    mlaName: string;
+    mlaStatus: string;
+  };
+
+  const PURPLES = ['#f2f0f7', '#cbc9e2', '#9e9ac8', '#756bb1', '#54278f'];
+
+  const STATUS_LABEL: Record<string, { en: string; zh: string }> = {
+    supportive: { en: 'Public support', zh: '公开支持' },
+    awaiting: { en: 'Awaiting response', zh: '尚未表态' },
+    silent: { en: 'No public statement', zh: '尚无公开声明' },
+    opposed: { en: 'Opposed', zh: '反对' },
+    unclear: { en: 'Unclear', zh: '立场不明' },
+  };
+
+  document.querySelectorAll<HTMLElement>('.riding-map').forEach((root) => {
+    const wrap = root.querySelector<HTMLElement>('.riding-map__map-wrap')!;
+    const supaUrl = wrap.dataset.supabaseUrl;
+    const supaKey = wrap.dataset.supabaseKey;
+    const pollMs = parseInt(wrap.dataset.pollMs || '30000', 10);
+    const perRidingGoal = parseInt(wrap.dataset.perRidingGoal || '400', 10);
+
+    const tooltip = root.querySelector<HTMLElement>('.riding-map__tooltip')!;
+    const regions = Array.from(root.querySelectorAll<SVGPathElement>('.riding-map__region'));
+    const labels = Array.from(root.querySelectorAll<SVGGElement>('.riding-map__label'));
+    const toggleBtns = Array.from(root.querySelectorAll<HTMLButtonElement>('.riding-map__toggle button'));
+    const legendCaption = root.querySelector<HTMLElement>('[data-legend-caption]')!;
+    const legendTicks = root.querySelector<HTMLElement>('[data-legend-ticks]')!;
+
+    const lang: 'en' | 'zh' = (document.documentElement.lang as 'en' | 'zh') || 'en';
+
+    let mode: 'goal' | 'raw' = 'goal';
+    const data: Record<string, RidingDatum> = {};
+
+    // Seed from SSR-rendered initial counts
+    for (const r of regions) {
+      const id = r.dataset.riding!;
+      data[id] = {
+        id,
+        name: r.dataset.ridingName || id,
+        count: parseInt(r.dataset.initialCount || '0', 10),
+        mlaName: r.dataset.mlaName || '—',
+        mlaStatus: r.dataset.mlaStatus || 'awaiting',
+      };
+    }
+
+    function bucketByGoal(count: number): number {
+      const r = count / perRidingGoal;
+      if (r < 0.25) return 0;
+      if (r < 0.5) return 1;
+      if (r < 0.75) return 2;
+      if (r < 1.0) return 3;
+      return 4;
+    }
+
+    function bucketByRank(count: number, sorted: number[]): number {
+      const idx = sorted.indexOf(count);
+      return Math.min(idx, 4);
+    }
+
+    function applyColors() {
+      const sorted = Object.values(data).map((d) => d.count).sort((a, b) => a - b);
+      for (const r of regions) {
+        const id = r.dataset.riding!;
+        const d = data[id];
+        const bucket = mode === 'goal' ? bucketByGoal(d.count) : bucketByRank(d.count, sorted);
+        const fill = PURPLES[bucket];
+        r.setAttribute('fill', fill);
+        const dark = bucket >= 2;
+        const labelG = labels.find((l) => l.dataset.riding === id);
+        if (labelG) {
+          labelG.querySelectorAll<SVGTextElement>('text').forEach((t) => {
+            t.setAttribute('fill', dark ? '#ffffff' : '#1a2238');
+          });
+          const numEl = labelG.querySelector<SVGTextElement>('.riding-map__num');
+          if (numEl) numEl.textContent = String(d.count);
+        }
+      }
+      // Legend caption swap
+      if (mode === 'goal') {
+        legendCaption.textContent = lang === 'zh' ? '按选区目标进度：' : '% of per-riding goal:';
+        legendTicks.innerHTML =
+          '<span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span><span>100%+</span>';
+      } else {
+        legendCaption.textContent = lang === 'zh' ? '按签名数排名：' : 'Signature count rank:';
+        legendTicks.innerHTML =
+          '<span>' + (lang === 'zh' ? '最低' : 'lowest') +
+          '</span><span></span><span></span><span></span><span></span><span>' +
+          (lang === 'zh' ? '最高' : 'highest') + '</span>';
+      }
+    }
+
+    function showTooltip(e: MouseEvent | FocusEvent, id: string) {
+      const d = data[id];
+      if (!d) return;
+      const pct = Math.round((d.count / perRidingGoal) * 100);
+      const statusKey = d.mlaStatus in STATUS_LABEL ? d.mlaStatus : 'awaiting';
+      const statusText = STATUS_LABEL[statusKey][lang];
+      tooltip.innerHTML =
+        '<strong>' + d.name + '</strong>' +
+        '<div class="riding-map__tt-stat">' + d.count +
+        ' <small>/ ' + (lang === 'zh' ? '目标 ' : 'goal ') + perRidingGoal + '</small></div>' +
+        '<div class="riding-map__tt-pct">' + pct +
+        (lang === 'zh' ? '% 选区目标' : '% of riding goal') + '</div>' +
+        '<div class="riding-map__tt-mla">' + d.mlaName +
+        ' &middot; <em>' + statusText + '</em></div>';
+      tooltip.classList.add('show');
+      moveTooltip(e);
+    }
+    function moveTooltip(e: MouseEvent | FocusEvent) {
+      const wrapRect = wrap.getBoundingClientRect();
+      const x = ('clientX' in e ? e.clientX : 0) - wrapRect.left;
+      const y = ('clientY' in e ? e.clientY : 0) - wrapRect.top;
+      tooltip.style.left = (x + 14) + 'px';
+      tooltip.style.top = (y + 14) + 'px';
+    }
+    function hideTooltip() { tooltip.classList.remove('show'); }
+
+    for (const r of regions) {
+      const id = r.dataset.riding!;
+      // pull friendly name from the label group
+      const labelG = labels.find((l) => l.dataset.riding === id);
+      const nameEl = labelG?.querySelector<SVGTextElement>('.riding-map__name');
+      if (nameEl && data[id]) data[id].name = nameEl.textContent || id;
+
+      r.addEventListener('mouseenter', (e) => showTooltip(e as MouseEvent, id));
+      r.addEventListener('mousemove', (e) => moveTooltip(e as MouseEvent));
+      r.addEventListener('mouseleave', hideTooltip);
+      r.addEventListener('focus', (e) => showTooltip(e as FocusEvent, id));
+      r.addEventListener('blur', hideTooltip);
+    }
+
+    for (const btn of toggleBtns) {
+      btn.addEventListener('click', () => {
+        toggleBtns.forEach((b) => b.classList.toggle('active', b === btn));
+        mode = (btn.dataset.mode as 'goal' | 'raw') || 'goal';
+        applyColors();
+      });
+    }
+
+    async function poll() {
+      if (!supaUrl || !supaKey) return;
+      try {
+        const res = await fetch(
+          `${supaUrl}/rest/v1/public_signatures_by_riding?select=riding_id,count`,
+          { headers: { apikey: supaKey, Authorization: `Bearer ${supaKey}` } }
+        );
+        if (!res.ok) return;
+        const rows = (await res.json()) as Array<{ riding_id: string; count: number }>;
+        const fresh: Record<string, number> = {};
+        for (const r of rows) fresh[r.riding_id] = r.count;
+        for (const id of Object.keys(data)) {
+          data[id].count = fresh[id] ?? 0;
+        }
+        applyColors();
+      } catch { /* keep last good */ }
+    }
+
+    // initial render to make sure label colors match SSR fills exactly
+    applyColors();
+    setInterval(poll, pollMs);
+  });
+</script>
+
+<style>
+  .riding-map {
+    padding: 56px 0 40px;
+    background: var(--paper);
+    border-top: 1px solid var(--line);
+  }
+  .riding-map__heading {
+    font-family: var(--font-sans);
+    font-size: clamp(24px, 3.4vw, 34px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 6px 0 12px;
+    color: var(--ink);
+  }
+  .riding-map__sub {
+    color: var(--ink-soft);
+    max-width: 720px;
+    margin: 0 0 20px;
+  }
+  .kicker {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .riding-map__toggle {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+  .riding-map__toggle button {
+    background: #fff;
+    border: 0;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font: inherit;
+    font-weight: 500;
+    border-right: 1px solid var(--line);
+  }
+  .riding-map__toggle button:last-child { border-right: 0; }
+  .riding-map__toggle button.active {
+    background: var(--ink);
+    color: #fff;
+  }
+  .riding-map__toggle button:hover:not(.active) { background: var(--cream); }
+
+  .riding-map__map-wrap {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .riding-map__svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .riding-map__region {
+    transition: filter 0.2s;
+    cursor: pointer;
+    outline: none;
+  }
+  .riding-map__region:hover,
+  .riding-map__region:focus { filter: brightness(0.92); }
+  .riding-map__name {
+    font-size: 11px;
+    font-weight: 600;
+    pointer-events: none;
+  }
+  .riding-map__num {
+    font-size: 16px;
+    font-weight: 700;
+    pointer-events: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .riding-map__tooltip {
+    position: absolute;
+    background: rgba(26, 34, 56, 0.96);
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    pointer-events: none;
+    transition: opacity 0.15s;
+    opacity: 0;
+    z-index: 10;
+    min-width: 220px;
+    max-width: 260px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+  .riding-map__tooltip.show { opacity: 1; }
+  .riding-map__tooltip strong { display: block; font-size: 13px; margin-bottom: 6px; }
+  .riding-map__tt-stat { font-size: 18px; font-weight: 700; margin: 2px 0; }
+  .riding-map__tt-stat small { font-size: 12px; font-weight: 500; opacity: 0.85; }
+  .riding-map__tt-pct { font-size: 12px; opacity: 0.92; margin: 2px 0 6px; }
+  .riding-map__tt-mla {
+    font-size: 11px;
+    opacity: 0.85;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .riding-map__tt-mla em { font-style: normal; color: #ffd16e; }
+
+  .riding-map__legend {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 14px;
+  }
+  .riding-map__legend-bar {
+    display: flex;
+    height: 14px;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .riding-map__legend-bar div { width: 36px; }
+  .riding-map__legend-ticks {
+    display: flex;
+    font-size: 10px;
+    color: var(--muted);
+    width: 180px;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+
+  .riding-map__source {
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.55;
+    border-top: 1px dashed var(--line);
+    padding-top: 12px;
+    max-width: 920px;
+  }
+  .riding-map__source a { color: var(--accent); text-decoration: none; }
+  .riding-map__source a:hover { text-decoration: underline; }
+
+  @media (max-width: 600px) {
+    .riding-map { padding: 36px 0 28px; }
+    .riding-map__name { font-size: 9px; }
+    .riding-map__num { font-size: 13px; }
+    .riding-map__tooltip { min-width: 180px; }
+  }
+</style>

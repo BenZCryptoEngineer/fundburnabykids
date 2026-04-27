@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Burnaby riding map — choropleth sample</title>
+<style>
+  :root {
+    --ink: #1a2238;
+    --ink-soft: #4a5169;
+    --paper: #faf8f3;
+    --line: #e0dcd2;
+    --muted: #888;
+    --accent: #1f3a5f;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    margin: 0;
+    padding: 40px 20px;
+    line-height: 1.5;
+  }
+  .wrap { max-width: 920px; margin: 0 auto; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  .note { color: var(--muted); font-size: 13px; margin: 0 0 16px; }
+  .toggle-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 16px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    overflow: hidden;
+    width: max-content;
+    font-size: 12px;
+  }
+  .toggle-row button {
+    background: #fff;
+    border: 0;
+    padding: 8px 14px;
+    cursor: pointer;
+    color: var(--ink-soft);
+    font: inherit;
+    border-right: 1px solid var(--line);
+  }
+  .toggle-row button:last-child { border-right: 0; }
+  .toggle-row button.active {
+    background: var(--ink);
+    color: #fff;
+  }
+  .toggle-row button:hover:not(.active) { background: #f5f1e8; }
+  .map-wrap {
+    position: relative;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  svg { width: 100%; height: auto; display: block; }
+  .riding {
+    stroke: #fff;
+    stroke-width: 1.5;
+    stroke-linejoin: round;
+    transition: filter 0.2s;
+    cursor: pointer;
+  }
+  .riding.hover { filter: brightness(0.92); }
+  .riding-label {
+    pointer-events: none;
+    text-anchor: middle;
+    font-weight: 600;
+  }
+  .riding-label .name { font-size: 11px; }
+  .riding-label .num { font-size: 16px; font-weight: 700; }
+  .tooltip {
+    position: absolute;
+    background: rgba(26, 34, 56, 0.96);
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    pointer-events: none;
+    transition: opacity 0.15s;
+    opacity: 0;
+    z-index: 10;
+    min-width: 220px;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip strong { display: block; font-size: 13px; margin-bottom: 6px; }
+  .tooltip .stat { font-size: 18px; font-weight: 700; margin: 2px 0; }
+  .tooltip .stat small { font-size: 12px; font-weight: 500; opacity: 0.85; }
+  .tooltip .pct { font-size: 12px; opacity: 0.92; margin: 2px 0 6px; }
+  .tooltip .mla {
+    font-size: 11px;
+    opacity: 0.85;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    padding-top: 8px;
+    margin-top: 4px;
+  }
+  .tooltip .mla em { font-style: normal; color: #ffd16e; }
+  .legend-wrap {
+    margin-top: 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .legend-bar {
+    display: flex;
+    height: 14px;
+    border-radius: 2px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+  }
+  .legend-bar div { width: 36px; }
+  .legend-ticks {
+    display: flex;
+    font-size: 10px;
+    color: var(--muted);
+    width: 180px;
+    justify-content: space-between;
+    margin-top: 2px;
+  }
+  .legend-caption { color: var(--ink-soft); }
+  .total-row {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .total-num { font-size: 22px; font-weight: 700; color: var(--ink); }
+  .source {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.55;
+    border-top: 1px dashed var(--line);
+    padding-top: 12px;
+  }
+  .source a { color: var(--accent); text-decoration: none; }
+  .source a:hover { text-decoration: underline; }
+  .loading {
+    text-align: center;
+    color: var(--muted);
+    padding: 80px 0;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Burnaby — signatures by riding</h1>
+  <p class="note">
+    Choropleth: each riding is shaded by progress against its goal. Hover for detail. Pattern matches
+    <a href="https://petitionmap.unboxedconsulting.com/" target="_blank" rel="noopener" style="color:var(--accent)">UK Parliament petition map</a>.
+  </p>
+
+  <div class="toggle-row" id="mode-toggle" role="tablist">
+    <button class="active" data-mode="goal" role="tab">% of riding goal</button>
+    <button data-mode="raw" role="tab">Raw signature count</button>
+  </div>
+
+  <div class="map-wrap">
+    <svg viewBox="0 0 800 500" id="map" aria-label="Burnaby provincial electoral districts choropleth">
+      <text x="400" y="250" class="loading" text-anchor="middle">Loading map…</text>
+    </svg>
+    <div class="tooltip" id="tooltip" role="status"></div>
+  </div>
+
+  <div class="legend-wrap">
+    <span class="legend-caption" id="legend-caption">% of per-riding goal</span>
+    <div>
+      <div class="legend-bar" id="legend-bar"></div>
+      <div class="legend-ticks" id="legend-ticks"></div>
+    </div>
+  </div>
+
+  <div class="total-row">
+    <div>Burnaby total &middot; goal 2,000</div>
+    <div><span class="total-num" id="total">0</span> / 2,000</div>
+  </div>
+
+  <p class="source">
+    <strong>Map data:</strong>
+    Provincial electoral district boundaries from
+    <a href="https://catalogue.data.gov.bc.ca/dataset/1cba4b16-263f-4d42-8d84-f5fecaa03d1a" target="_blank" rel="noopener">
+      Elections BC &middot; 2023 Electoral Boundaries Redistribution
+    </a>
+    (BC Data Catalogue, retrieved <span id="retrieval-date">2026-04-26</span>).
+    Released under the
+    <a href="https://www.elections.bc.ca/docs/EBC-Open-Data-Licence.pdf" target="_blank" rel="noopener">Elections BC Open Data Licence</a>.
+    Geometry simplified for display; do not use to determine voter eligibility.
+    Color ramp: <a href="https://colorbrewer2.org/#type=sequential&amp;scheme=Purples&amp;n=5" target="_blank" rel="noopener">ColorBrewer Purples (5-class)</a> &mdash;
+    chosen to avoid BC party-color associations.
+  </p>
+</div>
+
+<script type="module">
+  import * as d3 from 'https://esm.run/d3-geo@3';
+
+  const SAMPLE_COUNTS = {
+    'BNC': { count: 412, goal: 400, mla: { name: 'MLA — Burnaby Centre', status: 'supportive' } },
+    'BNE': { count:  95, goal: 400, mla: { name: 'MLA — Burnaby East', status: 'silent' } },
+    'BNN': { count: 180, goal: 400, mla: { name: 'MLA — Burnaby–New Westminster', status: 'unclear' } },
+    'BNO': { count: 320, goal: 400, mla: { name: 'MLA — Burnaby North', status: 'unclear' } },
+    'BNS': { count: 256, goal: 400, mla: { name: 'MLA — Burnaby South-Metrotown', status: 'opposed' } }
+  };
+
+  const STATUS_LABEL = {
+    supportive: 'Public support',
+    unclear: 'Unclear',
+    silent: 'No public statement',
+    opposed: 'Opposed'
+  };
+
+  // ColorBrewer Purples 5-class — sequential, non-partisan
+  const PURPLES = ['#f2f0f7', '#cbc9e2', '#9e9ac8', '#756bb1', '#54278f'];
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('map');
+  const tooltip = document.getElementById('tooltip');
+
+  const W = 800, H = 500;
+
+  const geojson = await fetch('./burnaby-ridings.geojson').then(r => r.json());
+
+  // Planar identity projection — Burnaby's small extent makes spherical
+  // distortion negligible, and it sidesteps GeoJSON ring-winding issues.
+  const projection = d3.geoIdentity().reflectY(true).fitExtent([[20, 20], [W - 20, H - 60]], geojson);
+  const path = d3.geoPath(projection);
+
+  svg.innerHTML = '';
+
+  const ridingsLayer = document.createElementNS(SVG_NS, 'g');
+  const labelsLayer = document.createElementNS(SVG_NS, 'g');
+  svg.appendChild(ridingsLayer);
+  svg.appendChild(labelsLayer);
+
+  // Build feature/data items
+  const items = geojson.features.map((f) => {
+    const data = SAMPLE_COUNTS[f.properties.abbrev] || { count: 0, goal: 400, mla: { name: '—', status: 'unclear' } };
+    const centroid = path.centroid(f);
+    return { feature: f, data, centroid };
+  });
+
+  let total = items.reduce((s, it) => s + it.data.count, 0);
+  document.getElementById('total').textContent = total.toLocaleString();
+  document.getElementById('retrieval-date').textContent = new Date().toISOString().slice(0, 10);
+
+  // Two color modes:
+  //   'goal' — bins by ratio = count/goal: <25, 25-50, 50-75, 75-100, >=100
+  //   'raw'  — bins by raw count quintiles across the 5 ridings
+  function colorModeGoal(d) {
+    const r = d.count / d.goal;
+    if (r < 0.25) return PURPLES[0];
+    if (r < 0.50) return PURPLES[1];
+    if (r < 0.75) return PURPLES[2];
+    if (r < 1.00) return PURPLES[3];
+    return PURPLES[4];
+  }
+  function colorModeRaw(d, sortedCounts) {
+    // 5 ridings → each gets its own bin by rank
+    const idx = sortedCounts.indexOf(d.count);
+    return PURPLES[Math.min(idx, 4)];
+  }
+
+  let currentMode = 'goal';
+
+  // Render polygons + labels
+  const polyEls = [];
+  const labelEls = [];
+
+  for (const item of items) {
+    const { feature, data, centroid } = item;
+
+    const poly = document.createElementNS(SVG_NS, 'path');
+    poly.setAttribute('d', path(feature));
+    poly.setAttribute('class', 'riding');
+    poly.dataset.id = feature.properties.id;
+    ridingsLayer.appendChild(poly);
+    polyEls.push({ poly, item });
+
+    // Combined label: name (small) + count (large) at centroid
+    const labelG = document.createElementNS(SVG_NS, 'g');
+    labelG.setAttribute('class', 'riding-label');
+    labelG.setAttribute('transform', `translate(${centroid[0]}, ${centroid[1]})`);
+
+    const nameText = document.createElementNS(SVG_NS, 'text');
+    nameText.setAttribute('class', 'name');
+    nameText.setAttribute('y', '-6');
+    nameText.textContent = feature.properties.name;
+    labelG.appendChild(nameText);
+
+    const numText = document.createElementNS(SVG_NS, 'text');
+    numText.setAttribute('class', 'num');
+    numText.setAttribute('y', '14');
+    numText.textContent = data.count;
+    labelG.appendChild(numText);
+
+    labelsLayer.appendChild(labelG);
+    labelEls.push({ labelG, nameText, numText, item });
+
+    const enter = (e) => { poly.classList.add('hover'); showTooltip(e, feature, data); };
+    const move = (e) => moveTooltip(e);
+    const leave = () => { poly.classList.remove('hover'); hideTooltip(); };
+    poly.addEventListener('mouseenter', enter);
+    poly.addEventListener('mousemove', move);
+    poly.addEventListener('mouseleave', leave);
+  }
+
+  function applyColors(mode) {
+    currentMode = mode;
+    const sortedCounts = items.map((it) => it.data.count).sort((a, b) => a - b);
+    for (const { poly, item } of polyEls) {
+      const fill = mode === 'goal' ? colorModeGoal(item.data) : colorModeRaw(item.data, sortedCounts);
+      poly.setAttribute('fill', fill);
+      // Auto-pick label color: dark text on lightest 2 fills, white on darkest 3
+      const idx = PURPLES.indexOf(fill);
+    }
+    // Update label colors based on fill darkness
+    for (const { nameText, numText, item } of labelEls) {
+      const fill = mode === 'goal' ? colorModeGoal(item.data) : colorModeRaw(item.data, sortedCounts);
+      const idx = PURPLES.indexOf(fill);
+      const dark = idx >= 2; // mid + darker → use white text
+      nameText.setAttribute('fill', dark ? '#fff' : '#1a2238');
+      numText.setAttribute('fill', dark ? '#fff' : '#1a2238');
+    }
+    renderLegend(mode);
+  }
+
+  function renderLegend(mode) {
+    const bar = document.getElementById('legend-bar');
+    const ticks = document.getElementById('legend-ticks');
+    const caption = document.getElementById('legend-caption');
+    bar.innerHTML = '';
+    ticks.innerHTML = '';
+    PURPLES.forEach((c) => {
+      const cell = document.createElement('div');
+      cell.style.background = c;
+      bar.appendChild(cell);
+    });
+    if (mode === 'goal') {
+      caption.textContent = '% of per-riding goal:';
+      ['0%', '25%', '50%', '75%', '100%', '100%+'].forEach((t) => {
+        const s = document.createElement('span');
+        s.textContent = t;
+        ticks.appendChild(s);
+      });
+    } else {
+      caption.textContent = 'Signature count rank:';
+      ['lowest', '', '', '', '', 'highest'].forEach((t) => {
+        const s = document.createElement('span');
+        s.textContent = t;
+        ticks.appendChild(s);
+      });
+    }
+  }
+
+  // Initial render
+  applyColors('goal');
+
+  // Toggle handler
+  document.getElementById('mode-toggle').addEventListener('click', (e) => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#mode-toggle button').forEach((b) => b.classList.toggle('active', b === btn));
+    applyColors(btn.dataset.mode);
+  });
+
+  function showTooltip(e, feature, data) {
+    const pct = Math.round((data.count / data.goal) * 100);
+    tooltip.innerHTML =
+      '<strong>' + feature.properties.name + '</strong>' +
+      '<div class="stat">' + data.count + ' <small>/ goal ' + data.goal + '</small></div>' +
+      '<div class="pct">' + pct + '% of riding goal</div>' +
+      '<div class="mla">' + data.mla.name + ' &middot; <em>' + STATUS_LABEL[data.mla.status] + '</em></div>';
+    tooltip.classList.add('show');
+    moveTooltip(e);
+  }
+  function moveTooltip(e) {
+    const wrap = document.querySelector('.map-wrap').getBoundingClientRect();
+    tooltip.style.left = (e.clientX - wrap.left + 14) + 'px';
+    tooltip.style.top = (e.clientY - wrap.top + 14) + 'px';
+  }
+  function hideTooltip() { tooltip.classList.remove('show'); }
+</script>
+</body>
+</html>

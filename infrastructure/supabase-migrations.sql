@@ -84,6 +84,12 @@ CREATE TABLE IF NOT EXISTS signatures (
   grade                     TEXT NOT NULL,
   neighbourhood             TEXT NOT NULL,
 
+  -- Provincial riding (post-2024 redistribution Elections BC abbreviation:
+  -- BNC/BNE/BNN/BNO/BNS). Derived from postal-code FSA at submission time;
+  -- nullable because non-Burnaby postal codes don't map. See netlify/functions/
+  -- _shared.ts for the FSA → riding_id table.
+  riding_id                 TEXT,
+
   -- Petition identifier (one row per petition signed; future-proof for
   -- multi-campaign deployments under the umbrella).
   petition_slug             TEXT NOT NULL DEFAULT 'fund-burnaby-kids',
@@ -138,6 +144,15 @@ CREATE INDEX IF NOT EXISTS idx_signatures_ip_audit
 CREATE INDEX IF NOT EXISTS idx_signatures_petition_slug
   ON signatures (petition_slug);
 
+CREATE INDEX IF NOT EXISTS idx_signatures_riding_id
+  ON signatures (riding_id)
+  WHERE confirmed = TRUE AND riding_id IS NOT NULL;
+
+-- For projects already migrated before riding_id existed, this adds the
+-- column idempotently (CREATE TABLE IF NOT EXISTS above won't add new columns
+-- to an existing table).
+ALTER TABLE signatures ADD COLUMN IF NOT EXISTS riding_id TEXT;
+
 ALTER TABLE signatures ENABLE ROW LEVEL SECURITY;
 -- No policy granted to anon — anon cannot SELECT/INSERT/UPDATE/DELETE directly.
 -- The Netlify Functions use the service_role key which bypasses RLS.
@@ -165,6 +180,29 @@ CREATE VIEW public_signatures AS
   ORDER BY signed_at DESC;
 
 GRANT SELECT ON public_signatures TO anon, authenticated;
+
+
+-- ----------------------------------------------------------------------------
+-- VIEW: public_signatures_by_riding
+-- ----------------------------------------------------------------------------
+-- Anon-readable aggregate of confirmed signatures grouped by Burnaby riding.
+-- Powers the riding choropleth on the homepage. Nulls (signatures whose
+-- postal code didn't map to a Burnaby riding) are excluded.
+-- ----------------------------------------------------------------------------
+
+DROP VIEW IF EXISTS public_signatures_by_riding;
+CREATE VIEW public_signatures_by_riding AS
+  SELECT
+    riding_id,
+    COUNT(*)::INTEGER AS count
+  FROM signatures
+  WHERE confirmed = TRUE
+    AND anonymized_at IS NULL
+    AND riding_id IS NOT NULL
+    AND petition_slug = 'fund-burnaby-kids'
+  GROUP BY riding_id;
+
+GRANT SELECT ON public_signatures_by_riding TO anon, authenticated;
 
 
 -- ----------------------------------------------------------------------------

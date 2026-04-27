@@ -75,6 +75,29 @@ export function postalToNeighbourhood(postal: string): string {
   return NEIGHBOURHOODS[prefix] || 'Burnaby';
 }
 
+// Postal-code FSA → BC provincial riding_id (post-2024 redistribution).
+// Best-effort mapping: FSAs cross riding boundaries, so this is approximate
+// at the edges. The riding_id matches Elections BC ED_ABBREVIATION used by
+// the riding-map component for visual aggregation, NOT for legal eligibility.
+// Mapping reviewed against Elections BC 2024 boundary GeoJSON; refine as
+// coverage data improves.
+const RIDING_BY_FSA: Record<string, string> = {
+  V3J: 'BNO', // North Burnaby fringe → Burnaby North
+  V3N: 'BNN', // Edmonds → Burnaby-New Westminster
+  V5A: 'BNE', // Mountain / Confederation Park → Burnaby East
+  V5B: 'BNO', // Brentwood / Capitol Hill → Burnaby North
+  V5C: 'BNC', // Heights / Willingdon Heights → Burnaby Centre
+  V5E: 'BNN', // Big Bend / SW industrial → Burnaby-New Westminster
+  V5G: 'BNC', // Central / Garden Village → Burnaby Centre
+  V5H: 'BNS', // Metrotown → Burnaby South-Metrotown
+  V5J: 'BNN', // Royal Oak / Suncrest → Burnaby-New Westminster
+};
+
+export function postalToRidingId(postal: string): string | null {
+  const prefix = postal.trim().toUpperCase().substring(0, 3);
+  return RIDING_BY_FSA[prefix] || null;
+}
+
 export function pickLocale(input: string | undefined): 'en' | 'zh' {
   return (input || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
 }

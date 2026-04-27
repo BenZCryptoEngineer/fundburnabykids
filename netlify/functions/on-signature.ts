@@ -14,6 +14,7 @@ import {
   getRequestIp,
   verifyTurnstile,
   postalToNeighbourhood,
+  postalToRidingId,
   pickLocale,
 } from './_shared.js';
 
@@ -80,6 +81,7 @@ async function handleSignature(
 
   const lastInitial = lastname.charAt(0).toUpperCase();
   const neighbourhood = postalToNeighbourhood(postal);
+  const ridingId = postalToRidingId(postal);
   const confirmToken = randomBytes(32).toString('base64url');
   const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
 
@@ -90,6 +92,7 @@ async function handleSignature(
     school: school.substring(0, 80),
     grade: grade.substring(0, 20),
     neighbourhood,
+    riding_id: ridingId,
     confirmed: false,
     confirm_token: confirmToken,
     confirm_token_expires: expiresAt,
