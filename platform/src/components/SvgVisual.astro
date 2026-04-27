@@ -1,17 +1,19 @@
 ---
-// Inline an SVG visualization from platform/public/visuals/{key}.{lang}.svg.
-// Reads the file at build time and inlines the markup so we can:
+// Inline an SVG visualization from src/data/visuals/{key}.{lang}.svg.
+// Reads the file at build time via Vite's `?raw` glob import, so the markup
+// is bundled alongside the component (works in both static SSG and SSR
+// Netlify-Function output). Inlining lets us:
 //   - style internals via CSS if needed
 //   - avoid an extra HTTP request
 //   - keep EN and ZH variants strictly separate per VISUAL_DESIGN policy
 //
+// Earlier revisions used readFileSync(import.meta.url + ...) which broke
+// when bundled into the SSR worker (path resolved to .netlify/build/chunks
+// instead of the project root). See CLAUDE.md "Vite native imports" note.
+//
 // Usage:
 //   <SvgVisual visual="cascade" lang={lang} />
 //   <SvgVisual visual="money" lang={lang} caption="Where the money lives" />
-
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
-import { dirname, join } from 'node:path';
 
 import I18nText from '~/components/I18nText.astro';
 import type { Lang } from '~/lib/i18n';
@@ -29,16 +31,17 @@ interface Props {
 
 const { visual, lang, kicker, headline, takeaway } = Astro.props;
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const svgPath = join(__dirname, '../../public/visuals', `${visual}.${lang}.svg`);
+// Eager raw glob: Vite resolves these at build, inlining SVG markup into
+// the bundle. Keys are paths relative to this file.
+const svgModules = import.meta.glob<string>('../data/visuals/*.svg', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 
-let svgContent = '';
-try {
-  svgContent = readFileSync(svgPath, 'utf-8');
-} catch (err) {
-  console.error(`SvgVisual: failed to read ${svgPath}:`, err);
-  svgContent = `<!-- SVG ${visual}.${lang} not found -->`;
-}
+const svgKey = `../data/visuals/${visual}.${lang}.svg`;
+const svgContent =
+  svgModules[svgKey] ?? `<!-- SVG ${visual}.${lang} not found -->`;
 
 // Unique id so multiple SvgVisual instances on a page each get their own dialog.
 const dialogId = `lightbox-${visual}-${lang}-${Math.random().toString(36).slice(2, 8)}`;
