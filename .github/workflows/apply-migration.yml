@@ -1,0 +1,42 @@
+# Apply infrastructure/supabase-migrations.sql before Netlify deploys main.
+#
+# Why: confirm-signature.ts writes to columns the v0.2 migration adds. If
+# Netlify deploys the new code before the migration is applied, every
+# confirmation will 500. The migration is idempotent, so running it on
+# every push to main (or whenever the SQL file changes) is safe.
+#
+# Why a separate workflow rather than running inside the Netlify build:
+# Netlify Build doesn't have outbound access to the Supabase Management
+# API in a controlled way, and we don't want to ship the SUPABASE_PAT as
+# a Netlify env var. GH Actions runs first, completes, then Netlify
+# auto-builds the same commit independently.
+#
+# Required GitHub Actions secrets:
+#   SUPABASE_URL  — https://<ref>.supabase.co
+#   SUPABASE_PAT  — Personal Access Token (Account → Access Tokens in
+#                   the Supabase dashboard)
+# Add via: Repo → Settings → Secrets and variables → Actions → New secret.
+
+name: Apply Supabase migration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - infrastructure/supabase-migrations.sql
+      - scripts/apply-supabase-migration.sh
+      - .github/workflows/apply-migration.yml
+  # Manual trigger so a fresh DB or out-of-band re-apply is one click.
+  workflow_dispatch:
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply migration
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: ./scripts/apply-supabase-migration.sh
