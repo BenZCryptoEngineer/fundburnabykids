@@ -106,6 +106,21 @@ CREATE TABLE IF NOT EXISTS signatures (
   pending_consent_updates   BOOLEAN,
   pending_locale            TEXT,  -- 'en' or 'zh', used to pick email template
 
+  -- Long-lived locale (copied from pending_locale at confirmation; the
+  -- pending_* fields are NULLed there, so we'd otherwise lose the signer's
+  -- chosen language for rendering their per-signer letter page).
+  locale                    TEXT,
+
+  -- Public letter token. Generated at confirmation time (alongside the flip
+  -- to confirmed=TRUE) so each signer has a stable, shareable URL at
+  -- /letters/<letter_token>. Distinct from confirm_token: confirm_token is
+  -- single-use and cleared after confirmation; letter_token is long-lived
+  -- and revocable (NULL it to drop a letter from public view without
+  -- triggering full-row anonymization). UNIQUE constraint is added by the
+  -- explicit ALTER block below (named signatures_letter_token_unique) so it
+  -- works idempotently for both fresh and existing DBs.
+  letter_token              TEXT,
+
   -- Fraud-detection data (anonymized 90 days after campaign close)
   ip_address                INET,
   validated_ip              INET,
@@ -122,6 +137,9 @@ CREATE TABLE IF NOT EXISTS signatures (
   ),
   CONSTRAINT signatures_pending_locale_valid CHECK (
     pending_locale IS NULL OR pending_locale IN ('en','zh')
+  ),
+  CONSTRAINT signatures_locale_valid CHECK (
+    locale IS NULL OR locale IN ('en','zh')
   )
 );
 
@@ -148,10 +166,26 @@ CREATE INDEX IF NOT EXISTS idx_signatures_riding_id
   ON signatures (riding_id)
   WHERE confirmed = TRUE AND riding_id IS NOT NULL;
 
+CREATE INDEX IF NOT EXISTS idx_signatures_letter_token
+  ON signatures (letter_token)
+  WHERE letter_token IS NOT NULL;
+
 -- For projects already migrated before riding_id existed, this adds the
 -- column idempotently (CREATE TABLE IF NOT EXISTS above won't add new columns
 -- to an existing table).
 ALTER TABLE signatures ADD COLUMN IF NOT EXISTS riding_id TEXT;
+
+-- v0.2 additions: per-signer letter system. Adds long-lived locale + public
+-- letter_token. See TODO.md item 2 ("Per-signer letter system, mode A + C").
+ALTER TABLE signatures ADD COLUMN IF NOT EXISTS locale TEXT;
+ALTER TABLE signatures ADD COLUMN IF NOT EXISTS letter_token TEXT;
+ALTER TABLE signatures DROP CONSTRAINT IF EXISTS signatures_locale_valid;
+ALTER TABLE signatures
+  ADD CONSTRAINT signatures_locale_valid
+  CHECK (locale IS NULL OR locale IN ('en','zh'));
+ALTER TABLE signatures DROP CONSTRAINT IF EXISTS signatures_letter_token_unique;
+ALTER TABLE signatures
+  ADD CONSTRAINT signatures_letter_token_unique UNIQUE (letter_token);
 
 ALTER TABLE signatures ENABLE ROW LEVEL SECURITY;
 -- No policy granted to anon — anon cannot SELECT/INSERT/UPDATE/DELETE directly.
@@ -203,6 +237,45 @@ CREATE VIEW public_signatures_by_riding AS
   GROUP BY riding_id;
 
 GRANT SELECT ON public_signatures_by_riding TO anon, authenticated;
+
+
+-- ----------------------------------------------------------------------------
+-- VIEW: public_letters
+-- ----------------------------------------------------------------------------
+-- Anon-readable feed for the per-signer letter system (TODO.md item 2):
+--   /letters/<letter_token>  — single signer's filled letter (mode A)
+--   /mla/<mla-id>            — riding-filtered list of signers' letters (mode C)
+--
+-- Privacy guardrails enforced at the view layer (defense-in-depth on top of
+-- the page-level rendering rules):
+--   - pending_email is NEVER projected (UK Parliament e-petition convention).
+--   - Full surname is NEVER projected — only last_initial.
+--   - letter_token must be non-NULL. To remove a letter from public view
+--     without anonymizing the row, NULL the letter_token (count remains in
+--     aggregate signature stats; row is unlinkable via /letters/*).
+-- ----------------------------------------------------------------------------
+
+DROP VIEW IF EXISTS public_letters;
+CREATE VIEW public_letters AS
+  SELECT
+    letter_token,
+    first_name,
+    last_initial,
+    school,
+    grade,
+    neighbourhood,
+    riding_id,
+    locale,
+    signed_at,
+    validated_at
+  FROM signatures
+  WHERE confirmed = TRUE
+    AND anonymized_at IS NULL
+    AND letter_token IS NOT NULL
+    AND petition_slug = 'fund-burnaby-kids'
+  ORDER BY signed_at DESC;
+
+GRANT SELECT ON public_letters TO anon, authenticated;
 
 
 -- ----------------------------------------------------------------------------

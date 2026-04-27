@@ -9,6 +9,7 @@
 // Idempotent: if the token already validated, treat as success.
 
 import type { Handler } from '@netlify/functions';
+import { randomBytes } from 'node:crypto';
 import { getSupabase, getRequestIp, pickLocale } from './_shared.js';
 
 const SITE_URL = process.env.SITE_URL || 'https://fundburnabykids.ca';
@@ -54,6 +55,15 @@ export const handler: Handler = async (event) => {
       return redirect(`${SITE_URL}/confirmed?status=already`);
     }
 
+    // letter_token: 32-byte URL-safe random, stable + revocable. Powers the
+    // per-signer letter pages at /letters/<token>. See TODO.md item 2.
+    const letterToken = randomBytes(32).toString('base64url');
+
+    // Promote pending_locale → locale (long-lived). pending_* is NULLed below
+    // per the lifecycle contract; without this hop, we'd lose the signer's
+    // chosen language for rendering their letter page.
+    const persistedLocale = pickLocale(row.pending_locale ?? undefined);
+
     // Capture confirmation details and clear pending fields.
     const { error: updateError } = await supabase
       .from('signatures')
@@ -66,6 +76,8 @@ export const handler: Handler = async (event) => {
         pending_email: null,
         pending_consent_updates: null,
         pending_locale: null,
+        locale: persistedLocale,
+        letter_token: letterToken,
       })
       .eq('id', row.id);
 
@@ -88,8 +100,7 @@ export const handler: Handler = async (event) => {
       });
     }
 
-    const locale = pickLocale(row.pending_locale ?? undefined);
-    return redirect(`${SITE_URL}/${locale === 'zh' ? 'zh/' : ''}confirmed?status=ok`);
+    return redirect(`${SITE_URL}/${persistedLocale === 'zh' ? 'zh/' : ''}confirmed?status=ok`);
   } catch (err) {
     console.error('confirm-signature unhandled error:', err);
     return redirect(`${SITE_URL}/confirm-failed?reason=server_error`);
