@@ -40,12 +40,30 @@ export function alternateLangUrl(pathname: string, currentLang: Lang): string {
 /**
  * Build a URL respecting the current locale prefix.
  * Useful for in-page anchor links and navigation.
+ *
+ * Always emits a trailing slash for non-anchor, non-query paths. With the
+ * @astrojs/netlify adapter installed, Netlify routes /foo (no slash)
+ * through the SSR function before checking the static /foo/index.html
+ * file, and the function returns 404 for paths it doesn't know about.
+ * Canonical URLs with trailing slashes hit the static file directly.
+ * Anchor (#act) and query (?status=ok) paths bypass the slash because
+ * they're appended to the current page.
  */
 export function localizedUrl(path: string, lang: Lang): string {
+  let resolved = path;
   if (lang === 'zh' && !path.startsWith('/zh')) {
-    return path === '/' ? '/zh/' : `/zh${path}`;
+    resolved = path === '/' ? '/zh/' : `/zh${path}`;
   }
-  return path;
+  // Skip the trailing-slash rule for anchors, queries, and paths that
+  // already end in a slash.
+  if (
+    resolved.includes('#') ||
+    resolved.includes('?') ||
+    resolved.endsWith('/')
+  ) {
+    return resolved;
+  }
+  return `${resolved}/`;
 }
 
 /**

@@ -23,7 +23,15 @@ import netlify from '@astrojs/netlify';
 
 export default defineConfig({
   site: 'https://fundburnabykids.ca',
-  trailingSlash: 'ignore',
+  // Always emit trailing slashes. With format: 'directory' static pages
+  // live at /foo/index.html and Netlify only auto-routes /foo (no slash)
+  // to that file when no other handler claims /foo. Once @astrojs/netlify
+  // lands the SSR function with `path: '/*'`, /foo without a trailing
+  // slash hits the function and 404s (the function only knows about its
+  // SSR routes). Setting trailingSlash: 'always' makes Astro emit /foo/
+  // everywhere (links, canonical, hreflang) so Netlify hits the static
+  // file directly.
+  trailingSlash: 'always',
   output: 'static',
   adapter: netlify(),
   build: {
