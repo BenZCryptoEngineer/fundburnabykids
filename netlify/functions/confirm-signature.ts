@@ -10,7 +10,7 @@
 
 import type { Handler } from '@netlify/functions';
 import { randomBytes } from 'node:crypto';
-import { getSupabase, getRequestIp, pickLocale } from './_shared.js';
+import { getSupabase, getRequestIp, pickLocale, sendLinksEmail } from './_shared.js';
 
 const SITE_URL = process.env.SITE_URL || 'https://fundburnabykids.ca';
 const BUTTONDOWN_API_KEY = process.env.BUTTONDOWN_API_KEY;
@@ -84,6 +84,26 @@ export const handler: Handler = async (event) => {
     if (updateError) {
       console.error('confirm update error:', updateError);
       return redirect(`${SITE_URL}/confirm-failed/?reason=server_error`);
+    }
+
+    // Post-confirm "your links" email — gives the signer their letter +
+    // withdraw URLs in their inbox forever, not just on the one-shot
+    // /confirmed/ page they may close immediately. Best-effort: a send
+    // failure here is logged but does not fail the confirmation (the
+    // row is already flipped, the URLs still work, the recovery flow
+    // at /find-my-signature/ exists as a fallback).
+    if (row.pending_email) {
+      try {
+        await sendLinksEmail({
+          to: row.pending_email,
+          firstName: row.first_name,
+          locale: persistedLocale,
+          letterToken,
+          mode: 'post_confirm',
+        });
+      } catch (err) {
+        console.error('post-confirm links email failed:', err);
+      }
     }
 
     // If the user opted in to the newsletter, add them to Buttondown

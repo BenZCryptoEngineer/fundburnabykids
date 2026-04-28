@@ -63,6 +63,12 @@
   status = 200
   force  = true
 
+[[redirects]]
+  from = "/api/recover"
+  to   = "/.netlify/functions/recover-signature"
+  status = 200
+  force  = true
+
 # -----------------------------------------------------------------------------
 # Trailing-slash 301s for every static page.
 #

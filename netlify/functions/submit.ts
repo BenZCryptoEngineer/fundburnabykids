@@ -22,7 +22,7 @@
 // bot can't probe for differential responses.
 
 import type { Handler } from '@netlify/functions';
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import {
   getSupabase,
   getRequestIp,
@@ -30,6 +30,7 @@ import {
   schoolToNeighbourhood,
   postalToRidingId,
   pickLocale,
+  emailHashHex,
 } from './_shared.js';
 
 const SITE_URL = process.env.SITE_URL || 'https://fundburnabykids.ca';
@@ -126,7 +127,7 @@ async function processSignature(
   const ridingId = postalToRidingId(postal);
   const confirmToken = randomBytes(32).toString('base64url');
   const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
-  const emailHash = createHash('sha256').update(email).digest('hex');
+  const emailHash = emailHashHex(email);
   const petitionSlug = 'fund-burnaby-kids';
 
   const supabase = getSupabase();

@@ -1,0 +1,229 @@
+---
+// ZH route for /find-my-signature. pickLang() auto-detects from /zh prefix
+// so the body is intentionally identical to the EN version — keep both
+// in sync if you edit one.
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+// `?sent=1` toggles the sent-confirmation panel. We can't read it at
+// build time (this page is static prerender — Astro.url.searchParams is
+// always empty), so both panels render server-side and a tiny inline
+// script flips visibility on page load.
+const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
+---
+
+<CampaignLayout
+  lang={lang}
+  noindex
+  title={lang === 'zh' ? '找回签名链接 — Fund Burnaby Kids' : 'Recover signature links — Fund Burnaby Kids'}
+>
+  <section class="recover-page">
+    <div class="wrap">
+      <div class="recover-card">
+        <div class="recover-sent" data-recover-sent hidden>
+          <div class="recover-icon" aria-hidden="true">📬</div>
+          <h1>
+            <I18nText en="Check your email" zh="请查收邮件" lang={lang} />
+          </h1>
+          <p class="recover-lede">
+            <I18nText
+              en="If a confirmed signature exists for that email, we just sent the letter and withdraw links to it."
+              zh="如果该邮箱确实有已确认的签名，我们刚把信件链接和移除链接发到那里。"
+              lang={lang}
+            />
+          </p>
+          <p class="recover-note muted small sans">
+            <I18nText
+              en="We send the same response regardless of whether a signature exists, to avoid leaking who has signed."
+              zh="无论该邮箱是否有签名，我们都返回同样的提示，避免泄露谁签过名。"
+              lang={lang}
+            />
+          </p>
+          <p class="recover-back">
+            <a href={localizedUrl('/', lang)}>
+              ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+            </a>
+          </p>
+        </div>
+
+        <div class="recover-form-panel" data-recover-form>
+          <h1>
+            <I18nText
+              en="Recover your signature links"
+              zh="找回你的签名链接"
+              lang={lang}
+            />
+          </h1>
+          <p class="recover-lede">
+            <I18nText
+              en="Lost the /confirmed/ page or the letter URL? Enter the email you signed with and we'll re-send both your public letter URL and your withdraw URL."
+              zh="找不到 /confirmed/ 页或者信件 URL 了？输入你签名时填的邮箱，我们会把公开信件 URL 和移除签名 URL 重新发给你。"
+              lang={lang}
+            />
+          </p>
+
+          <form
+            class="recover-form"
+            name="recover"
+            method="POST"
+            action="/api/recover"
+          >
+            <input type="hidden" name="locale" value={lang} />
+            <p class="hidden" aria-hidden="true">
+              <label>
+                <I18nText en="Don't fill this:" zh="不要填这个：" lang={lang} />
+                <input name="bot-field" />
+              </label>
+            </p>
+
+            <div class="field">
+              <label for="recover-email">
+                <I18nText en="Email" zh="邮箱" lang={lang} />
+              </label>
+              <input
+                type="email"
+                name="email"
+                id="recover-email"
+                required
+                maxlength="254"
+                autocomplete="email"
+              />
+            </div>
+
+            {turnstileSiteKey && (
+              <div class="turnstile-wrap">
+                <div class="cf-turnstile" data-sitekey={turnstileSiteKey}></div>
+              </div>
+            )}
+
+            <button type="submit" class="btn btn--primary">
+              <I18nText en="Send me my links" zh="把链接发给我" lang={lang} />
+            </button>
+          </form>
+
+          <p class="recover-note muted small sans">
+            <I18nText
+              en="Only confirmed signatures (where you clicked the email link) can be recovered this way. If you signed but never confirmed, just sign again — duplicates are de-duped automatically."
+              zh="只有已确认的签名（点过邮件确认链接的）才能用这种方式找回。如果你签了但从未确认过，直接重新签一次即可 —— 系统会自动去重。"
+              lang={lang}
+            />
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+{turnstileSiteKey && (
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+)}
+
+<script>
+  (function recoverPanelSwap() {
+    const sent = new URLSearchParams(window.location.search).get('sent') === '1';
+    const sentEl = document.querySelector<HTMLElement>('[data-recover-sent]');
+    const formEl = document.querySelector<HTMLElement>('[data-recover-form]');
+    if (!sentEl || !formEl) return;
+    sentEl.hidden = !sent;
+    formEl.hidden = sent;
+  })();
+</script>
+
+<style>
+  .recover-page { padding: 64px 0; }
+  .recover-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    box-shadow: var(--shadow-sm);
+  }
+  .recover-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: 26px; margin-bottom: 12px; }
+  .recover-lede {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .recover-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .field input {
+    font-family: inherit;
+    font-size: 16px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
+  }
+  .turnstile-wrap {
+    display: flex;
+    justify-content: center;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+  }
+  .recover-note {
+    color: var(--muted);
+    line-height: 1.5;
+    margin: 12px 0 0;
+  }
+  .recover-back {
+    margin-top: 24px;
+  }
+  .recover-back a {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .small { font-size: 13px; }
+  .muted { color: var(--muted); }
+  .hidden { display: none; }
+</style>

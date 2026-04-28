@@ -66,6 +66,16 @@ const reasonText = reasons[reason] ?? reasons.unknown;
               <I18nText en="Sign again" zh="重新签名" lang={lang} />
             </a>
           </p>
+          <p class="confirm-recover sans small muted" style="margin-top: 12px;">
+            <I18nText
+              en="Already confirmed once and just want your letter / withdraw URL back?"
+              zh="之前已经确认过、只想找回信件 / 移除链接？"
+              lang={lang}
+            />{' '}
+            <a href={localizedUrl('/find-my-signature', lang)}>
+              <I18nText en="Recover by email →" zh="用邮箱找回 →" lang={lang} />
+            </a>
+          </p>
         </div>
 
         <p class="confirm-back">

@@ -42,6 +42,8 @@ GET	/withdrawn/	200	-
 GET	/zh/withdrawn/	200	-
 GET	/withdraw-failed/	200	-
 GET	/zh/withdraw-failed/	200	-
+GET	/find-my-signature/	200	Recover
+GET	/zh/find-my-signature/	200	找回
 GET	/letters/garbage_test_token_aaaaaa/	404	Letter not found
 GET	/zh/letters/garbage_test_token_aaaaaa/	404	未找到该信件
 GET	/mla/kang/	200	Anne Kang
@@ -126,6 +128,32 @@ else
   FAIL=$((FAIL + 1))
   FAILED_URLS+=("/api/submit (honeypot)")
   printf '\033[0;31m  FAIL\033[0m  %s %-50s -> %s [loc=%s]\n' "POST" "/api/submit (honeypot)" "$submit_status" "$submit_loc"
+fi
+
+# POST /api/recover smoke check. Honeypot tripped so the function bails
+# before looking up the email — same 303 → /find-my-signature/?sent=1
+# response shape as a real recovery request.
+recover_status=$(curl -sS -o /dev/null -w "%{http_code}" -X POST \
+  "$BASE/api/recover" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "bot-field=smoke" \
+  --data-urlencode "email=smoke@example.invalid" \
+  --data-urlencode "locale=en" \
+  --max-time 15 || echo "000")
+recover_loc=$(curl -sS -o /dev/null -w "%{redirect_url}" -X POST \
+  "$BASE/api/recover" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "bot-field=smoke" \
+  --data-urlencode "email=smoke@example.invalid" \
+  --data-urlencode "locale=en" \
+  --max-time 15 || echo "")
+if [ "$recover_status" = "303" ] && echo "$recover_loc" | grep -q "/find-my-signature/?sent=1"; then
+  PASS=$((PASS + 1))
+  printf '\033[0;32m  PASS\033[0m  %s %-50s -> %s\n' "POST" "/api/recover (honeypot)" "$recover_status"
+else
+  FAIL=$((FAIL + 1))
+  FAILED_URLS+=("/api/recover (honeypot)")
+  printf '\033[0;31m  FAIL\033[0m  %s %-50s -> %s [loc=%s]\n' "POST" "/api/recover (honeypot)" "$recover_status" "$recover_loc"
 fi
 
 echo
