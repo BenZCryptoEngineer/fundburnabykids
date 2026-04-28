@@ -172,10 +172,14 @@ const dataMailto = JSON.stringify({
           name="postal"
           id="postal"
           required
-          pattern="^V[0-9][A-Z]\s?[0-9][A-Z][0-9]$"
+          pattern="^[Vv][0-9][A-Za-z]\s?[0-9][A-Za-z][0-9]$"
           placeholder="V5C 5W6"
           autocomplete="postal-code"
           maxlength="7"
+          inputmode="text"
+          autocapitalize="characters"
+          spellcheck="false"
+          data-postal-input
         />
         <p class="hint">
           <I18nText
@@ -299,6 +303,24 @@ const dataMailto = JSON.stringify({
     form.addEventListener('input', updatePreview);
     form.addEventListener('change', updatePreview);
     updatePreview();
+
+    // Postal code normalization: on every keystroke, trim whitespace and
+    // uppercase. Mobile keyboards autocapitalize the first letter only,
+    // so users typically end up with "V5b 3x6" — we accept either case
+    // in the pattern, but normalizing here makes the submitted value
+    // canonical for the FSA → riding lookup in netlify/functions/_shared.ts.
+    const postalEl = form.querySelector<HTMLInputElement>('[data-postal-input]');
+    if (postalEl) {
+      postalEl.addEventListener('input', () => {
+        const raw = postalEl.value;
+        const cleaned = raw.toUpperCase().replace(/^\s+|\s+$/g, '');
+        if (cleaned !== raw) {
+          // Preserve caret roughly: setting value moves caret to end,
+          // which is the right behaviour as users type left-to-right.
+          postalEl.value = cleaned;
+        }
+      });
+    }
 
     // On submit: optionally open mailto: in a new tab so user can review + send.
     form.addEventListener('submit', () => {
@@ -433,6 +455,12 @@ const dataMailto = JSON.stringify({
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
+  }
+  /* Postal code: visually uppercase as user types so they see the
+     normalized form. Actual value is also normalized via JS on input
+     so the submitted form data is canonical. */
+  #postal {
+    text-transform: uppercase;
   }
   .hint {
     font-family: var(--font-sans);
