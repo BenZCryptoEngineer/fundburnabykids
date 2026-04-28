@@ -19,6 +19,7 @@
 --
 -- Scheduled jobs (pg_cron):
 --   purge-expired-pending-signatures  — hourly, drops expired pending rows
+--   purge-test-signatures             — every 10 min, drops smoke/test rows
 --
 -- IP / fraud-detection design follows alphagov/e-petitions (UK Parliament):
 --   - Raw IP stored at submission AND at validation (two events)
@@ -407,6 +408,37 @@ SELECT cron.schedule(
     DELETE FROM signatures
     WHERE confirmed = FALSE
       AND confirm_token_expires < NOW();
+  $$
+);
+
+-- Every 10 minutes: purge rows that match known test/smoke sentinels.
+-- Defense-in-depth on top of the smoke-db.sh cleanup trap (which already
+-- DELETEs _smoke_* rows on every run). Catches:
+--   - _smoke_* rows from a smoke-db run that crashed before its cleanup
+--   - manual end-to-end tests using ClaudeTest / PlaywrightTest / Test
+--   - any submission to RFC-2606 reserved test domains (example.invalid,
+--     example.com, example.org) — no real user has these addresses
+-- The patterns are deliberately conservative: real signatures with
+-- last_initial 'X' or first_name 'Test' but pending_email that's NOT a
+-- reserved test domain stay safe (e.g. someone literally named Test
+-- with a real email address won't get caught by this clause alone).
+SELECT cron.unschedule('purge-test-signatures')
+  WHERE EXISTS (
+    SELECT 1 FROM cron.job WHERE jobname = 'purge-test-signatures'
+  );
+
+SELECT cron.schedule(
+  'purge-test-signatures',
+  '*/10 * * * *',
+  $$
+    DELETE FROM signatures
+    WHERE first_name LIKE '\_smoke\_%' ESCAPE '\'
+       OR email_hash LIKE 'smoke\_%' ESCAPE '\'
+       OR pending_email LIKE '%@example.invalid'
+       OR pending_email LIKE '%@example.com'
+       OR pending_email LIKE '%@example.org'
+       OR (first_name IN ('ClaudeTest', 'PlaywrightTest')
+           AND last_initial = 'X');
   $$
 );
 
