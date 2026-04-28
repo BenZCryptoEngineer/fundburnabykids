@@ -77,15 +77,84 @@ const lang = pickLang(Astro.url.pathname);
           </ul>
         </div>
 
-        <div class="thanks-letter-note">
-          <p class="sans muted small">
+        <div class="thanks-letter-note" data-mailto-block hidden>
+          <h2 class="sans">
             <I18nText
-              en="A pre-filled email to your MLA + the Education Minister should have opened in a new tab. Send it whenever you're ready — no rush."
-              zh="一封预填给你的 MLA 和教育部长的邮件应该已经在新标签页打开了。准备好就发出去，不急。"
+              en="The email to your MLA is ready"
+              zh="给 MLA 的邮件已准备好"
+              lang={lang}
+            />
+          </h2>
+          <p>
+            <I18nText
+              en="Pre-filled with your name, school, and grade. Click to open it in your default email app, then hit Send."
+              zh="已经预填了你的姓名、学校、年级。点击下面的按钮在你的默认邮件应用中打开，按 Send 发送即可。"
               lang={lang}
             />
           </p>
+          <p class="thanks-letter-actions">
+            <a class="btn btn--primary" href="#" data-mailto-link target="_blank" rel="noopener">
+              <I18nText
+                en="Open the email →"
+                zh="打开邮件 →"
+                lang={lang}
+              />
+            </a>
+          </p>
+          <p class="sans muted small">
+            <I18nText
+              en="No email app set up? You can copy the email body below and paste it into your webmail."
+              zh="还没设默认邮件应用？可以复制下方内容，贴到 Gmail / Outlook 等网页邮箱中发送。"
+              lang={lang}
+            />
+          </p>
+          <details class="thanks-letter-fallback">
+            <summary class="sans">
+              <I18nText en="Show plain text + addresses" zh="显示纯文本和邮件地址" lang={lang} />
+            </summary>
+            <div class="thanks-letter-fallback__body">
+              <p><strong><I18nText en="To:" zh="收件人：" lang={lang} /></strong> <code data-mailto-to></code></p>
+              <p><strong><I18nText en="Cc:" zh="抄送：" lang={lang} /></strong> <code data-mailto-cc></code></p>
+              <p><strong><I18nText en="Subject:" zh="主题：" lang={lang} /></strong> <span data-mailto-subject></span></p>
+              <pre data-mailto-body class="thanks-letter-body"></pre>
+            </div>
+          </details>
         </div>
+
+        <script>
+          // Read the mailto URL stashed by ActionForm's submit handler and
+          // wire up the actionable button + plain-text fallback. We render
+          // a real <a href="mailto:..."> click target instead of opening
+          // mailto from JS (current-tab nav hazard on browsers without a
+          // mailto handler — see the corresponding comment in
+          // ActionForm.astro).
+          const KEY = 'fbk_mailto';
+          let url = '';
+          try { url = sessionStorage.getItem(KEY) || ''; } catch { /* ignore */ }
+          if (!url) {
+            // Nothing stashed — leave the block hidden (not everyone opts
+            // in to "also open the email"; some skip the consent box).
+          } else {
+            const block = document.querySelector<HTMLElement>('[data-mailto-block]');
+            const link = document.querySelector<HTMLAnchorElement>('[data-mailto-link]');
+            const toEl = document.querySelector<HTMLElement>('[data-mailto-to]');
+            const ccEl = document.querySelector<HTMLElement>('[data-mailto-cc]');
+            const subjEl = document.querySelector<HTMLElement>('[data-mailto-subject]');
+            const bodyEl = document.querySelector<HTMLElement>('[data-mailto-body]');
+            if (link) link.href = url;
+            // Parse the mailto URL into displayable parts for the fallback.
+            try {
+              const afterMailto = url.replace(/^mailto:/, '');
+              const [toPart, queryPart = ''] = afterMailto.split('?');
+              const params = new URLSearchParams(queryPart);
+              if (toEl) toEl.textContent = decodeURIComponent(toPart);
+              if (ccEl) ccEl.textContent = params.get('cc') || '';
+              if (subjEl) subjEl.textContent = params.get('subject') || '';
+              if (bodyEl) bodyEl.textContent = params.get('body') || '';
+            } catch { /* leave fallback empty if parse fails */ }
+            if (block) block.hidden = false;
+          }
+        </script>
 
         <p class="thanks-back">
           <a href={localizedUrl('/', lang)}>
@@ -149,9 +218,78 @@ const lang = pickLang(Astro.url.pathname);
   .thanks-letter-note {
     background: var(--cream);
     border-left: 3px solid var(--warm);
-    padding: 12px 16px;
+    padding: 16px 20px;
     border-radius: 4px;
     margin: 24px 0;
+  }
+  .thanks-letter-note h2 {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--warm);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .thanks-letter-note p { margin: 0 0 12px; line-height: 1.5; }
+  .thanks-letter-actions { margin: 16px 0 !important; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .btn--primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn--primary:hover {
+    background: var(--accent-deep);
+    border-color: var(--accent-deep);
+  }
+  .thanks-letter-fallback {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .thanks-letter-fallback summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .thanks-letter-fallback__body {
+    margin-top: 8px;
+    padding: 12px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+  }
+  .thanks-letter-fallback__body p { margin: 0 0 6px; word-break: break-word; }
+  .thanks-letter-fallback__body code {
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .thanks-letter-body {
+    margin: 8px 0 0;
+    padding: 12px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 280px;
+    overflow-y: auto;
   }
   .thanks-back {
     margin-top: 24px;

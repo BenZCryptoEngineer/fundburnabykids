@@ -410,10 +410,24 @@ const dataMailto = JSON.stringify({
       });
     });
 
-    // On submit: optionally open mailto: in a new tab so user can review + send.
+    // On submit: build the mailto URL and STASH it in sessionStorage so
+    // /confirm-thanks can render it as a real anchor for the user to click.
+    //
+    // Earlier revisions called window.open('mailto:...') during submit.
+    // Browsers without a registered mailto: handler (Chrome on a fresh
+    // profile is the common case) treat that as a current-tab navigation
+    // to the mailto: URL — the form's POST is cancelled, the user lands
+    // on a blank "mailto:..." page, and the signature is never recorded.
+    //
+    // Stashing instead means: form POST → Netlify Forms → /confirm-thanks
+    // happens cleanly, and the email opens on user gesture from a real
+    // <a href="mailto:..."> anchor on that page.
     form.addEventListener('submit', () => {
       const sendLetter = (form.elements.namedItem('consent-letter') as HTMLInputElement | null)?.checked;
-      if (!sendLetter) return; // nothing extra to do; form posts to Netlify Forms
+      // Always clear stale data, even if user UNCHECKED the letter consent
+      // — otherwise a previous submission's mailto would resurface.
+      try { sessionStorage.removeItem('fbk_mailto'); } catch { /* private mode */ }
+      if (!sendLetter) return;
 
       const mailtoData = form.dataset.mailto;
       if (!mailtoData) return;
@@ -435,8 +449,13 @@ const dataMailto = JSON.stringify({
           `?cc=${encodeURIComponent(m.cc.join(','))}` +
           `&subject=${encodeURIComponent(m.subject)}` +
           `&body=${encodeURIComponent(body)}`;
-        // Open in a new tab so the form submit isn't disrupted
-        window.open(url, '_blank');
+        try {
+          sessionStorage.setItem('fbk_mailto', url);
+        } catch {
+          // sessionStorage unavailable (private mode, etc.) — silent fail.
+          // /confirm-thanks will simply not render the button; user can
+          // still send manually from the email template on the page.
+        }
       } catch (err) {
         console.error('mailto build failed:', err);
       }
