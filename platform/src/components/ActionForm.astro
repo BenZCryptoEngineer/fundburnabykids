@@ -70,6 +70,42 @@ const dataMailto = JSON.stringify({
       </h2>
     </header>
 
+    {/* Letter preview — what gets sent on your behalf. Closed by default
+        so it doesn't dominate the form, but visible enough that nobody
+        signs without knowing what they're attaching their name to. The
+        letter goes in English regardless of UI locale (recipient
+        Ministers / MLAs office in English), so we render the EN body
+        with placeholder text instead of {FIRST} {LAST} etc. */}
+    <details class="letter-preview">
+      <summary class="sans">
+        <I18nText
+          en="Read the letter you're co-signing →"
+          zh="阅读你将联署的信件 →"
+          lang={lang}
+        />
+      </summary>
+      <div class="letter-preview__body">
+        {lang === 'zh' && (
+          <p class="letter-preview__lang-note sans muted small">
+            信件用英文发出（收件人是省政府部长 / MLA 办公室）。下方是实际寄出的内容。
+          </p>
+        )}
+        <p class="letter-preview__meta sans small">
+          <strong>To:</strong> <code>ECC.Minister@gov.bc.ca</code> ·{' '}
+          <strong>Cc:</strong> <code>your 4 Burnaby MLAs + Finance Minister</code>
+        </p>
+        <p class="letter-preview__subject sans">
+          <strong><I18nText en="Subject:" zh="主题：" lang={lang} /></strong> {subjectEn}
+        </p>
+        <pre class="letter-preview__text">{bodyTemplateEn
+          .replace(/\{FIRST\}/g, '[Your first name]')
+          .replace(/\{LAST\}/g, '[Your last name]')
+          .replace(/\{SCHOOL\}/g, '[Your school]')
+          .replace(/\{GRADE\}/g, '[Your grade]')
+          .replace(/\{POSTAL\}/g, '[Your postal code]')}</pre>
+      </div>
+    </details>
+
     {/* Live public-listing preview */}
     <div class="public-preview-card">
       <p class="public-preview-label sans">
@@ -486,6 +522,66 @@ const dataMailto = JSON.stringify({
     line-height: 1.3;
     margin: 0;
     color: var(--ink);
+  }
+
+  /* Letter preview (what gets sent on the signer's behalf) */
+  .letter-preview {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    margin-bottom: 16px;
+  }
+  .letter-preview > summary {
+    cursor: pointer;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    list-style: none;
+  }
+  .letter-preview > summary::-webkit-details-marker { display: none; }
+  .letter-preview > summary:hover { background: var(--cream); }
+  .letter-preview[open] > summary {
+    border-bottom: 1px solid var(--line);
+  }
+  .letter-preview__body {
+    padding: 16px 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .letter-preview__lang-note {
+    margin: 0;
+    padding: 8px 12px;
+    background: var(--cream);
+    border-left: 3px solid var(--accent);
+    border-radius: 4px;
+    line-height: 1.5;
+  }
+  .letter-preview__meta,
+  .letter-preview__subject {
+    margin: 0;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .letter-preview__meta code {
+    font-size: 12px;
+    color: var(--ink);
+  }
+  .letter-preview__text {
+    margin: 4px 0 0;
+    padding: 14px 16px;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    font-family: var(--font-serif);
+    font-size: 14px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    color: var(--ink);
+    max-height: 360px;
+    overflow-y: auto;
   }
 
   /* Live preview card */

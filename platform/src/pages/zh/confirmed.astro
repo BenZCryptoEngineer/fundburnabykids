@@ -124,20 +124,37 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
         </div>
 
         {withdrawUrl && (
-          <p class="confirm-withdraw sans">
-            <I18nText
-              en="Changed your mind?"
-              zh="改变主意了？"
-              lang={lang}
-            />{' '}
-            <a href={withdrawUrl}>
+          <div class="confirm-withdraw-block">
+            <h2 class="sans">
               <I18nText
-                en="Remove my signature"
-                zh="移除我的签名"
+                en="Want to remove your signature later?"
+                zh="想以后移除你的签名？"
                 lang={lang}
               />
-            </a>
-          </p>
+            </h2>
+            <p class="confirm-withdraw-block__lede">
+              <I18nText
+                en="Save this link. It removes your name from the public list — no questions asked, takes two clicks."
+                zh="保存这个链接。点开就能从公开名单中移除你的名字 — 两步确认，无须解释。"
+                lang={lang}
+              />
+            </p>
+            <div class="confirm-withdraw-block__row">
+              <a class="btn btn--ghost btn--small" href={withdrawUrl}>
+                <I18nText en="Open the withdraw page →" zh="打开移除页面 →" lang={lang} />
+              </a>
+              <button
+                type="button"
+                class="confirm-letter__copy"
+                data-copy-url={withdrawUrl}
+                data-copied={lang === 'zh' ? '已复制' : 'Copied!'}
+                data-default={lang === 'zh' ? '复制链接' : 'Copy link'}
+              >
+                <I18nText en="Copy link" zh="复制链接" lang={lang} />
+              </button>
+            </div>
+            <code class="confirm-letter__url" aria-label={lang === 'zh' ? '移除链接' : 'Withdraw URL'}>{withdrawUrl}</code>
+          </div>
         )}
 
         <p class="confirm-back">
@@ -208,16 +225,40 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
   }
   .confirm-back a:hover { color: var(--accent-deep); }
 
-  .confirm-withdraw {
-    color: var(--muted);
-    font-size: 13px;
-    margin: 8px 0 16px;
+  .confirm-withdraw-block {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin: 24px 0;
   }
-  .confirm-withdraw a {
+  .confirm-withdraw-block h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--muted);
-    text-decoration: underline;
+    margin-bottom: 12px;
+    font-weight: 600;
   }
-  .confirm-withdraw a:hover { color: var(--danger, #B91C1C); }
+  .confirm-withdraw-block__lede {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 16px;
+    font-size: 14px;
+  }
+  .confirm-withdraw-block__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .btn--ghost {
+    background: var(--paper);
+    color: var(--accent);
+    border-color: var(--line);
+  }
+  .btn--ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent-deep);
+  }
 
   .confirm-letter {
     border-top: 1px solid var(--line);

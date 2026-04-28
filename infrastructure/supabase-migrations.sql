@@ -166,6 +166,33 @@ ALTER TABLE signatures DROP CONSTRAINT IF EXISTS signatures_letter_token_unique;
 ALTER TABLE signatures
   ADD CONSTRAINT signatures_letter_token_unique UNIQUE (letter_token);
 
+-- v0.3 dedup: SHA-256 of the normalized lowercase email, kept long-lived
+-- (NOT cleared at confirm). Without this column we have no way to detect
+-- "same person signing twice" — pending_email is NULLed at confirm to
+-- minimize PII retention, so a second sign with the same address looks
+-- like a brand-new signer at the application layer. The hash is one-way
+-- and never displayed; it only powers (a) the submit-time dedup check
+-- and (b) the partial UNIQUE index below that backstops any race the
+-- application logic misses.
+ALTER TABLE signatures ADD COLUMN IF NOT EXISTS email_hash TEXT;
+
+-- At most one CONFIRMED signature per (email_hash, petition_slug). Partial
+-- so unconfirmed pending rows can coexist with their eventual confirmed
+-- form, and so legacy rows with NULL email_hash (pre-v0.3) don't collide
+-- with each other or block the constraint creation.
+DROP INDEX IF EXISTS signatures_email_hash_confirmed_unique;
+CREATE UNIQUE INDEX IF NOT EXISTS signatures_email_hash_confirmed_unique
+  ON signatures (email_hash, petition_slug)
+  WHERE confirmed = TRUE AND email_hash IS NOT NULL;
+
+-- Plain (non-unique) index for the submit-time dedup lookup that hits
+-- email_hash without filtering on confirmed. The partial unique index
+-- above only covers `WHERE confirmed = TRUE`, so it can't accelerate the
+-- "is there a pending row?" branch.
+CREATE INDEX IF NOT EXISTS idx_signatures_email_hash
+  ON signatures (email_hash)
+  WHERE email_hash IS NOT NULL;
+
 CREATE INDEX IF NOT EXISTS idx_signatures_confirmed_recent
   ON signatures (signed_at DESC)
   WHERE confirmed = TRUE;

@@ -22,7 +22,7 @@
 // bot can't probe for differential responses.
 
 import type { Handler } from '@netlify/functions';
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import {
   getSupabase,
   getRequestIp,
@@ -126,8 +126,76 @@ async function processSignature(
   const ridingId = postalToRidingId(postal);
   const confirmToken = randomBytes(32).toString('base64url');
   const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();
+  const emailHash = createHash('sha256').update(email).digest('hex');
+  const petitionSlug = 'fund-burnaby-kids';
 
   const supabase = getSupabase();
+
+  // Dedup: look up any prior signature for this (email_hash, petition).
+  // We don't keep the email itself past confirmation (privacy), so the
+  // hash is what tells us "same person". Three branches:
+  //   - confirmed row exists: silently no-op. Don't reveal it (defense
+  //     vs. email enumeration), don't send a second email, don't insert
+  //     a duplicate. The confirmed row already counts; the user lands on
+  //     the same /confirm-thanks/ page they'd see on a fresh sign and
+  //     simply stops getting emails because none are queued.
+  //   - pending row within 48h: re-issue the confirm token + extend the
+  //     expiry on the SAME row, send a fresh email. Useful when a signer
+  //     lost the first email or it landed in spam. Avoids accumulating
+  //     orphan rows for one person.
+  //   - nothing prior: normal INSERT path below.
+  const { data: priorRows, error: lookupError } = await supabase
+    .from('signatures')
+    .select('id, confirmed, confirm_token_expires')
+    .eq('email_hash', emailHash)
+    .eq('petition_slug', petitionSlug)
+    .order('signed_at', { ascending: false });
+
+  if (lookupError) {
+    console.error('signatures dedup lookup error:', lookupError);
+    return;
+  }
+
+  const confirmedRow = priorRows?.find((r) => r.confirmed);
+  if (confirmedRow) {
+    // Already signed and confirmed. No-op, but tell the log so admin
+    // can spot abuse if it ever spikes.
+    console.warn('submit signature: duplicate (already confirmed)');
+    return;
+  }
+
+  const now = Date.now();
+  const pendingRow = priorRows?.find(
+    (r) => !r.confirmed && r.confirm_token_expires && new Date(r.confirm_token_expires).getTime() > now
+  );
+  if (pendingRow) {
+    // Re-issue: same row, fresh token + 48h, latest contact details.
+    const { error: updateError } = await supabase
+      .from('signatures')
+      .update({
+        first_name: firstname.substring(0, 40),
+        last_initial: lastInitial,
+        school: school.substring(0, 80),
+        grade: grade.substring(0, 20),
+        neighbourhood,
+        riding_id: ridingId,
+        confirm_token: confirmToken,
+        confirm_token_expires: expiresAt,
+        pending_email: email,
+        pending_consent_updates: consentUpdates,
+        pending_locale: locale,
+        ip_address: ip,
+      })
+      .eq('id', pendingRow.id);
+    if (updateError) {
+      console.error('signatures dedup-update error:', updateError);
+      return;
+    }
+    await sendConfirmationEmail({ to: email, firstName: firstname, locale, token: confirmToken });
+    return;
+  }
+
+  // No prior. Fresh INSERT.
   const { error: insertError } = await supabase.from('signatures').insert({
     first_name: firstname.substring(0, 40),
     last_initial: lastInitial,
@@ -141,8 +209,9 @@ async function processSignature(
     pending_email: email,
     pending_consent_updates: consentUpdates,
     pending_locale: locale,
+    email_hash: emailHash,
     ip_address: ip,
-    petition_slug: 'fund-burnaby-kids',
+    petition_slug: petitionSlug,
   });
 
   if (insertError) {
