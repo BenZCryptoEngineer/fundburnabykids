@@ -44,9 +44,11 @@ GET	/withdraw-failed/	200	-
 GET	/zh/withdraw-failed/	200	-
 GET	/letters/garbage_test_token_aaaaaa/	404	Letter not found
 GET	/zh/letters/garbage_test_token_aaaaaa/	404	未找到该信件
-GET	/mla/kang	200	Anne Kang
-GET	/zh/mla/kang	200	Anne Kang
-GET	/mla/nonexistent_id	404	-
+GET	/mla/kang/	200	Anne Kang
+GET	/zh/mla/kang/	200	Anne Kang
+GET	/mla/nonexistent_id/	404	-
+GET	/mla/kang	301	-
+GET	/zh/mla/kang	301	-
 GET	/withdraw/garbage_test_token_aaaaaa/	404	Signature not found
 GET	/zh/withdraw/garbage_test_token_aaaaaa/	404	未找到该签名
 GET	/confirm-thanks	301	-
