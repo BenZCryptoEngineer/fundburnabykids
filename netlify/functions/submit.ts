@@ -482,8 +482,9 @@ ${escapeHtml(p.mailingAddress)}
 
 <p style="font-size:12px;color:#888;">
 You are receiving this email because you signed the petition at
-fundburnabykids.ca. This is the only email you will receive about
-this signature unless you opted in to ongoing updates.
+<a href="https://fundburnabykids.ca" style="color:#1C3F8F;">fundburnabykids.ca</a>.
+This is the only email you will receive about this signature unless
+you opted in to ongoing updates.
 </p>
 </body></html>`;
 
@@ -563,8 +564,9 @@ ${escapeHtml(p.mailingAddress)}
 </p>
 
 <p style="font-size:12px;color:#888;">
-你收到这封邮件，是因为你在 fundburnabykids.ca 签署了请愿。
-除非你勾选了订阅后续更新，这是与本次签名相关的唯一一封邮件。
+你收到这封邮件，是因为你在
+<a href="https://fundburnabykids.ca" style="color:#1C3F8F;">fundburnabykids.ca</a>
+签署了请愿。除非你勾选了订阅后续更新，这是与本次签名相关的唯一一封邮件。
 </p>
 </body></html>`;
 
