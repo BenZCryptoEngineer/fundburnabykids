@@ -1,0 +1,153 @@
+---
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+const status = Astro.url.searchParams.get('status') || 'ok';
+const isAlready = status === 'already';
+---
+
+<CampaignLayout lang={lang} noindex
+  title={lang === 'zh' ? '签名已撤回 — Fund Burnaby Kids' : 'Signature withdrawn — Fund Burnaby Kids'}
+>
+  <section class="withdrawn-page">
+    <div class="wrap">
+      <div class="withdrawn-card">
+        <div class="withdrawn-icon" aria-hidden="true">✓</div>
+        <h1>
+          {isAlready ? (
+            <I18nText en="Already withdrawn" zh="已撤回" lang={lang} />
+          ) : (
+            <I18nText en="Your signature has been withdrawn" zh="你的签名已撤回" lang={lang} />
+          )}
+        </h1>
+        <p class="withdrawn-lede">
+          <I18nText
+            en="Your signature row was permanently deleted. Your public letter page now returns 404 and you no longer appear in the MLA constituent inbox."
+            zh="你的签名记录已永久删除。你的公开信件页面现在返回 404，你也不再出现在 MLA 选区来信收件箱中。"
+            lang={lang}
+          />
+        </p>
+
+        <div class="withdrawn-next">
+          <h2 class="sans">
+            <I18nText en="What if I change my mind?" zh="如果我改变主意？" lang={lang} />
+          </h2>
+          <p>
+            <I18nText
+              en="You can sign again at any time from the campaign homepage. The deletion itself, though, can't be undone — the previous row is gone."
+              zh="你可以随时回主页重新签名。但本次撤回操作本身无法撤销——原签名记录已消失。"
+              lang={lang}
+            />
+          </p>
+        </div>
+
+        <div class="withdrawn-newsletter">
+          <h2 class="sans">
+            <I18nText en="Newsletter subscription" zh="通讯订阅" lang={lang} />
+          </h2>
+          <p>
+            <I18nText
+              en="If you opted in to newsletter updates when you signed, we tried to remove you from that list automatically. If you receive a newsletter email after this, click the one-click unsubscribe link in its footer to be sure."
+              zh="如果你之前签名时勾选了通讯订阅，我们已尝试自动将你从列表中移除。如果之后还收到通讯邮件，请点击其页脚的一键退订链接以确保移除。"
+              lang={lang}
+            />
+          </p>
+        </div>
+
+        <div class="withdrawn-other">
+          <h2 class="sans">
+            <I18nText en="Other places your data might still live (briefly)" zh="还可能短期存在你数据的地方" lang={lang} />
+          </h2>
+          <ul>
+            <li>
+              <I18nText
+                en="Netlify Forms keeps the raw form submission for 30 days then auto-purges. We can purge sooner on request — email"
+                zh="Netlify Forms 保留原始表单 30 天后自动清除。如需更快清除请发邮件给"
+                lang={lang}
+              />
+              {' '}<a href="mailto:privacy@fundburnabykids.ca">privacy@fundburnabykids.ca</a>.
+            </li>
+            <li>
+              <I18nText
+                en="IP address logs were dropped from your row when it was deleted (the IP only existed inside the signatures row)."
+                zh="IP 地址记录在你的签名记录被删除时一并消失（IP 只存在于签名记录内）。"
+                lang={lang}
+              />
+            </li>
+          </ul>
+        </div>
+
+        <p class="withdrawn-back">
+          <a href={localizedUrl('/', lang)}>
+            ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .withdrawn-page { padding: 64px 0; }
+  .withdrawn-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 48px 32px;
+    box-shadow: var(--shadow-sm);
+    max-width: 640px;
+  }
+  .withdrawn-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--success-soft);
+    color: var(--success);
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 24px;
+  }
+  h1 { font-size: 28px; margin: 0 0 12px; }
+  .withdrawn-lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 32px;
+  }
+  .withdrawn-card h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .withdrawn-next,
+  .withdrawn-newsletter,
+  .withdrawn-other {
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
+    margin-bottom: 16px;
+  }
+  .withdrawn-card p { color: var(--ink-soft); line-height: 1.6; margin: 0 0 8px; }
+  .withdrawn-other ul {
+    margin: 0;
+    padding-left: 18px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    font-size: 14px;
+  }
+  .withdrawn-other li { margin-bottom: 6px; }
+  .withdrawn-back { margin-top: 24px; }
+  .withdrawn-back a {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+  }
+</style>

@@ -1,0 +1,285 @@
+---
+// ZH withdraw page. Mirrors ../../withdraw/[token].astro — body kept
+// identical so I18nText drives the language. lang is hard-coded to 'zh'
+// here because directory placement determines locale.
+//
+// Self-serve signature withdrawal. Backs the FAQ #6 / privacy
+// "right to deletion" promise with a real-time, one-click flow.
+//
+// Authentication is the letter_token itself (32-byte CSPRNG, only ever
+// shown to the signer in their own confirmation flow / saved letter URL).
+//
+// Two-step UX so a stray click can't delete:
+//   Step 1 — show summary (school, neighbourhood, signed_at) +
+//             checkbox "I understand this is permanent" + Withdraw button
+//   Step 2 — POST /api/withdraw → row deleted → 302 to /withdrawn/
+
+export const prerender = false;
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { localizedUrl, formatDate } from '~/lib/i18n';
+import { fetchLetterByToken } from '~/lib/supabase';
+
+const lang = 'zh';
+const token = (Astro.params.token ?? '').trim();
+
+const letter = /^[A-Za-z0-9_-]{16,128}$/.test(token)
+  ? await fetchLetterByToken(token)
+  : null;
+
+if (!letter) {
+  Astro.response.status = 404;
+}
+
+const title = letter
+  ? '撤回你的签名 — Fund Burnaby Kids'
+  : '未找到该签名 — Fund Burnaby Kids';
+---
+
+<CampaignLayout lang={lang} title={title} noindex>
+  <section class="withdraw-page">
+    <div class="wrap">
+      {letter ? (
+        <div class="withdraw-card">
+          <h1>
+            <I18nText en="Withdraw your signature" zh="撤回你的签名" lang={lang} />
+          </h1>
+          <p class="withdraw-card__lede">
+            <I18nText
+              en="Submitting this form will permanently remove your signature from the public record. You can sign again later if you change your mind, but the withdrawal itself cannot be undone."
+              zh="提交此表单将从公开记录中永久移除你的签名。之后如果改变主意可以重新签署，但本次撤回操作本身无法撤销。"
+              lang={lang}
+            />
+          </p>
+
+          <div class="withdraw-summary">
+            <p class="sans muted small">
+              <I18nText en="Signed " zh="签署于 " lang={lang} />
+              <time datetime={letter.signed_at}>{formatDate(letter.signed_at, lang)}</time>
+            </p>
+            <p class="sans">
+              <strong>{letter.first_name} {letter.last_initial}.</strong>
+              {' '}—{' '}
+              {letter.school}
+              {letter.neighbourhood && <> · {letter.neighbourhood}</>}
+            </p>
+          </div>
+
+          <h2 class="sans">
+            <I18nText en="What happens when you submit" zh="提交后会发生什么" lang={lang} />
+          </h2>
+          <ul class="withdraw-effects">
+            <li>
+              <I18nText
+                en="Your signature row is permanently deleted from our database."
+                zh="你的签名记录从我们的数据库中永久删除。"
+                lang={lang}
+              />
+            </li>
+            <li>
+              <I18nText
+                en="Your public letter page (/letters/...) returns 404 immediately."
+                zh="你的公开信件页面（/letters/...）立刻返回 404。"
+                lang={lang}
+              />
+            </li>
+            <li>
+              <I18nText
+                en="You disappear from your MLA's constituent letter inbox."
+                zh="你从你 MLA 的选区来信收件箱消失。"
+                lang={lang}
+              />
+            </li>
+            <li>
+              <I18nText
+                en="If you opted in to newsletter updates, we attempt to unsubscribe your email automatically."
+                zh="如果你订阅了通讯，我们会自动尝试退订你的邮箱。"
+                lang={lang}
+              />
+            </li>
+          </ul>
+
+          <form method="POST" action="/api/withdraw" class="withdraw-form">
+            <input type="hidden" name="letter_token" value={token} />
+            <input type="hidden" name="locale" value={lang} />
+
+            <label class="withdraw-form__field">
+              <span class="sans">
+                <I18nText
+                  en="Optional — tell us why (won't be stored, only logged for our process review)"
+                  zh="可选——说明原因（不会存储，仅用于流程改进的运行日志）"
+                  lang={lang}
+                />
+              </span>
+              <textarea name="reason" rows="3" maxlength="1000" placeholder={lang === 'zh' ? '可留空' : 'Optional'}></textarea>
+            </label>
+
+            <label class="withdraw-form__consent">
+              <input type="checkbox" required />
+              <span>
+                <I18nText
+                  en="I understand this will permanently delete my signature and cannot be undone."
+                  zh="我明白这将永久删除我的签名，且无法撤销。"
+                  lang={lang}
+                />
+              </span>
+            </label>
+
+            <div class="withdraw-form__actions">
+              <button type="submit" class="btn btn--danger">
+                <I18nText
+                  en="Withdraw my signature permanently"
+                  zh="永久撤回我的签名"
+                  lang={lang}
+                />
+              </button>
+              <a class="btn btn--ghost" href={letter ? `/zh/letters/${encodeURIComponent(token)}` : localizedUrl('/', lang)}>
+                <I18nText en="Cancel — keep my signature" zh="取消 — 保留我的签名" lang={lang} />
+              </a>
+            </div>
+          </form>
+        </div>
+      ) : (
+        <div class="withdraw-missing">
+          <h1><I18nText en="Signature not found" zh="未找到该签名" lang={lang} /></h1>
+          <p>
+            <I18nText
+              en="This withdrawal link is not valid, or your signature has already been withdrawn."
+              zh="此撤回链接无效，或你的签名已被撤回。"
+              lang={lang}
+            />
+          </p>
+          <p>
+            <a href={localizedUrl('/', lang)}>
+              ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .withdraw-page { padding: 48px 0; }
+  .withdraw-card,
+  .withdraw-missing {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    max-width: 640px;
+  }
+  .withdraw-card h1,
+  .withdraw-missing h1 {
+    font-size: 26px;
+    margin: 0 0 12px;
+  }
+  .withdraw-card__lede {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 20px;
+  }
+  .withdraw-summary {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin: 0 0 24px;
+  }
+  .withdraw-summary p { margin: 0; }
+  .withdraw-summary .small { font-size: 13px; }
+  .withdraw-card h2 {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .withdraw-effects {
+    margin: 0 0 24px;
+    padding-left: 20px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .withdraw-effects li { margin-bottom: 6px; font-size: 14px; }
+  .withdraw-form { display: flex; flex-direction: column; gap: 16px; }
+  .withdraw-form__field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .withdraw-form__field span {
+    font-size: 13px;
+    color: var(--ink-soft);
+  }
+  .withdraw-form textarea {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--paper);
+    resize: vertical;
+  }
+  .withdraw-form textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
+  }
+  .withdraw-form__consent {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.4;
+    color: var(--ink);
+  }
+  .withdraw-form__consent input { margin-top: 3px; flex-shrink: 0; }
+  .withdraw-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    border-radius: var(--radius-md);
+    border: 2px solid transparent;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .btn--danger {
+    background: var(--danger, #B91C1C);
+    color: #fff;
+    border-color: var(--danger, #B91C1C);
+  }
+  .btn--danger:hover { filter: brightness(0.92); }
+  .btn--ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+  .btn--ghost:hover { border-color: var(--ink); }
+  .withdraw-missing p {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 12px;
+  }
+  .withdraw-missing a {
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-weight: 500;
+  }
+  .muted { color: var(--muted); }
+</style>

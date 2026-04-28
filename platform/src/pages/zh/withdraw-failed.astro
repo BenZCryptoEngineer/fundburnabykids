@@ -1,0 +1,88 @@
+---
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+const reason = Astro.url.searchParams.get('reason') || 'unknown';
+---
+
+<CampaignLayout lang={lang} noindex
+  title={lang === 'zh' ? '撤回未完成 — Fund Burnaby Kids' : 'Withdrawal failed — Fund Burnaby Kids'}
+>
+  <section class="wf-page">
+    <div class="wrap">
+      <div class="wf-card">
+        <h1><I18nText en="Withdrawal could not be completed" zh="撤回未能完成" lang={lang} /></h1>
+        <p class="wf-lede">
+          {reason === 'invalid_token' ? (
+            <I18nText
+              en="The withdrawal link is missing or malformed. If you reached this page from your /letters/&lt;token&gt; URL, double-check the link wasn't truncated."
+              zh="撤回链接缺失或格式错误。如果你是从你的 /letters/<token> URL 进入，请确认链接没有被截断。"
+              lang={lang}
+            />
+          ) : reason === 'method_not_allowed' ? (
+            <I18nText
+              en="This page only accepts form submissions. Please go back and click the Withdraw button."
+              zh="此页面仅处理表单提交。请返回上一页点击「撤回」按钮。"
+              lang={lang}
+            />
+          ) : (
+            <I18nText
+              en="Something went wrong on our end while removing your signature. Your row may or may not be deleted — please email privacy@fundburnabykids.ca and we'll verify and complete the deletion within the same day."
+              zh="我们在删除你的签名时出了问题。你的记录可能已删除或仍在数据库中——请发邮件给 privacy@fundburnabykids.ca，我们会当天核实并完成删除。"
+              lang={lang}
+            />
+          )}
+        </p>
+        <p>
+          <I18nText
+            en="Reason code:"
+            zh="错误代码："
+            lang={lang}
+          />{' '}
+          <code>{reason}</code>
+        </p>
+        <p class="wf-back">
+          <a href={localizedUrl('/', lang)}>
+            ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+          </a>
+          {' '}·{' '}
+          <a href="mailto:privacy@fundburnabykids.ca">privacy@fundburnabykids.ca</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .wf-page { padding: 64px 0; }
+  .wf-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--warm);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-sm);
+    max-width: 560px;
+  }
+  h1 { font-size: 22px; margin: 0 0 12px; color: var(--warm); }
+  .wf-lede {
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0 0 16px;
+  }
+  code {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-size: 13px;
+  }
+  .wf-back {
+    margin-top: 20px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+  }
+  .wf-back a { color: var(--accent); }
+</style>

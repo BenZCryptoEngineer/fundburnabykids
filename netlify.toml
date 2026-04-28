@@ -47,6 +47,12 @@
   status = 200
   force  = true
 
+[[redirects]]
+  from = "/api/withdraw"
+  to   = "/.netlify/functions/withdraw"
+  status = 200
+  force  = true
+
 # Webhook target for Netlify Forms submissions is configured at site level
 # (POST /api/v1/hooks with event=submission_created), pointing at:
 #   https://<site>/.netlify/functions/on-signature

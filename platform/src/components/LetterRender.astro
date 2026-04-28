@@ -152,6 +152,16 @@ const signedDate = formatDate(letter.signed_at, lang);
     </button>
     <code class="letter-card__url" aria-label={lang === 'zh' ? '分享链接' : 'Share URL'}>{shareUrl}</code>
   </footer>
+
+  <p class="letter-card__withdraw sans">
+    <a href={`${lang === 'zh' ? '/zh/withdraw/' : '/withdraw/'}${encodeURIComponent(letter.letter_token)}/`}>
+      <I18nText
+        en="Withdraw my signature"
+        zh="撤回我的签名"
+        lang={lang}
+      />
+    </a>
+  </p>
 </article>
 
 <script>
@@ -288,8 +298,20 @@ const signedDate = formatDate(letter.signed_at, lang);
     .letter-card__signer { font-size: 20px; }
     .letter-card__body { font-size: 15px; }
   }
+  .letter-card__withdraw {
+    margin: 16px 0 0;
+    padding-top: 12px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .letter-card__withdraw a {
+    color: var(--muted);
+    text-decoration: underline;
+  }
+  .letter-card__withdraw a:hover { color: var(--danger, #B91C1C); }
   @media print {
-    .letter-card__footer { display: none; }
+    .letter-card__footer,
+    .letter-card__withdraw { display: none; }
     .letter-card {
       border: none;
       box-shadow: none;

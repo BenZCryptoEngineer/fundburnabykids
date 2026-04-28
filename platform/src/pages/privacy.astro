@@ -178,8 +178,24 @@ const mailingAddress = import.meta.env.MAILING_ADDRESS ?? '(Mailing address bein
         <summary><I18nText en="6. Can I withdraw my signature later?" zh="6. 我可以随时撤回我的签名吗？" lang={lang} /></summary>
         <p>
           <I18nText
-            en="Yes, at any time. Email privacy@fundburnabykids.ca. We delete your information within 7 days (BC's PIPA law allows up to 30 days; we commit to faster)."
-            zh="可以，随时。发邮件到 privacy@fundburnabykids.ca。我们 7 天内删除你的全部信息（BC PIPA 法律允许我们 30 天内回应，我们承诺更快）。"
+            en="Yes, immediately and self-serve. Open your personal letter URL (the one you got after confirming your signature, format /letters/<token>) and click "
+            zh="可以，立刻自助完成。打开你的个人信件页面（确认签名后给你的 /letters/<token> URL），点击 "
+            lang={lang} />
+          <strong><I18nText en="Withdraw my signature" zh="撤回我的签名" lang={lang} /></strong>{' '}
+          <I18nText
+            en="at the bottom. Your signature row is permanently deleted in real time, and any newsletter subscription is removed automatically."
+            zh="（在頁面底部）。你的签名记录会即时永久删除，订阅的通讯也会自动退订。"
+            lang={lang} />
+        </p>
+        <p>
+          <I18nText
+            en="Lost the URL? Email"
+            zh="找不到链接？发邮件给 "
+            lang={lang} />{' '}
+          <a href="mailto:privacy@fundburnabykids.ca">privacy@fundburnabykids.ca</a>{' '}
+          <I18nText
+            en="and we delete within 7 days (BC's PIPA law allows up to 30 days; we commit to faster)."
+            zh="，我们 7 天内手动删除（BC PIPA 允许 30 天，我们承诺更快）。"
             lang={lang} />
         </p>
       </details>
@@ -274,8 +290,14 @@ const mailingAddress = import.meta.env.MAILING_ADDRESS ?? '(Mailing address bein
       <h3><I18nText en="What we collect" zh="我们收集什么" lang={lang} /></h3>
       <p>
         <I18nText
-          en="First name, last name, email address, your child's school, your child's grade, and the first three characters of your postal code. Governed by BC's Personal Information Protection Act (PIPA)."
-          zh="名字、姓氏、邮箱地址、孩子的学校、孩子的年级、邮编的前 3 个字符。受 BC 省《个人信息保护法》（PIPA）管辖。"
+          en={`First name, last name (only the first letter is kept; the rest is dropped at submission), email address (kept only until you click the confirmation link, then immediately deleted), your child's school, your child's grade, and your postal code (used at submission to derive your neighbourhood and provincial riding, then dropped — the postal code itself is never written to our database). Governed by BC's Personal Information Protection Act (PIPA).`}
+          zh={`名字、姓氏（只保留首字母，其余在提交时丢弃）、邮箱地址（只保留到你点击确认链接为止，之后立即删除）、孩子的学校、孩子的年级、邮编（提交时用于推算你所在街区和省级选区，之后丢弃 — 邮编本身从不写入我们的数据库）。受 BC 省《个人信息保护法》(PIPA) 管辖。`}
+          lang={lang} />
+      </p>
+      <p class="muted small">
+        <I18nText
+          en="Note: Netlify Forms (the form-submission service we use) retains the raw form payload for 30 days before auto-purging. During those 30 days the raw email and full postal code exist on Netlify's servers, accessible only by Ben. Email privacy@fundburnabykids.ca to request earlier purge."
+          zh="补充：Netlify Forms（我们用的表单服务）会保留原始表单 30 天后自动清除。这 30 天内原始邮箱和完整邮编保存在 Netlify 服务器，仅 Ben 可访问。如需提前清除请发邮件给 privacy@fundburnabykids.ca。"
           lang={lang} />
       </p>
 
