@@ -40,6 +40,8 @@ tests/                          smoke-test.sh (pre-deploy + post-deploy)
 | Apply Supabase migration | `source credentials.env && scripts/apply-supabase-migration.sh` |
 | Type-check Functions | `npm run typecheck:functions` (root) |
 | Production deploy | `git push origin HEAD:main` (Netlify auto-builds; GH Actions runs migration if SQL changed) |
+| **Purge test signatures from prod** | `source credentials.env && scripts/purge-test-signatures.sh` (dry-run) → re-run with `--apply` |
+| Database smoke (schema + dedup) | `source credentials.env && tests/smoke-db.sh` (also runs in smoke-test-prod) |
 
 `credentials.env` at repo root (gitignored) has every key — `source credentials.env` before any script that needs Supabase / Resend / Netlify / Turnstile / Cloudflare / Buttondown access.
 
@@ -95,6 +97,16 @@ A **Claude Code Local** session has no such allowlist — the same code can run 
 - **Vite native imports** for static assets (`import x from '~/data/foo.json'`, or `import.meta.glob('?raw')` for `src/data/visuals/*.svg`) — do NOT use `fs.readFileSync(import.meta.url + ...)` because it breaks once components are bundled into the SSR worker.
 - **SSR function authentication for `/withdraw/`**: the `letter_token` itself is the credential. It's a 32-byte CSPRNG only ever shown to the signer. Don't add a second auth layer.
 - **TS literal-narrowing trap on SSR pages**: `const lang = 'en'` narrows to literal `'en'`; comparing `lang === 'zh'` errors out under `astro check`. If a single-locale SSR page ever needs to branch on locale, use locale-specific text directly per file (no comparison) — see the withdraw pages.
+
+## Test-data hygiene
+
+Test rows can land in the production `signatures` table from three sources: smoke-db.sh sentinels, manual end-to-end debugging, and submissions to RFC-2606 reserved test domains. The cleanup story is **deliberately manual**, not scheduled.
+
+- **`scripts/purge-test-signatures.sh`** — the only entry point. Dry-run by default (lists matching rows, exits without deleting). Pass `--apply` to actually DELETE. Patterns matched: `first_name LIKE '_smoke_%'`, `email_hash LIKE 'smoke_%'`, `pending_email` ending in `@example.invalid` / `@example.com` / `@example.org`, and `(first_name IN ('ClaudeTest','PlaywrightTest') AND last_initial='X')`. The patterns are conservative — a real signer named "Test" with a real email won't be caught.
+- **`tests/smoke-db.sh` cleanup trap** — runs DELETE on `_smoke_*` rows on every exit (success or fail). This is the only auto-cleanup; it's per-run, not periodic, and only catches its own sentinels.
+- **What's NOT scheduled** — there is no `pg_cron` job for test-data purging. We tried `purge-test-signatures` on `*/10 * * * *` for one push (`097f307`) and reverted: automatic deletion of test rows is too eager (a developer might be inspecting a deliberate debug row when the job fires). Re-enabling needs an explicit user request and a code change.
+
+When the user says "clean up the prod DB" or similar, the right move is `scripts/purge-test-signatures.sh` — first dry-run to show what would go, then `--apply` once they confirm. Do NOT add a cron schedule unless asked.
 
 ## Pending work
 
