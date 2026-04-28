@@ -34,6 +34,12 @@ const schoolGroups: Array<{ groupKey: 'elementary' | 'secondary' | 'other'; labe
   { groupKey: 'other',      labelEn: 'Other',      labelZh: '其它', items: schools?.other ?? [] },
 ];
 
+// Sources displayed at the bottom of the help dialog so signers can
+// trace any row back to the authoritative SD41 / heritage / planning
+// source. Optional in the YAML — empty array if missing.
+type SchoolSource = { label: string; url: string };
+const schoolSources: SchoolSource[] = (schools?.sources as SchoolSource[] | undefined) ?? [];
+
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const subjectEn = letter?.subject?.en ?? '';
 const bodyTemplateEn = letter?.body_template_en ?? '';
@@ -363,6 +369,20 @@ const dataMailto = JSON.stringify({
           ))}
         </tbody>
       </table>
+      {schoolSources.length > 0 && (
+        <div class="school-help-modal__sources">
+          <p class="school-help-modal__sources-label sans">
+            <I18nText en="Sources" zh="数据来源" lang={lang} />
+          </p>
+          <ul>
+            {schoolSources.map((s) => (
+              <li>
+                <a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   </div>
 </dialog>
@@ -852,5 +872,35 @@ const dataMailto = JSON.stringify({
   .school-help-modal__nb {
     color: var(--accent);
     font-weight: 500;
+  }
+  .school-help-modal__sources {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .school-help-modal__sources-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+  .school-help-modal__sources ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .school-help-modal__sources li {
+    margin-bottom: 3px;
+    line-height: 1.4;
+  }
+  .school-help-modal__sources a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .school-help-modal__sources a:hover {
+    text-decoration: underline;
   }
 </style>

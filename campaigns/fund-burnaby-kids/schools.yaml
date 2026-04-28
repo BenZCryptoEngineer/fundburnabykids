@@ -66,3 +66,18 @@ secondary:
 other:
   - { name: "South Slope / BC School for the Deaf", neighbourhood: "South Burnaby" }
   - { name: "Other / Prefer not to say",            neighbourhood: "Burnaby" }
+
+# Sources rendered at the bottom of the school → neighbourhood help
+# dialog (the "?" popover next to the school field on the form). Two
+# purposes: (a) traceability for any signer who wants to verify a row,
+# (b) it makes the maintenance job concrete — when SD41 opens or
+# closes a school, this list is where you'd start re-checking.
+sources:
+  - label: "SD41 elementary school directory"
+    url: "https://burnabyschools.ca/elementary-school-addresses/"
+  - label: "SD41 secondary school directory"
+    url: "https://burnabyschools.ca/secondary-schools/"
+  - label: "Heritage Burnaby — neighbourhood + landmark records"
+    url: "https://search.heritageburnaby.ca/"
+  - label: "City of Burnaby community planning areas"
+    url: "https://www.burnaby.ca/our-city/projects"
