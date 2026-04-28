@@ -49,6 +49,16 @@ GET	/zh/mla/kang	200	Anne Kang
 GET	/mla/nonexistent_id	404	-
 GET	/withdraw/garbage_test_token_aaaaaa/	404	Signature not found
 GET	/zh/withdraw/garbage_test_token_aaaaaa/	404	未找到该签名
+GET	/confirm-thanks	301	-
+GET	/confirmed	301	-
+GET	/methodology	301	-
+GET	/privacy	301	-
+GET	/pac-kit	301	-
+GET	/withdrawn	301	-
+GET	/withdraw-failed	301	-
+GET	/zh/confirm-thanks	301	-
+GET	/zh/confirmed	301	-
+GET	/zh/methodology	301	-
 EOF
 
 PASS=0

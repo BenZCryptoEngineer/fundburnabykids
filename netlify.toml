@@ -53,6 +53,88 @@
   status = 200
   force  = true
 
+# -----------------------------------------------------------------------------
+# Trailing-slash 301s for every static page.
+#
+# Why we need these explicitly: with `output: 'static'` + adapter, the
+# @astrojs/netlify SSR function declares `path: '/*'` so it can serve
+# /letters/<token> and friends. That makes Netlify route /confirm-thanks
+# (no slash) to the function — which has no route for that path and
+# 404s — instead of falling through to the static /confirm-thanks/index.html.
+# `preferStatic: true` only helps when the requested path matches a literal
+# file; /confirm-thanks doesn't, only /confirm-thanks/ does.
+#
+# Astro's `trailingSlash: 'always'` makes our own emitted links use the
+# slashed form, but external POSTs (Netlify Forms 302 from the signature
+# form, browser cache from before the trailing-slash deploy, manual links
+# in old emails) still hit the unslashed URL. These rules permanently
+# redirect those.
+# -----------------------------------------------------------------------------
+[[redirects]]
+  from = "/confirm-thanks"
+  to   = "/confirm-thanks/"
+  status = 301
+[[redirects]]
+  from = "/zh/confirm-thanks"
+  to   = "/zh/confirm-thanks/"
+  status = 301
+[[redirects]]
+  from = "/confirmed"
+  to   = "/confirmed/"
+  status = 301
+[[redirects]]
+  from = "/zh/confirmed"
+  to   = "/zh/confirmed/"
+  status = 301
+[[redirects]]
+  from = "/confirm-failed"
+  to   = "/confirm-failed/"
+  status = 301
+[[redirects]]
+  from = "/zh/confirm-failed"
+  to   = "/zh/confirm-failed/"
+  status = 301
+[[redirects]]
+  from = "/methodology"
+  to   = "/methodology/"
+  status = 301
+[[redirects]]
+  from = "/zh/methodology"
+  to   = "/zh/methodology/"
+  status = 301
+[[redirects]]
+  from = "/privacy"
+  to   = "/privacy/"
+  status = 301
+[[redirects]]
+  from = "/zh/privacy"
+  to   = "/zh/privacy/"
+  status = 301
+[[redirects]]
+  from = "/pac-kit"
+  to   = "/pac-kit/"
+  status = 301
+[[redirects]]
+  from = "/zh/pac-kit"
+  to   = "/zh/pac-kit/"
+  status = 301
+[[redirects]]
+  from = "/withdrawn"
+  to   = "/withdrawn/"
+  status = 301
+[[redirects]]
+  from = "/zh/withdrawn"
+  to   = "/zh/withdrawn/"
+  status = 301
+[[redirects]]
+  from = "/withdraw-failed"
+  to   = "/withdraw-failed/"
+  status = 301
+[[redirects]]
+  from = "/zh/withdraw-failed"
+  to   = "/zh/withdraw-failed/"
+  status = 301
+
 # Webhook target for Netlify Forms submissions is configured at site level
 # (POST /api/v1/hooks with event=submission_created), pointing at:
 #   https://<site>/.netlify/functions/on-signature
