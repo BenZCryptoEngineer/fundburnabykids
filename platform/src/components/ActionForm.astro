@@ -1,10 +1,11 @@
 ---
-// The signature + send form. POSTs to Netlify Forms; Netlify webhook
-// fires the on-signature Function which writes Supabase + sends the
-// transactional confirmation email via Resend.
+// The signature + send form. POSTs URL-encoded form data to /api/submit
+// (a Netlify Function — see netlify/functions/submit.ts). The Function
+// writes Supabase, sends the Resend confirmation email, and returns a
+// 303 to /confirm-thanks/.
 //
 // Per UX research: live "public listing preview" calms privacy fears.
-// Per PRD §9.1: data-netlify + bot-field honeypot + form-name hidden.
+// Per PRD §9.1: bot-field honeypot + form-name hidden.
 // Per VISUAL_DESIGN: Turnstile loaded server-side rendered, widget
 // hydrated client-side.
 
@@ -92,9 +93,7 @@ const dataMailto = JSON.stringify({
       class="action-form"
       name="signature"
       method="POST"
-      action={localizedUrl('/confirm-thanks', lang)}
-      data-netlify="true"
-      netlify-honeypot="bot-field"
+      action="/api/submit"
       data-mailto={dataMailto}
     >
       <input type="hidden" name="form-name" value="signature" />
@@ -189,7 +188,7 @@ const dataMailto = JSON.stringify({
           name="postal"
           id="postal"
           required
-          pattern="^[Vv][0-9][A-Za-z]\s?[0-9][A-Za-z][0-9]$"
+          pattern={"^[Vv][0-9][A-Za-z]\\s?[0-9][A-Za-z][0-9]$"}
           placeholder="V5C 5W6"
           autocomplete="postal-code"
           maxlength="7"

@@ -7,14 +7,17 @@
   "scripts": {
     "typecheck:functions": "tsc -p tsconfig.json --noEmit",
     "typecheck:platform": "cd platform && npm run check",
-    "typecheck": "npm run typecheck:functions && npm run typecheck:platform"
+    "typecheck": "npm run typecheck:functions && npm run typecheck:platform",
+    "test:e2e": "playwright test --config=tests/playwright.config.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0"
   },
   "devDependencies": {
     "@netlify/functions": "^2.8.0",
+    "@playwright/test": "^1.59.1",
     "@types/node": "^20.0.0",
+    "netlify-cli": "^25.6.1",
     "typescript": "^5.5.0"
   },
   "engines": {

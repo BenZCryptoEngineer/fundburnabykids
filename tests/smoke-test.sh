@@ -98,6 +98,34 @@ while IFS=$'\t' read -r method url expected_status expected_body; do
   rm -f "$body_file"
 done <<< "$CHECKS"
 
+# POST /api/submit smoke check. We use the honeypot field so the request
+# short-circuits in submit.ts before any DB write — same response shape
+# (303 → /confirm-thanks/) as a real submission. Catches the regression
+# where /api/submit 404s because the function isn't wired (see
+# netlify/functions/submit.ts header).
+submit_status=$(curl -sS -o /dev/null -w "%{http_code}" -X POST \
+  "$BASE/api/submit" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "form-name=signature" \
+  --data-urlencode "bot-field=smoke" \
+  --data-urlencode "locale=en" \
+  --max-time 15 || echo "000")
+submit_loc=$(curl -sS -o /dev/null -w "%{redirect_url}" -X POST \
+  "$BASE/api/submit" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  --data-urlencode "form-name=signature" \
+  --data-urlencode "bot-field=smoke" \
+  --data-urlencode "locale=en" \
+  --max-time 15 || echo "")
+if [ "$submit_status" = "303" ] && echo "$submit_loc" | grep -q "/confirm-thanks/"; then
+  PASS=$((PASS + 1))
+  printf '\033[0;32m  PASS\033[0m  %s %-50s -> %s\n' "POST" "/api/submit (honeypot)" "$submit_status"
+else
+  FAIL=$((FAIL + 1))
+  FAILED_URLS+=("/api/submit (honeypot)")
+  printf '\033[0;31m  FAIL\033[0m  %s %-50s -> %s [loc=%s]\n' "POST" "/api/submit (honeypot)" "$submit_status" "$submit_loc"
+fi
+
 echo
 echo "========================================"
 echo "  $PASS passed, $FAIL failed against $BASE"

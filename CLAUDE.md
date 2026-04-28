@@ -13,7 +13,7 @@ campaigns/fund-burnaby-kids/    YAML content collections (meta, mlas, journey,
                                 personas, facts, faq, schools, thresholds,
                                 pac-kit, letter)
 infrastructure/                 Supabase SQL migration + workflow + privacy docs
-netlify/functions/              Netlify Functions: on-signature, confirm-signature, withdraw
+netlify/functions/              Netlify Functions: submit, confirm-signature, withdraw
 platform/                       Astro 5 site (TypeScript, content collections)
   src/components/               Astro islands
   src/data/                     Static data files imported at build time (incl. visuals/)
@@ -66,7 +66,7 @@ This repo passed through a major v0.2 work pass that added the per-signer letter
 - Static OG card at `public/og/letter.{en,zh}.svg` (1200×630).
 
 ### Schema (signatures table)
-`first_name`, `last_initial`, `school`, `grade`, `neighbourhood`, `riding_id`, `confirmed`, `confirm_token` (cleared on confirm), `confirm_token_expires`, `signed_at`, `validated_at`, `pending_email` (NULLed at confirm), `pending_consent_updates` (NULLed at confirm), `pending_locale` (NULLed at confirm), `locale` (long-lived, copied from pending_locale at confirm), `letter_token` (long-lived, generated at confirm), `ip_address`, `validated_ip`, `anonymized_at`. The full postal code is **never** stored — `on-signature.ts` derives `neighbourhood` from school name (via `SCHOOL_NEIGHBOURHOODS` in `_shared.ts`) and `riding_id` from postal FSA, then drops the postal.
+`first_name`, `last_initial`, `school`, `grade`, `neighbourhood`, `riding_id`, `confirmed`, `confirm_token` (cleared on confirm), `confirm_token_expires`, `signed_at`, `validated_at`, `pending_email` (NULLed at confirm), `pending_consent_updates` (NULLed at confirm), `pending_locale` (NULLed at confirm), `locale` (long-lived, copied from pending_locale at confirm), `letter_token` (long-lived, generated at confirm), `ip_address`, `validated_ip`, `anonymized_at`. The full postal code is **never** stored — `submit.ts` derives `neighbourhood` from school name (via `SCHOOL_NEIGHBOURHOODS` in `_shared.ts`) and `riding_id` from postal FSA, then drops the postal.
 
 ### School → neighbourhood (transparency)
 `schools.yaml` is `{ name, neighbourhood }` per row. `ActionForm.astro` shows the derived neighbourhood inline after school selection + a "?" help icon opens a `<dialog>` with the full mapping table. Mirrored in `_shared.ts:SCHOOL_NEIGHBOURHOODS` for server-side derivation (don't trust client). **Keep the YAML and the TS map in sync.**
@@ -90,7 +90,7 @@ A **Claude Code Local** session has no such allowlist — the same code can run 
 
 - **Astro 5 content collections** are configured in `platform/src/content.config.ts`. The collection is named `campaign` and loads `*.yaml` from `../campaigns/fund-burnaby-kids/`. Look up entries via `getEntry('campaign', '<filename-without-extension>')`. The `meta.yaml` file uses `slug: fund-burnaby-kids` as its entry id (overrides filename).
 - **Bilingual strings** follow `{ en: '...', zh: '...' }` pattern. Render via `<I18nText en="..." zh="..." lang={lang} />` or `t({ en, zh }, lang)`.
-- **Signatures** flow: form post → Netlify Forms detection → `on-signature.ts` → DB insert (`pending_*` columns + `locale` copy) → Resend confirmation email → user clicks link → `confirm-signature.ts` flips `confirmed=TRUE`, NULLs `pending_email`, copies `pending_locale` → `locale`, generates `letter_token`. Email never persists past confirmation.
+- **Signatures** flow: form POST `/api/submit` → `submit.ts` parses URL-encoded body → DB insert (`pending_*` columns + `locale` copy) → Resend confirmation email → 303 to `/confirm-thanks/` → user clicks link → `confirm-signature.ts` flips `confirmed=TRUE`, NULLs `pending_email`, copies `pending_locale` → `locale`, generates `letter_token`. Email never persists past confirmation. We deliberately bypassed Netlify Forms (it interacts badly with the SSR adapter's `path: '/*'` catch-all — POSTs fall through to the SSR function and 404). Trade-off: submissions don't appear in the Netlify Forms dashboard; Supabase is the source of truth.
 - **Riding map** joins on `riding_id` (Elections BC `ED_ABBREVIATION`: BNC/BNE/BNN/BNO/BNS). The `RIDING_BY_FSA` table in `netlify/functions/_shared.ts` derives `riding_id` from postal code at submission.
 - **Vite native imports** for static assets (`import x from '~/data/foo.json'`, or `import.meta.glob('?raw')` for `src/data/visuals/*.svg`) — do NOT use `fs.readFileSync(import.meta.url + ...)` because it breaks once components are bundled into the SSR worker.
 - **SSR function authentication for `/withdraw/`**: the `letter_token` itself is the credential. It's a 32-byte CSPRNG only ever shown to the signer. Don't add a second auth layer.

@@ -4,7 +4,7 @@
 //
 // Includes the full kit content from pac-kit.yaml (intro, do/dont,
 // motion text, briefing, qa) AND the pac-endorsement form that POSTs
-// to Netlify Forms → on-signature webhook (form-name dispatch).
+// to /api/submit (form-name dispatch — see netlify/functions/submit.ts).
 
 import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
@@ -124,8 +124,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
           class="pac-form"
           name="pac-endorsement"
           method="POST"
-          data-netlify="true"
-          netlify-honeypot="pac-bot"
+          action="/api/submit"
         >
           <input type="hidden" name="form-name" value="pac-endorsement" />
           <input type="hidden" name="locale" value={lang} />

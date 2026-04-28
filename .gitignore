@@ -50,3 +50,10 @@ coverage/
 # --- Build artifacts ---
 *.tsbuildinfo
 *.map
+
+# --- Playwright ---
+test-results/
+playwright-report/
+
+# --- netlify-cli writes a Deno lockfile when bundling Edge Functions runtime ---
+deno.lock

@@ -39,7 +39,11 @@
   node_bundler = "esbuild"
 
 # -----------------------------------------------------------------------------
-# Pretty URL for the confirmation flow.
+# Function aliases. force=true so /api/* always hits the Function even if
+# a like-named static path exists. Why /api/submit handles BOTH the
+# signature and pac-endorsement form POSTs (form-name dispatch) instead
+# of using Netlify Forms: see the "Why we moved off Netlify Forms"
+# comment in netlify/functions/submit.ts.
 # -----------------------------------------------------------------------------
 [[redirects]]
   from = "/api/confirm"
@@ -50,6 +54,12 @@
 [[redirects]]
   from = "/api/withdraw"
   to   = "/.netlify/functions/withdraw"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from = "/api/submit"
+  to   = "/.netlify/functions/submit"
   status = 200
   force  = true
 
@@ -135,10 +145,12 @@
   to   = "/zh/withdraw-failed/"
   status = 301
 
-# Webhook target for Netlify Forms submissions is configured at site level
-# (POST /api/v1/hooks with event=submission_created), pointing at:
-#   https://<site>/.netlify/functions/on-signature
-# Already configured during Phase 4B.
+# Note: a `submission_created` webhook used to fire on-signature.ts when
+# Netlify Forms intercepted the form POST. We've moved off Netlify Forms
+# entirely (forms now POST to /api/submit). The old webhook can be left
+# configured — it never fires in the new flow because no submission_created
+# events are produced — or removed at the site level. submit.ts is the
+# single source of truth for form persistence + email.
 
 # -----------------------------------------------------------------------------
 # Headers — security baseline.

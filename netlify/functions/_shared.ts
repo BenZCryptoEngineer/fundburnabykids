@@ -1,5 +1,5 @@
 // Shared helpers for Netlify Functions.
-// Imported by on-signature.ts and confirm-signature.ts.
+// Imported by submit.ts, confirm-signature.ts, and withdraw.ts.
 
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 

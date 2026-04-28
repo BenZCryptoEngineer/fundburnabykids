@@ -17,19 +17,29 @@ const lang = pickLang(Astro.url.pathname);
 >
   <section class="thanks-page">
     <div class="wrap">
-      <div class="thanks-card">
+      <div class="thanks-card" data-variant="signature">
+        {/* PAC submission lands here too via ?form=pac. We swap the headline
+            client-side so the signature flow renders without flicker for the
+            common case (the signature 303 has no query string). */}
         <div class="thanks-icon" aria-hidden="true">📬</div>
-        <h1>
+        <h1 data-pac-headline-target>
           <I18nText
             en="Check your email"
             zh="请查收邮件"
             lang={lang}
           />
         </h1>
-        <p class="thanks-lede">
+        <p class="thanks-lede" data-pac-lede-target>
           <I18nText
             en="We just sent a confirmation link to your email. Click it within 48 hours to add your name to the public count."
             zh="我们刚向你的邮箱发了一封确认邮件。请在 48 小时内点击链接，将你的名字加入公开计数。"
+            lang={lang}
+          />
+        </p>
+        <p class="thanks-lede" data-pac-only hidden>
+          <I18nText
+            en="We received your PAC endorsement. We'll verify it personally — usually within 24 hours — and email the chair address you provided."
+            zh="我们已收到你的 PAC endorsement，会人工核实（通常 24 小时内）并通过邮件回复你填写的主席邮箱。"
             lang={lang}
           />
         </p>
@@ -120,6 +130,24 @@ const lang = pickLang(Astro.url.pathname);
         </div>
 
         <script>
+          // PAC variant swap. submit.ts redirects PAC endorsements to
+          // /confirm-thanks/?form=pac so they don't see "Check your email"
+          // (PAC chairs don't get a confirmation email, only an admin
+          // notification fires). Signature flow has no ?form param.
+          (function pacSwap() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.get('form') !== 'pac') return;
+            const card = document.querySelector<HTMLElement>('.thanks-card[data-variant="signature"]');
+            if (card) card.setAttribute('data-variant', 'pac');
+            const headline = document.querySelector<HTMLElement>('[data-pac-headline-target]');
+            const lede = document.querySelector<HTMLElement>('[data-pac-lede-target]');
+            const pacLede = document.querySelector<HTMLElement>('[data-pac-only]');
+            const lang = document.documentElement.lang;
+            if (headline) headline.textContent = lang === 'zh' ? '已收到你的 endorsement' : 'Endorsement received';
+            if (lede) lede.hidden = true;
+            if (pacLede) pacLede.hidden = false;
+          })();
+
           // Read the mailto URL stashed by ActionForm's submit handler and
           // wire up the actionable button + plain-text fallback. We render
           // a real <a href="mailto:..."> click target instead of opening

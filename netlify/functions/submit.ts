@@ -1,11 +1,25 @@
-// netlify/functions/on-signature.ts
+// netlify/functions/submit.ts
 //
-// Handles Netlify Forms webhook for two forms:
-//   - signature        — petition signature with email confirmation
-//   - pac-endorsement  — Parent Advisory Council endorsement (verified manually)
+// Receives the signature + pac-endorsement form POSTs directly. Replaces
+// the previous Netlify-Forms-based flow whose `submission_created` webhook
+// fired into on-signature.ts.
 //
-// Form dispatch is by `form-name` field in the webhook payload.
-// Both flows verify Cloudflare Turnstile before any DB write.
+// Why we moved off Netlify Forms: with `output: 'static'` + `@astrojs/netlify`
+// adapter, the SSR function declares `path: '/*'` (so it can serve the
+// SSR routes /letters/[token], /mla/[id], /withdraw/[token]). Netlify
+// Forms detection at deploy time + form-POST interception at the edge is
+// not reliably triggered ahead of the SSR catch-all in this setup — POSTs
+// fall through to the SSR function, which has no handler for the form's
+// action URL and 404s. Owning the submit endpoint as a regular Function
+// gives us a stable URL (`/api/submit` via netlify.toml) that doesn't
+// depend on Netlify Forms detection. The trade-off is that submissions
+// no longer appear in the Netlify Forms dashboard — Supabase is the
+// source of truth instead.
+//
+// Form dispatch is by `form-name` field in the URL-encoded POST body.
+// On success, returns 303 See Other to the appropriate confirm page.
+// On honeypot trip, mimics success (no DB write, same redirect) so a
+// bot can't probe for differential responses.
 
 import type { Handler } from '@netlify/functions';
 import { randomBytes } from 'node:crypto';
@@ -25,58 +39,81 @@ const MAILING_ADDRESS = process.env.MAILING_ADDRESS || '';
 const ADMIN_NOTIFICATION_EMAIL = process.env.ADMIN_NOTIFICATION_EMAIL || 'ben@fundburnabykids.ca';
 
 export const handler: Handler = async (event) => {
-  try {
-    const raw = JSON.parse(event.body || '{}');
-    const data = raw.payload?.data || raw;
-    const formName = raw.payload?.form_name || data['form-name'];
-
-    const ip = getRequestIp(event.headers as Record<string, string | undefined>);
-
-    const turnstile = await verifyTurnstile(data['cf-turnstile-response'], ip);
-    if (!turnstile.ok) {
-      console.warn(`turnstile failed: ${turnstile.reason}`);
-      return { statusCode: 200, body: 'turnstile_failed' };
-    }
-
-    if (formName === 'signature') {
-      return await handleSignature(data, ip);
-    }
-    if (formName === 'pac-endorsement') {
-      return await handlePacEndorsement(data, ip);
-    }
-
-    return { statusCode: 200, body: 'ignored_unknown_form' };
-  } catch (err) {
-    // Never throw — Netlify will retry, which causes duplicate sends.
-    console.error('on-signature unhandled error:', err);
-    return { statusCode: 200, body: 'ok' };
+  if (event.httpMethod !== 'POST') {
+    return { statusCode: 405, body: 'method_not_allowed' };
   }
+
+  let data: Record<string, string>;
+  try {
+    data = parseBody(event.body, event.isBase64Encoded, event.headers as Record<string, string | undefined>);
+  } catch (err) {
+    console.error('submit body parse error:', err);
+    return { statusCode: 400, body: 'invalid_body' };
+  }
+
+  const formName = data['form-name'] || '';
+  const locale = pickLocale(data.locale);
+  const ip = getRequestIp(event.headers as Record<string, string | undefined>);
+
+  // Honeypot fields are blank for humans; if filled, silently accept and
+  // redirect (same response shape as success — no signal back to bots).
+  const honeypotKey = formName === 'pac-endorsement' ? 'pac-bot' : 'bot-field';
+  if ((data[honeypotKey] || '').length > 0) {
+    return redirectAfterSubmit(formName, locale);
+  }
+
+  const turnstile = await verifyTurnstile(data['cf-turnstile-response'], ip);
+  if (!turnstile.ok) {
+    console.warn(`turnstile failed: ${turnstile.reason}`);
+    return redirectAfterSubmit(formName, locale);
+  }
+
+  try {
+    if (formName === 'signature') {
+      await processSignature(data, locale, ip);
+    } else if (formName === 'pac-endorsement') {
+      await processPacEndorsement(data, ip);
+    } else {
+      console.warn('submit: unknown form-name', formName);
+    }
+  } catch (err) {
+    // Never throw — we'd rather show the user the thanks page and have
+    // the missed write surface in logs than 500 to a parent who just
+    // typed in their kid's school. The signature/email is recoverable
+    // from logs if it really matters.
+    console.error('submit unhandled error:', err);
+  }
+
+  return redirectAfterSubmit(formName, locale);
 };
 
 // ---------------------------------------------------------------------------
 
-async function handleSignature(
-  data: Record<string, string | boolean | undefined>,
+async function processSignature(
+  data: Record<string, string>,
+  locale: 'en' | 'zh',
   ip: string | null
-): Promise<{ statusCode: number; body: string }> {
-  const firstname = String(data.firstname || '').trim();
-  const lastname = String(data.lastname || '').trim();
-  const email = String(data.email || '').trim().toLowerCase();
-  const school = String(data.school || '').trim();
-  const grade = String(data.grade || '').trim();
-  const postal = String(data.postal || '').trim().toUpperCase();
-  const consentPublic = data['consent-public'] === 'on' || data['consent-public'] === true;
-  const consentUpdates = data['consent-updates'] === 'on' || data['consent-updates'] === true;
-  const locale = pickLocale(data.locale as string | undefined);
+): Promise<void> {
+  const firstname = (data.firstname || '').trim();
+  const lastname = (data.lastname || '').trim();
+  const email = (data.email || '').trim().toLowerCase();
+  const school = (data.school || '').trim();
+  const grade = (data.grade || '').trim();
+  const postal = (data.postal || '').trim().toUpperCase();
+  const consentPublic = data['consent-public'] === 'on';
+  const consentUpdates = data['consent-updates'] === 'on';
 
   if (!firstname || !lastname || !email || !school || !grade || !postal) {
-    return { statusCode: 200, body: 'missing_required_fields' };
+    console.warn('submit signature: missing required fields');
+    return;
   }
   if (!consentPublic) {
-    return { statusCode: 200, body: 'public_consent_required' };
+    console.warn('submit signature: public consent missing');
+    return;
   }
   if (!email.includes('@') || email.length > 254) {
-    return { statusCode: 200, body: 'invalid_email' };
+    console.warn('submit signature: invalid email');
+    return;
   }
 
   const lastInitial = lastname.charAt(0).toUpperCase();
@@ -110,7 +147,7 @@ async function handleSignature(
 
   if (insertError) {
     console.error('signatures insert error:', insertError);
-    return { statusCode: 200, body: 'db_error' };
+    return;
   }
 
   await sendConfirmationEmail({
@@ -119,27 +156,26 @@ async function handleSignature(
     locale,
     token: confirmToken,
   });
-
-  return { statusCode: 200, body: 'ok' };
 }
 
 // ---------------------------------------------------------------------------
 
-async function handlePacEndorsement(
-  data: Record<string, string | boolean | undefined>,
+async function processPacEndorsement(
+  data: Record<string, string>,
   ip: string | null
-): Promise<{ statusCode: number; body: string }> {
-  const school = String(data['pac-school'] || '').trim();
-  const studentsRaw = String(data['pac-students'] || '').trim();
-  const chairName = String(data['pac-chair-name'] || '').trim();
-  const chairEmail = String(data['pac-chair-email'] || '').trim().toLowerCase();
-  const approvalDate = String(data['pac-approval-date'] || '').trim() || null;
-  const consent = data['pac-consent'] === 'on' || data['pac-consent'] === true;
-  const futureInterest = data['pac-future-interest'] === 'on' || data['pac-future-interest'] === true;
+): Promise<void> {
+  const school = (data['pac-school'] || '').trim();
+  const studentsRaw = (data['pac-students'] || '').trim();
+  const chairName = (data['pac-chair-name'] || '').trim();
+  const chairEmail = (data['pac-chair-email'] || '').trim().toLowerCase();
+  const approvalDate = (data['pac-approval-date'] || '').trim() || null;
+  const consent = data['pac-consent'] === 'on';
+  const futureInterest = data['pac-future-interest'] === 'on';
 
   const students = parseInt(studentsRaw, 10);
   if (!school || !chairName || !chairEmail || !consent || !Number.isFinite(students) || students <= 0) {
-    return { statusCode: 200, body: 'invalid_pac_submission' };
+    console.warn('submit pac-endorsement: invalid');
+    return;
   }
 
   const supabase = getSupabase();
@@ -157,11 +193,9 @@ async function handlePacEndorsement(
 
   if (insertError) {
     console.error('pac_endorsements insert error:', insertError);
-    return { statusCode: 200, body: 'db_error' };
+    return;
   }
 
-  // Notify Ben so he can verify (see infrastructure/MLA_REPLY_WORKFLOW.md
-  // and the sibling VERIFY_PAC.md once it exists).
   await sendAdminNotification({
     subject: `[PAC pending] ${school} — verify endorsement`,
     text:
@@ -173,8 +207,54 @@ async function handlePacEndorsement(
       `Verify via Supabase: UPDATE pac_endorsements SET status='verified', ` +
       `verified_at=NOW() WHERE school='${school.replace(/'/g, "''")}' AND status='pending';`,
   });
+}
 
-  return { statusCode: 200, body: 'ok' };
+// ---------------------------------------------------------------------------
+// Body parsing — Netlify Functions hand us URL-encoded form bodies as
+// the raw string in event.body. POST may be base64-encoded depending on
+// content-type negotiation, so guard for that.
+// ---------------------------------------------------------------------------
+
+function parseBody(
+  body: string | null | undefined,
+  isBase64: boolean | undefined,
+  headers: Record<string, string | undefined>
+): Record<string, string> {
+  if (!body) return {};
+  const decoded = isBase64 ? Buffer.from(body, 'base64').toString('utf8') : body;
+  const ct = (headers['content-type'] || headers['Content-Type'] || '').toLowerCase();
+  if (ct.includes('application/x-www-form-urlencoded') || !ct.includes('application/json')) {
+    const params = new URLSearchParams(decoded);
+    const out: Record<string, string> = {};
+    params.forEach((value, key) => {
+      out[key] = value;
+    });
+    return out;
+  }
+  // Defensive fallback: if a future caller posts JSON, accept it.
+  return JSON.parse(decoded) as Record<string, string>;
+}
+
+// ---------------------------------------------------------------------------
+
+function redirectAfterSubmit(
+  formName: string,
+  locale: 'en' | 'zh'
+): { statusCode: number; headers: Record<string, string>; body: string } {
+  const localePrefix = locale === 'zh' ? '/zh' : '';
+  // 303 See Other forces the browser to GET the redirect target — the
+  // correct semantics for "POST then redirect to a results page".
+  // Relative path so dev (localhost:8888), preview deploys, and prod
+  // each redirect to themselves rather than to SITE_URL hard-coded.
+  const target =
+    formName === 'pac-endorsement'
+      ? `${localePrefix}/confirm-thanks/?form=pac`
+      : `${localePrefix}/confirm-thanks/`;
+  return {
+    statusCode: 303,
+    headers: { Location: target, 'Cache-Control': 'no-store' },
+    body: '',
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -222,7 +302,6 @@ async function sendConfirmationEmail(opts: {
       subject,
       html,
       text,
-      // Tag for Resend dashboard filtering
       tags: [{ name: 'type', value: 'signature_confirmation' }],
     }),
   });

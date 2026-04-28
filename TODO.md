@@ -4,71 +4,23 @@ Active deferred work. Each item is self-contained — a fresh session can pick a
 
 ---
 
-## 🚨 ACTIVE BUG — fill form → click Sign → "Page not found"
+## ✅ RESOLVED — fill form → click Sign → "Page not found"
 
-**As of commit `b489d44` deployed to production.** User is on Windows + Chrome. Reports: filling the signature form, clicking "Sign — and send your email →", browser lands on Netlify's default "Page not found" yellow page. URL bar reads `https://fundburnabykids.ca/confirm-thanks/`.
+Fixed by routing the signature + pac-endorsement form POSTs through a custom Netlify Function (`/api/submit` → `netlify/functions/submit.ts`) instead of relying on Netlify Forms detection.
 
-### What's known
-- The static file `dist/confirm-thanks/index.html` is emitted (verified in build).
-- The form's emitted `action` attribute is `/confirm-thanks/` (with slash, after `c16b2a9`).
-- `netlify.toml` has explicit 301 redirects from `/<page>` → `/<page>/` for every static page (added `b489d44`).
-- Astro `trailingSlash: 'always'` is set.
-- `<form data-netlify="true">` count = 2 in `dist/index.html` (signature + pac-endorsement).
-- Hidden `<input name="form-name" value="signature">` is present in form HTML.
+### Confirmed root cause
+A live `curl -X POST https://fundburnabykids.ca/confirm-thanks/` against prod returned `404`, confirming hypothesis 1: Netlify Forms wasn't intercepting the POST. With the SSR adapter declaring `path: '/*'` + `preferStatic: true`, GET requests fall back to the static `/confirm-thanks/index.html`, but POSTs land on the SSR function — which has no route for `/confirm-thanks/` and returns Netlify's default 404 page. Whether Netlify's form-detection scan was failing entirely or losing the race against the SSR catch-all wasn't worth pinning down further; the fix removes the dependency.
 
-### What was tried, didn't fix
-- `c16b2a9` — Astro `trailingSlash: 'always'` + form action with slash.
-- `b489d44` — explicit netlify.toml `[[redirects]]` 301s for unslashed → slashed (16 rules).
-- User hard-reloaded browser (Ctrl+Shift+R), still 404.
+### Fix shape
+- `submit.ts` parses the URL-encoded body, dispatches by `form-name`, runs Turnstile + honeypot + validation, writes Supabase, sends the Resend confirmation email, and returns 303 to `/confirm-thanks/` (or `/zh/confirm-thanks/?form=pac` for PAC).
+- `netlify.toml` adds `/api/submit` → `/.netlify/functions/submit` (force=true).
+- Both forms in `ActionForm.astro` and `PacKitModal.astro` now have `action="/api/submit"` and no `data-netlify` / `netlify-honeypot` attributes.
+- `confirm-thanks` (en + zh) reads `?form=pac` client-side and swaps copy from "Check your email" to "Endorsement received" so PAC submitters don't see misleading email copy.
+- Bonus fix uncovered by the e2e: the postal `pattern` attribute was being emitted as `s?` (Astro stripped the source backslash); switched to expression-form `pattern={"^...\\s?...$"}` so the regex now accepts canonical "V5B 3X6" with a space.
 
-### Hypotheses, untested (sandbox couldn't reach prod)
-1. **Netlify Forms isn't detecting the form.** If detection fails, the POST goes through to the SSR function (`path: '/*'`, `preferStatic: true`), which has no route for `/confirm-thanks/` (it's static) → returns 404. Cause could be: SSR adapter is somehow flagging index.html as dynamic; form HTML structure has a subtle issue; deploy hasn't actually completed.
-2. **Latest deploy hasn't propagated.** User's browser sees stale CDN cache. Less likely after a hard reload but not impossible.
-3. **Netlify Forms is detecting but its 302 redirect is going to a path that 404s.** Maybe Netlify Forms appends something or strips the slash.
-
-### How a local session can confirm root cause in 5 minutes
-
-```bash
-# 1. Test 1: redirect chain. Need to see 301 → 200.
-curl -sI -L https://fundburnabykids.ca/confirm-thanks
-# Expected: HTTP/2 301 → location: /confirm-thanks/ → HTTP/2 200
-# If only HTTP/2 404 → b489d44 not deployed yet.
-
-# 2. Test 2: simulate form POST. Need to see 302.
-curl -sI -X POST https://fundburnabykids.ca/confirm-thanks/ \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  --data-urlencode "form-name=signature" \
-  --data-urlencode "firstname=ClaudeTest" \
-  --data-urlencode "lastname=DontStore" \
-  --data-urlencode "email=claude-smoke-test@example.invalid" \
-  --data-urlencode "school=Capitol Hill" \
-  --data-urlencode "grade=2" \
-  --data-urlencode "postal=V5B 3X6" \
-  --data-urlencode "consent-public=on" \
-  --data-urlencode "school_neighbourhood=Capitol Hill" \
-  --data-urlencode "locale=en"
-# Expected: HTTP/2 302 → location: /confirm-thanks/
-# 404 → Netlify Forms isn't capturing → form-detection problem (hypothesis 1).
-# 405 → POST going to static file → same root cause.
-# 302 → form capture works → bug must be in the GET-after-302 step.
-
-# 3. If 1 and 2 both work but the user STILL hits 404, run a real browser test:
-npx playwright install chromium
-npx playwright test tests/e2e-form-submit.spec.ts  # write this if it doesn't exist
-```
-
-### Where to look in code
-- `platform/src/components/ActionForm.astro` lines 92-100 — the form element
-- `platform/dist/index.html` — what Netlify Forms actually scans (run `astro build` first)
-- `netlify.toml` — redirect order matters; SSR function's `path: '/*'` is in `.netlify/v1/config.json`, not netlify.toml
-- Netlify dashboard → Forms tab → is "signature" form listed as detected? If not, that's the answer.
-
-### Acceptance for this fix
-
-- A real browser submitting the signature form lands on `https://fundburnabykids.ca/confirm-thanks/` showing the "Check your email" card (not Netlify's yellow 404).
-- The signature row appears in Supabase `signatures` table with `confirmed=FALSE`.
-- The user receives a Resend confirmation email at the address they provided.
-- A new Playwright e2e test in `tests/` covers the flow so this regression never ships again silently.
+### Regression coverage shipped alongside
+- `tests/e2e/form-submit.spec.ts` (new) — Playwright fills the signature form with realistic data, asserts the submit lands on `/confirm-thanks/` showing "Check your email", and explicitly fails if Netlify's "Page not found" body leaks through. Auto-starts `netlify dev` via Playwright `webServer` config so a single `npm run test:e2e` runs the whole loop.
+- `tests/smoke-test.sh` (extended) — added a POST `/api/submit` honeypot check that asserts 303 → `/confirm-thanks/`. Runs against prod every 30 min via `smoke-test-prod.yml`, so the regression cannot silently re-ship.
 
 ---
 
