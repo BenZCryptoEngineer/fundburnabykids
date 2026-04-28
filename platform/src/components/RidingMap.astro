@@ -421,6 +421,7 @@ function bucketByGoal(count: number): number {
 
     // initial render to make sure label colors match SSR fills exactly
     applyColors();
+    poll();
     setInterval(poll, pollMs);
   });
 </script>

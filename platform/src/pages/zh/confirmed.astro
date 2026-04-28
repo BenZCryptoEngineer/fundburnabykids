@@ -20,6 +20,11 @@ const safeToken = /^[A-Za-z0-9_-]{16,128}$/.test(letterToken) ? letterToken : ''
 const siteOrigin = Astro.site?.toString().replace(/\/$/, '') ?? 'https://fundburnabykids.ca';
 const letterPath = lang === 'zh' ? '/zh/letters/' : '/letters/';
 const letterUrl = safeToken ? `${siteOrigin}${letterPath}${encodeURIComponent(safeToken)}` : null;
+// Withdraw URL — same letter_token doubles as the withdrawal credential.
+// Surface it here (alongside the letter URL) so signers don't have to dig
+// through the letter page or privacy policy to find the self-serve flow.
+const withdrawPath = lang === 'zh' ? '/zh/withdraw/' : '/withdraw/';
+const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponent(safeToken)}/` : null;
 ---
 
 <CampaignLayout
@@ -118,6 +123,23 @@ const letterUrl = safeToken ? `${siteOrigin}${letterPath}${encodeURIComponent(sa
           </ul>
         </div>
 
+        {withdrawUrl && (
+          <p class="confirm-withdraw sans">
+            <I18nText
+              en="Changed your mind?"
+              zh="改变主意了？"
+              lang={lang}
+            />{' '}
+            <a href={withdrawUrl}>
+              <I18nText
+                en="Remove my signature"
+                zh="移除我的签名"
+                lang={lang}
+              />
+            </a>
+          </p>
+        )}
+
         <p class="confirm-back">
           <a href={localizedUrl('/', lang)}>
             ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
@@ -185,6 +207,17 @@ const letterUrl = safeToken ? `${siteOrigin}${letterPath}${encodeURIComponent(sa
     font-weight: 500;
   }
   .confirm-back a:hover { color: var(--accent-deep); }
+
+  .confirm-withdraw {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 8px 0 16px;
+  }
+  .confirm-withdraw a {
+    color: var(--muted);
+    text-decoration: underline;
+  }
+  .confirm-withdraw a:hover { color: var(--danger, #B91C1C); }
 
   .confirm-letter {
     border-top: 1px solid var(--line);

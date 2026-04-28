@@ -96,6 +96,11 @@ const display = initialCount === null ? '—' : initialCount.toLocaleString();
         /* swallow — keep last good value */
       }
     }
+    // Fire once immediately — the build-time initialCount goes stale the
+    // moment a new signature is confirmed. Without this, a user who just
+    // signed sees "0" (or whatever the build saw) for up to 30s and
+    // assumes the system swallowed their submission.
+    poll();
     setInterval(poll, pollMs);
   });
 </script>

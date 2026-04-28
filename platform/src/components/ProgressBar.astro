@@ -125,6 +125,7 @@ const nextRemaining = next ? next.count - initialCount : 0;
         /* keep last good */
       }
     }
+    poll();
     setInterval(poll, pollMs);
   });
 </script>
