@@ -432,3 +432,13 @@ GRANT USAGE, SELECT ON SEQUENCE mla_replies_id_seq       TO service_role;
 -- 6. Cleanup:
 --      DELETE FROM signatures WHERE first_name='Test' AND last_initial='X';
 -- ============================================================================
+
+-- ----------------------------------------------------------------------------
+-- Reload PostgREST schema cache.
+-- Without this, every column added by the migration above is invisible to
+-- the REST API for ~1-2 minutes (or until the next process restart). That
+-- shows up at runtime as `PGRST204: Could not find the 'X' column of 'Y' in
+-- the schema cache` and is exactly what bit us when letter_token first
+-- shipped. Running NOTIFY here makes the migration self-healing.
+-- ----------------------------------------------------------------------------
+NOTIFY pgrst, 'reload schema';
