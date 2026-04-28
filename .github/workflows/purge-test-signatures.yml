@@ -17,8 +17,17 @@ name: Purge test signatures
 on:
   workflow_dispatch:
     inputs:
+      mode:
+        description: 'list = read-only dump of all rows, sentinels = delete only test patterns, wipe-all = delete EVERY row'
+        required: true
+        type: choice
+        default: list
+        options:
+          - list
+          - sentinels
+          - wipe-all
       apply:
-        description: 'Actually DELETE matched rows (default: dry-run preview only)'
+        description: 'For sentinels / wipe-all: actually DELETE (default: dry-run preview)'
         required: true
         type: boolean
         default: false
@@ -29,16 +38,37 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run purge (dry-run preview)
-        if: ${{ inputs.apply == false }}
+      - name: List all signatures (non-PII columns)
+        if: ${{ inputs.mode == 'list' }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: ./scripts/purge-test-signatures.sh --list
+
+      - name: Sentinel purge (dry-run preview)
+        if: ${{ inputs.mode == 'sentinels' && inputs.apply == false }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
         run: ./scripts/purge-test-signatures.sh
 
-      - name: Run purge (--apply, deletes rows)
-        if: ${{ inputs.apply == true }}
+      - name: Sentinel purge (--apply, deletes matched rows)
+        if: ${{ inputs.mode == 'sentinels' && inputs.apply == true }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
         run: ./scripts/purge-test-signatures.sh --apply
+
+      - name: Wipe ALL signatures (dry-run preview)
+        if: ${{ inputs.mode == 'wipe-all' && inputs.apply == false }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: ./scripts/purge-test-signatures.sh --wipe-all
+
+      - name: Wipe ALL signatures (--apply, deletes EVERY row)
+        if: ${{ inputs.mode == 'wipe-all' && inputs.apply == true }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: ./scripts/purge-test-signatures.sh --wipe-all --apply

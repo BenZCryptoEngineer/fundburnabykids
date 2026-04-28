@@ -40,9 +40,16 @@ PROJECT_REF="${PROJECT_REF%%.*}"
 API="https://api.supabase.com/v1/projects/${PROJECT_REF}/database/query"
 
 APPLY=false
-if [[ "${1:-}" == "--apply" ]]; then
-  APPLY=true
-fi
+LIST=false
+WIPE_ALL=false
+for arg in "$@"; do
+  case "$arg" in
+    --apply) APPLY=true ;;
+    --list)  LIST=true  ;;
+    --wipe-all) WIPE_ALL=true ;;
+    *) echo "warn: unknown arg '$arg'" >&2 ;;
+  esac
+done
 
 # WHERE clause is duplicated in the SELECT (preview) and DELETE (apply)
 # branches. Keep them in sync — the preview must match exactly what the
@@ -76,6 +83,49 @@ print(json.dumps({"query": sys.argv[1]}))
     --data-binary "$payload" \
     "$API"
 }
+
+# --list: dump every row with non-PII columns. Used to reconcile what's
+# in prod when the sentinel patterns don't match expected test data.
+# Deliberately does NOT include pending_email, confirm_token, letter_token,
+# or email_hash — those are PII / credentials and shouldn't land in CI logs.
+if [[ "$LIST" == "true" ]]; then
+  echo "== all signatures (non-PII columns) =="
+  body=$(run_sql "SELECT id, first_name, last_initial, school, neighbourhood, riding_id, signed_at, confirmed, validated_at, anonymized_at, petition_slug FROM signatures ORDER BY signed_at DESC;")
+  echo "$body" | python3 -m json.tool 2>/dev/null || echo "$body"
+  count=$(echo "$body" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d) if isinstance(d, list) else 0)' 2>/dev/null || echo "?")
+  echo
+  echo "== total: $count row(s) =="
+  exit 0
+fi
+
+# --wipe-all: nuclear. Drops EVERY signature row regardless of pattern.
+# Only sane before public launch when the table is just self-test data.
+# Requires --apply too — otherwise it's a dry-run count.
+if [[ "$WIPE_ALL" == "true" ]]; then
+  echo "== preview: rows that would be deleted (WIPE ALL) =="
+  body=$(run_sql "SELECT id, first_name, last_initial, school, signed_at, confirmed FROM signatures ORDER BY signed_at DESC;")
+  echo "$body" | python3 -m json.tool 2>/dev/null || echo "$body"
+  count=$(echo "$body" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d) if isinstance(d, list) else 0)' 2>/dev/null || echo "?")
+  echo
+  echo "== matched: $count row(s) (ALL signatures) =="
+  if [[ "$APPLY" != "true" ]]; then
+    echo
+    echo "(dry-run — pass --wipe-all --apply to actually DELETE EVERY ROW)"
+    exit 0
+  fi
+  if [[ "$count" == "0" ]]; then
+    echo "(nothing to delete)"
+    exit 0
+  fi
+  echo
+  echo "== applying WIPE ALL =="
+  result=$(run_sql "DELETE FROM signatures RETURNING id, first_name;")
+  echo "$result" | python3 -m json.tool 2>/dev/null || echo "$result"
+  deleted=$(echo "$result" | python3 -c 'import json,sys; d=json.load(sys.stdin); print(len(d) if isinstance(d, list) else 0)' 2>/dev/null || echo "?")
+  echo
+  echo "== deleted: $deleted row(s) =="
+  exit 0
+fi
 
 echo "== preview: rows that would be deleted =="
 PREVIEW_SQL="SELECT id, first_name, last_initial, school, signed_at, confirmed, pending_email FROM signatures WHERE ${WHERE_CLAUSE} ORDER BY signed_at DESC;"
