@@ -23,6 +23,17 @@ const schools = (await getEntry('campaign', 'schools'))?.data as any;
 const letter = (await getEntry('campaign', 'letter'))?.data as any;
 const mlas = (await getEntry('campaign', 'mlas'))?.data?.mlas as Array<any> ?? [];
 
+// Flatten the school list for the school → neighbourhood help dialog and
+// for the dropdown render. Each school is `{ name, neighbourhood }` after
+// the v0.3 schema migration in schools.yaml.
+type SchoolEntry = { name: string; neighbourhood: string };
+const schoolGroups: Array<{ groupKey: 'elementary' | 'secondary' | 'other'; labelEn: string; labelZh: string; items: SchoolEntry[] }> = [
+  { groupKey: 'elementary', labelEn: 'Elementary', labelZh: '小学', items: schools?.elementary ?? [] },
+  { groupKey: 'secondary',  labelEn: 'Secondary',  labelZh: '中学', items: schools?.secondary ?? [] },
+  { groupKey: 'other',      labelEn: 'Other',      labelZh: '其它', items: schools?.other ?? [] },
+];
+const allSchools: SchoolEntry[] = schoolGroups.flatMap((g) => g.items);
+
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const subjectEn = letter?.subject?.en ?? '';
 const bodyTemplateEn = letter?.body_template_en ?? '';
@@ -127,27 +138,34 @@ const dataMailto = JSON.stringify({
 
       <div class="form-row form-row--two">
         <div class="field">
-          <label for="school">
+          <label for="school" class="field-label-with-help">
             <I18nText en="Your child's school" zh="孩子的学校" lang={lang} />
+            <button
+              type="button"
+              class="help-icon"
+              data-open-modal="school-neighbourhood-help"
+              aria-label={lang === 'zh' ? '查看学校与街区的对应表' : 'View school → neighbourhood mapping'}
+            >?</button>
           </label>
-          <select name="school" id="school" required>
-            <option value="">— {t({en: 'select', zh: '选择'}, lang)} —</option>
-            {schools?.elementary && (
-              <optgroup label={lang === 'zh' ? '小学' : 'Elementary'}>
-                {schools.elementary.map((s: string) => <option value={s}>{s}</option>)}
+          <select name="school" id="school" required data-school-select>
+            <option value="" data-neighbourhood="">— {t({en: 'select', zh: '选择'}, lang)} —</option>
+            {schoolGroups.map((group) => group.items.length > 0 && (
+              <optgroup label={lang === 'zh' ? group.labelZh : group.labelEn}>
+                {group.items.map((s) => (
+                  <option value={s.name} data-neighbourhood={s.neighbourhood}>{s.name}</option>
+                ))}
               </optgroup>
-            )}
-            {schools?.secondary && (
-              <optgroup label={lang === 'zh' ? '中学' : 'Secondary'}>
-                {schools.secondary.map((s: string) => <option value={s}>{s}</option>)}
-              </optgroup>
-            )}
-            {schools?.other && (
-              <optgroup label={lang === 'zh' ? '其它' : 'Other'}>
-                {schools.other.map((s: string) => <option value={s}>{s}</option>)}
-              </optgroup>
-            )}
+            ))}
           </select>
+          <p class="hint" data-school-hint hidden>
+            <I18nText en="Neighbourhood: " zh="街区：" lang={lang} />
+            <strong data-school-hint-value></strong>
+          </p>
+          {/* Hidden form field — populated by JS from the selected school's
+              data-neighbourhood. on-signature.ts derives the canonical value
+              from its own SCHOOL_NEIGHBOURHOODS table (don't trust client),
+              but submitting it lets us cross-check + flag mismatches in logs. */}
+          <input type="hidden" name="school_neighbourhood" data-school-neighbourhood-input value="" />
         </div>
         <div class="field">
           <label for="grade">
@@ -183,8 +201,8 @@ const dataMailto = JSON.stringify({
         />
         <p class="hint">
           <I18nText
-            en="Used to derive your neighbourhood (V5C → Willingdon Heights). Full code never displayed publicly."
-            zh="用于推算街区（V5C → Willingdon Heights）。完整邮编从不公开。"
+            en="Used to map you to your provincial MLA's riding for the riding map. Full code never displayed publicly."
+            zh="用于将你的签名归到对应省级 MLA 选区（地图用）。完整邮编从不公开。"
             lang={lang}
           />
         </p>
@@ -263,6 +281,58 @@ const dataMailto = JSON.stringify({
   </div>
 </section>
 
+{/* School → neighbourhood transparency dialog. Opened by the "?" button
+    next to the school field. PAC / parents can scan the table and flag
+    wrong rows back to us so the mapping improves over time. */}
+<dialog class="school-help-modal" id="school-neighbourhood-help" aria-labelledby="school-neighbourhood-help-title">
+  <div class="school-help-modal__inner">
+    <header class="school-help-modal__header">
+      <h2 id="school-neighbourhood-help-title">
+        <I18nText
+          en="School → neighbourhood mapping"
+          zh="学校与街区对照表"
+          lang={lang}
+        />
+      </h2>
+      <button class="school-help-modal__close" type="button" data-close-modal aria-label="Close">×</button>
+    </header>
+    <div class="school-help-modal__body">
+      <p class="school-help-modal__lede">
+        <I18nText
+          en="The neighbourhood shown next to your name comes from your child's school, not your postal code (postal-code FSAs cross neighbourhood boundaries — V5B alone covers Capitol Hill, Brentwood, and Burnaby Heights). If a row below looks wrong, email"
+          zh="你姓名旁显示的街区来自孩子的学校，不是邮编（邮编 FSA 会跨街区——V5B 同时覆盖 Capitol Hill、Brentwood、Burnaby Heights）。如果下面有任何对应错误，请来信"
+          lang={lang}
+        />{' '}
+        <a href="mailto:hello@fundburnabykids.ca?subject=School%20mapping%20correction">hello@fundburnabykids.ca</a>{' '}
+        <I18nText en="and we'll fix it." zh="，我们会修正。" lang={lang} />
+      </p>
+      <table class="school-help-modal__table">
+        <thead>
+          <tr>
+            <th><I18nText en="School" zh="学校" lang={lang} /></th>
+            <th><I18nText en="Neighbourhood" zh="街区" lang={lang} /></th>
+          </tr>
+        </thead>
+        <tbody>
+          {schoolGroups.map((group) => group.items.length > 0 && (
+            <>
+              <tr class="school-help-modal__group">
+                <td colspan="2">{lang === 'zh' ? group.labelZh : group.labelEn}</td>
+              </tr>
+              {group.items.map((s) => (
+                <tr>
+                  <td>{s.name}</td>
+                  <td class="school-help-modal__nb">{s.neighbourhood}</td>
+                </tr>
+              ))}
+            </>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</dialog>
+
 {turnstileSiteKey && (
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 )}
@@ -276,17 +346,15 @@ const dataMailto = JSON.stringify({
     const previewName = form.parentElement?.querySelector<HTMLElement>('.preview-name');
     const previewMeta = form.parentElement?.querySelector<HTMLElement>('.preview-meta');
 
-    const NEIGHBOURHOODS: Record<string, string> = {
-      V3J: 'North Burnaby', V3N: 'Edmonds',
-      V5A: 'Burnaby Mountain', V5B: 'Brentwood',
-      V5C: 'Willingdon Heights', V5E: 'Big Bend',
-      V5G: 'Central Burnaby', V5H: 'Metrotown',
-      V5J: 'South Burnaby',
-    };
+    const schoolSelect = form.querySelector<HTMLSelectElement>('[data-school-select]');
+    const schoolHint = form.querySelector<HTMLElement>('[data-school-hint]');
+    const schoolHintValue = form.querySelector<HTMLElement>('[data-school-hint-value]');
+    const schoolNeighInput = form.querySelector<HTMLInputElement>('[data-school-neighbourhood-input]');
 
-    function postalToNeighbourhood(postal: string): string {
-      const prefix = postal.trim().toUpperCase().substring(0, 3);
-      return NEIGHBOURHOODS[prefix] || 'Burnaby';
+    function selectedNeighbourhood(): string {
+      if (!schoolSelect) return '';
+      const opt = schoolSelect.options[schoolSelect.selectedIndex];
+      return opt?.dataset.neighbourhood ?? '';
     }
 
     function updatePreview() {
@@ -294,8 +362,20 @@ const dataMailto = JSON.stringify({
       const ln = (form.elements.namedItem('lastname') as HTMLInputElement | null)?.value.trim() || '';
       const initial = ln ? ln[0].toUpperCase() + '.' : '';
       const sch = (form.elements.namedItem('school') as HTMLSelectElement | null)?.value || 'Your school';
-      const postal = (form.elements.namedItem('postal') as HTMLInputElement | null)?.value || '';
-      const neigh = postal.length >= 3 ? postalToNeighbourhood(postal) : 'Your neighbourhood';
+      const neigh = selectedNeighbourhood() || 'Your neighbourhood';
+
+      // Update the inline hint under the school dropdown so the user can
+      // verify the derived neighbourhood the moment they pick a school.
+      if (schoolNeighInput) schoolNeighInput.value = selectedNeighbourhood();
+      if (schoolHint && schoolHintValue) {
+        if (selectedNeighbourhood()) {
+          schoolHintValue.textContent = selectedNeighbourhood();
+          schoolHint.hidden = false;
+        } else {
+          schoolHint.hidden = true;
+        }
+      }
+
       if (previewName) previewName.textContent = `${fn}${initial ? ' ' + initial : ''}`;
       if (previewMeta) previewMeta.textContent = `${sch} · ${neigh}`;
     }
@@ -321,6 +401,14 @@ const dataMailto = JSON.stringify({
         }
       });
     }
+
+    // Close the school-help dialog when the user clicks the dim backdrop
+    // (PacKitModal's global handler only matches dialog.pac-modal).
+    document.querySelectorAll<HTMLDialogElement>('dialog.school-help-modal').forEach((dlg) => {
+      dlg.addEventListener('click', (e) => {
+        if (e.target === dlg) dlg.close();
+      });
+    });
 
     // On submit: optionally open mailto: in a new tab so user can review + send.
     form.addEventListener('submit', () => {
@@ -522,4 +610,134 @@ const dataMailto = JSON.stringify({
   }
 
   .hidden { display: none; }
+
+  /* School field — help icon and inline neighbourhood echo. */
+  .field-label-with-help {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .help-icon {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--accent);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    display: inline-grid;
+    place-items: center;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .help-icon:hover,
+  .help-icon:focus-visible {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    outline: none;
+  }
+  [data-school-hint] {
+    margin-top: 4px;
+  }
+  [data-school-hint] strong { color: var(--accent); }
+
+  /* School → neighbourhood help dialog. */
+  .school-help-modal {
+    width: min(560px, calc(100vw - 32px));
+    max-height: calc(100vh - 64px);
+    padding: 0;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-lg);
+  }
+  .school-help-modal::backdrop {
+    background: rgba(15, 23, 36, 0.5);
+    backdrop-filter: blur(2px);
+  }
+  .school-help-modal__inner {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 64px);
+  }
+  .school-help-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+  .school-help-modal__header h2 {
+    font-family: var(--font-sans);
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--ink);
+  }
+  .school-help-modal__close {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    line-height: 1;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .school-help-modal__close:hover {
+    color: var(--ink);
+    background: var(--line-soft);
+  }
+  .school-help-modal__body {
+    overflow-y: auto;
+    padding: 16px 20px 20px;
+  }
+  .school-help-modal__lede {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0 0 16px;
+  }
+  .school-help-modal__lede a { color: var(--accent); }
+  .school-help-modal__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .school-help-modal__table th,
+  .school-help-modal__table td {
+    text-align: left;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--line-soft);
+  }
+  .school-help-modal__table th {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    background: var(--cream);
+    position: sticky;
+    top: 0;
+  }
+  .school-help-modal__group td {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    background: var(--cream);
+    padding-top: 10px;
+    padding-bottom: 6px;
+    font-weight: 600;
+  }
+  .school-help-modal__nb {
+    color: var(--accent);
+    font-weight: 500;
+  }
 </style>

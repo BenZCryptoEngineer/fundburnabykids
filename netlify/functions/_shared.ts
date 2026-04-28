@@ -58,21 +58,67 @@ export async function verifyTurnstile(
   }
 }
 
-const NEIGHBOURHOODS: Record<string, string> = {
-  V3J: 'North Burnaby',
-  V3N: 'Edmonds',
-  V5A: 'Burnaby Mountain',
-  V5B: 'Brentwood',
-  V5C: 'Willingdon Heights',
-  V5E: 'Big Bend',
-  V5G: 'Central Burnaby',
-  V5H: 'Metrotown',
-  V5J: 'South Burnaby',
+// School → neighbourhood lookup — kept in sync with
+// campaigns/fund-burnaby-kids/schools.yaml. The Function derives the
+// canonical neighbourhood from the submitted school name rather than
+// trusting whatever the form posts (defense in depth) and rather than
+// deriving from postal-code FSA (which crosses neighbourhood
+// boundaries — V5B alone covers Capitol Hill, Brentwood, and Burnaby
+// Heights).
+const SCHOOL_NEIGHBOURHOODS: Record<string, string> = {
+  // Elementary
+  'Armstrong': 'Capitol Hill',
+  'Aubrey': 'Edmonds',
+  'Brantford': 'Lochdale',
+  'Buckingham': 'Buckingham',
+  'Cameron': 'Lochdale',
+  'Capitol Hill': 'Capitol Hill',
+  'Cascade Heights': 'Cascade Heights',
+  'Chaffey-Burke': 'Garden Village',
+  'Clinton': 'South Burnaby',
+  'Confederation Park': 'Capitol Hill',
+  'Douglas Road': 'Edmonds',
+  'Edmonds': 'Edmonds',
+  'Forest Grove': 'Forest Grove',
+  'Gilmore': 'Willingdon Heights',
+  'Glenwood': 'Edmonds',
+  'Inman': 'Highgate',
+  'Kitchener': 'Brentwood',
+  'Lakeview': 'Sperling-Duthie',
+  'Lochdale': 'Lochdale',
+  'Lyndhurst': 'Lochdale',
+  'Marlborough': 'Maywood',
+  'Maywood': 'Metrotown',
+  'Morley': 'South Burnaby',
+  'Nelson': 'Burnaby Heights',
+  'Parkcrest': 'Brentwood',
+  'Seaforth': 'Forest Grove',
+  'Second Street': 'Edmonds',
+  'Sperling': 'Sperling-Duthie',
+  'Stoney Creek': 'Brentwood',
+  'Stride Avenue': 'Edmonds',
+  'Suncrest': 'Suncrest',
+  'Taylor Park': 'Edmonds',
+  'Twelfth Avenue': 'Edmonds',
+  'University Highlands': 'Burnaby Mountain',
+  'Westridge': 'Westridge',
+  'Windsor': 'Burnaby Heights',
+  // Secondary
+  'Alpha': 'Capitol Hill',
+  'Burnaby Central': 'Central Burnaby',
+  'Burnaby Mountain': 'Burnaby Mountain',
+  'Burnaby North': 'Capitol Hill',
+  'Burnaby South': 'South Burnaby',
+  'Byrne Creek': 'Edmonds',
+  'Cariboo Hill': 'Edmonds',
+  'Moscrop': 'Central Burnaby',
+  // Other
+  'South Slope / BC School for the Deaf': 'South Burnaby',
+  'Other / Prefer not to say': 'Burnaby',
 };
 
-export function postalToNeighbourhood(postal: string): string {
-  const prefix = postal.trim().toUpperCase().substring(0, 3);
-  return NEIGHBOURHOODS[prefix] || 'Burnaby';
+export function schoolToNeighbourhood(school: string): string {
+  return SCHOOL_NEIGHBOURHOODS[school.trim()] || 'Burnaby';
 }
 
 // Postal-code FSA → BC provincial riding_id (post-2024 redistribution).

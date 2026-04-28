@@ -13,7 +13,7 @@ import {
   getSupabase,
   getRequestIp,
   verifyTurnstile,
-  postalToNeighbourhood,
+  schoolToNeighbourhood,
   postalToRidingId,
   pickLocale,
 } from './_shared.js';
@@ -80,7 +80,12 @@ async function handleSignature(
   }
 
   const lastInitial = lastname.charAt(0).toUpperCase();
-  const neighbourhood = postalToNeighbourhood(postal);
+  // Neighbourhood is derived from the school selection (more accurate than
+  // postal-code FSA, which crosses neighbourhood boundaries). Postal code
+  // is still required for riding_id (BNC/BNE/BNN/BNO/BNS) — riding
+  // resolution at FSA granularity is fine because Burnaby ridings line up
+  // closely with FSA splits.
+  const neighbourhood = schoolToNeighbourhood(school);
   const ridingId = postalToRidingId(postal);
   const confirmToken = randomBytes(32).toString('base64url');
   const expiresAt = new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString();

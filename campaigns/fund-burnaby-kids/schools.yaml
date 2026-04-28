@@ -1,51 +1,64 @@
+# SD41 schools with their neighbourhood. Used by ActionForm to derive
+# the public-display neighbourhood from school selection (more accurate
+# than postal-code FSA, which crosses neighbourhood boundaries — see
+# the Capitol Hill / Brentwood ambiguity in V5B).
+#
+# The mapping is shown to signers in a "?" popover on the form so they
+# can verify and flag errors. If the wife / PAC / a signer points out a
+# wrong row, edit here, push to main → site rebuilds with the new
+# mapping. The same data is mirrored in netlify/functions/_shared.ts
+# (SCHOOL_NEIGHBOURHOODS) so the on-signature Function can derive the
+# neighbourhood from the submitted school name without trusting client
+# data — keep the two in sync.
+
 elementary:
-  - "Armstrong"
-  - "Aubrey"
-  - "Brantford"
-  - "Buckingham"
-  - "Cameron"
-  - "Capitol Hill"
-  - "Cascade Heights"
-  - "Chaffey-Burke"
-  - "Clinton"
-  - "Confederation Park"
-  - "Douglas Road"
-  - "Edmonds"
-  - "Forest Grove"
-  - "Gilmore"
-  - "Glenwood"
-  - "Inman"
-  - "Kitchener"
-  - "Lakeview"
-  - "Lochdale"
-  - "Lyndhurst"
-  - "Marlborough"
-  - "Maywood"
-  - "Morley"
-  - "Nelson"
-  - "Parkcrest"
-  - "Seaforth"
-  - "Second Street"
-  - "Sperling"
-  - "Stoney Creek"
-  - "Stride Avenue"
-  - "Suncrest"
-  - "Taylor Park"
-  - "Twelfth Avenue"
-  - "University Highlands"
-  - "Westridge"
-  - "Windsor"
+  - { name: "Armstrong",            neighbourhood: "Capitol Hill" }
+  - { name: "Aubrey",               neighbourhood: "Edmonds" }
+  - { name: "Brantford",            neighbourhood: "Lochdale" }
+  - { name: "Buckingham",           neighbourhood: "Buckingham" }
+  - { name: "Cameron",              neighbourhood: "Lochdale" }
+  - { name: "Capitol Hill",         neighbourhood: "Capitol Hill" }
+  - { name: "Cascade Heights",      neighbourhood: "Cascade Heights" }
+  - { name: "Chaffey-Burke",        neighbourhood: "Garden Village" }
+  - { name: "Clinton",              neighbourhood: "South Burnaby" }
+  - { name: "Confederation Park",   neighbourhood: "Capitol Hill" }
+  - { name: "Douglas Road",         neighbourhood: "Edmonds" }
+  - { name: "Edmonds",              neighbourhood: "Edmonds" }
+  - { name: "Forest Grove",         neighbourhood: "Forest Grove" }
+  - { name: "Gilmore",              neighbourhood: "Willingdon Heights" }
+  - { name: "Glenwood",             neighbourhood: "Edmonds" }
+  - { name: "Inman",                neighbourhood: "Highgate" }
+  - { name: "Kitchener",            neighbourhood: "Brentwood" }
+  - { name: "Lakeview",             neighbourhood: "Sperling-Duthie" }
+  - { name: "Lochdale",             neighbourhood: "Lochdale" }
+  - { name: "Lyndhurst",            neighbourhood: "Lochdale" }
+  - { name: "Marlborough",          neighbourhood: "Maywood" }
+  - { name: "Maywood",              neighbourhood: "Metrotown" }
+  - { name: "Morley",               neighbourhood: "South Burnaby" }
+  - { name: "Nelson",               neighbourhood: "Burnaby Heights" }
+  - { name: "Parkcrest",            neighbourhood: "Brentwood" }
+  - { name: "Seaforth",             neighbourhood: "Forest Grove" }
+  - { name: "Second Street",        neighbourhood: "Edmonds" }
+  - { name: "Sperling",             neighbourhood: "Sperling-Duthie" }
+  - { name: "Stoney Creek",         neighbourhood: "Brentwood" }
+  - { name: "Stride Avenue",        neighbourhood: "Edmonds" }
+  - { name: "Suncrest",             neighbourhood: "Suncrest" }
+  - { name: "Taylor Park",          neighbourhood: "Edmonds" }
+  - { name: "Twelfth Avenue",       neighbourhood: "Edmonds" }
+  - { name: "University Highlands", neighbourhood: "Burnaby Mountain" }
+  - { name: "Westridge",            neighbourhood: "Westridge" }
+  - { name: "Windsor",              neighbourhood: "Burnaby Heights" }
 
 secondary:
-  - "Alpha"
-  - "Burnaby Central"
-  - "Burnaby Mountain"
-  - "Burnaby North"
-  - "Burnaby South"
-  - "Byrne Creek"
-  - "Cariboo Hill"
-  - "Moscrop"
+  - { name: "Alpha",            neighbourhood: "Capitol Hill" }
+  - { name: "Burnaby Central",  neighbourhood: "Central Burnaby" }
+  - { name: "Burnaby Mountain", neighbourhood: "Burnaby Mountain" }
+  - { name: "Burnaby North",    neighbourhood: "Capitol Hill" }
+  - { name: "Burnaby South",    neighbourhood: "South Burnaby" }
+  - { name: "Byrne Creek",      neighbourhood: "Edmonds" }
+  - { name: "Cariboo Hill",     neighbourhood: "Edmonds" }
+  - { name: "Moscrop",          neighbourhood: "Central Burnaby" }
 
 other:
-  - "South Slope / BC School for the Deaf"
-  - "Other / Prefer not to say"
+  - { name: "South Slope / BC School for the Deaf", neighbourhood: "South Burnaby" }
+  - { name: "Other / Prefer not to say",            neighbourhood: "Burnaby" }
