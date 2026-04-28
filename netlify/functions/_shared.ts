@@ -149,6 +149,26 @@ export function pickLocale(input: string | undefined): 'en' | 'zh' {
   return (input || 'en').toLowerCase().startsWith('zh') ? 'zh' : 'en';
 }
 
+// Canonical URL of the deploy that's processing this request. Used to
+// build absolute confirmation / letter / withdraw links inside email
+// bodies, where relative URLs aren't an option.
+//
+// Precedence:
+//   1. SITE_URL — explicit operator override (set on Netlify env per
+//      deploy context). On Production this is "https://fundburnabykids.ca".
+//   2. URL      — auto-injected by Netlify. Resolves to the primary
+//      custom domain on Production, the deploy-preview-N URL on PR
+//      previews, and the branch--<site> URL on branch deploys. So a
+//      preview deploy self-links to itself without any env tweaking.
+//   3. Hardcoded prod fallback — only matters in environments where
+//      neither env is set (e.g. local node test scripts).
+//
+// Single source of truth so the email-built URL doesn't drift across
+// submit.ts / confirm-signature.ts / withdraw.ts / recover-signature.ts.
+export function getSiteUrl(): string {
+  return process.env.SITE_URL || process.env.URL || 'https://fundburnabykids.ca';
+}
+
 // ---------------------------------------------------------------------------
 // "Your links" email — sent from two places:
 //   1. confirm-signature.ts, immediately after a signature flips to
@@ -160,7 +180,6 @@ export function pickLocale(input: string | undefined): 'en' | 'zh' {
 // in via `mode`.
 // ---------------------------------------------------------------------------
 
-const SITE_URL_FOR_LINKS = process.env.SITE_URL || 'https://fundburnabykids.ca';
 const RESEND_FROM_FOR_LINKS = process.env.RESEND_FROM || 'Fund Burnaby Kids <campaign@fundburnabykids.ca>';
 const MAILING_ADDRESS_FOR_LINKS = process.env.MAILING_ADDRESS || '';
 
@@ -178,8 +197,8 @@ export async function sendLinksEmail(opts: {
   }
 
   const localePrefix = opts.locale === 'zh' ? '/zh' : '';
-  const letterUrl = `${SITE_URL_FOR_LINKS}${localePrefix}/letters/${encodeURIComponent(opts.letterToken)}/`;
-  const withdrawUrl = `${SITE_URL_FOR_LINKS}${localePrefix}/withdraw/${encodeURIComponent(opts.letterToken)}/`;
+  const letterUrl = `${getSiteUrl()}${localePrefix}/letters/${encodeURIComponent(opts.letterToken)}/`;
+  const withdrawUrl = `${getSiteUrl()}${localePrefix}/withdraw/${encodeURIComponent(opts.letterToken)}/`;
 
   const subject =
     opts.locale === 'zh'

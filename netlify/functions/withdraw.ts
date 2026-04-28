@@ -19,14 +19,13 @@
 // gating it on a manual email round-trip.
 
 import type { Handler } from '@netlify/functions';
-import { getSupabase, getRequestIp } from './_shared.js';
+import { getSupabase, getRequestIp, getSiteUrl } from './_shared.js';
 
-const SITE_URL = process.env.SITE_URL || 'https://fundburnabykids.ca';
 const BUTTONDOWN_API_KEY = process.env.BUTTONDOWN_API_KEY;
 
 export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
-    return redirect(`${SITE_URL}/withdraw-failed/?reason=method_not_allowed`);
+    return redirect(`${getSiteUrl()}/withdraw-failed/?reason=method_not_allowed`);
   }
 
   try {
@@ -60,7 +59,7 @@ export const handler: Handler = async (event) => {
       // Already deleted, or token never existed. Idempotent — treat as
       // success so a user clicking the same link twice doesn't see a
       // confusing error.
-      return redirect(`${SITE_URL}/${locale === 'zh' ? 'zh/' : ''}withdrawn/?status=already`);
+      return redirect(`${getSiteUrl()}/${locale === 'zh' ? 'zh/' : ''}withdrawn/?status=already`);
     }
 
     const row = rows[0];
@@ -93,10 +92,10 @@ export const handler: Handler = async (event) => {
       });
     }
 
-    return redirect(`${SITE_URL}/${locale === 'zh' ? 'zh/' : ''}withdrawn/?status=ok`);
+    return redirect(`${getSiteUrl()}/${locale === 'zh' ? 'zh/' : ''}withdrawn/?status=ok`);
   } catch (err) {
     console.error('withdraw unhandled error:', err);
-    return redirect(`${SITE_URL}/withdraw-failed/?reason=server_error`);
+    return redirect(`${getSiteUrl()}/withdraw-failed/?reason=server_error`);
   }
 };
 
@@ -113,7 +112,7 @@ function parseBody(raw: string | null | undefined, contentType: string): Record<
 }
 
 function failPath(locale: 'en' | 'zh', reason: string): string {
-  return `${SITE_URL}/${locale === 'zh' ? 'zh/' : ''}withdraw-failed/?reason=${encodeURIComponent(reason)}`;
+  return `${getSiteUrl()}/${locale === 'zh' ? 'zh/' : ''}withdraw-failed/?reason=${encodeURIComponent(reason)}`;
 }
 
 function redirect(url: string): { statusCode: number; headers: Record<string, string>; body: string } {

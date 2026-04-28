@@ -31,9 +31,8 @@ import {
   postalToRidingId,
   pickLocale,
   emailHashHex,
+  getSiteUrl,
 } from './_shared.js';
-
-const SITE_URL = process.env.SITE_URL || 'https://fundburnabykids.ca';
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RESEND_FROM = process.env.RESEND_FROM || 'Fund Burnaby Kids <campaign@fundburnabykids.ca>';
 const MAILING_ADDRESS = process.env.MAILING_ADDRESS || '';
@@ -349,7 +348,7 @@ async function sendConfirmationEmail(opts: {
     return;
   }
 
-  const confirmUrl = `${SITE_URL}/api/confirm?t=${encodeURIComponent(opts.token)}`;
+  const confirmUrl = `${getSiteUrl()}/api/confirm?t=${encodeURIComponent(opts.token)}`;
   const subject =
     opts.locale === 'zh'
       ? '再点一下：让你为本拿比孩子的签名生效'

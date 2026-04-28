@@ -10,16 +10,15 @@
 
 import type { Handler } from '@netlify/functions';
 import { randomBytes } from 'node:crypto';
-import { getSupabase, getRequestIp, pickLocale, sendLinksEmail } from './_shared.js';
+import { getSupabase, getRequestIp, pickLocale, sendLinksEmail, getSiteUrl } from './_shared.js';
 
-const SITE_URL = process.env.SITE_URL || 'https://fundburnabykids.ca';
 const BUTTONDOWN_API_KEY = process.env.BUTTONDOWN_API_KEY;
 
 export const handler: Handler = async (event) => {
   try {
     const token = (event.queryStringParameters?.t || '').trim();
     if (!token || token.length < 16 || token.length > 128) {
-      return redirect(`${SITE_URL}/confirm-failed/?reason=invalid_token`);
+      return redirect(`${getSiteUrl()}/confirm-failed/?reason=invalid_token`);
     }
 
     const ip = getRequestIp(event.headers as Record<string, string | undefined>);
@@ -35,24 +34,24 @@ export const handler: Handler = async (event) => {
 
     if (selectError) {
       console.error('confirm select error:', selectError);
-      return redirect(`${SITE_URL}/confirm-failed/?reason=server_error`);
+      return redirect(`${getSiteUrl()}/confirm-failed/?reason=server_error`);
     }
     if (!rows || rows.length === 0) {
       // Token unknown OR row already confirmed (token cleared on confirmation).
       // Without a separate "confirmed-token-history" table we can't distinguish.
       // Treat as success — the user clicked a confirmation link, the worst case
       // is a stale double-click.
-      return redirect(`${SITE_URL}/confirmed/?status=already`);
+      return redirect(`${getSiteUrl()}/confirmed/?status=already`);
     }
 
     const row = rows[0];
     const expires = row.confirm_token_expires ? new Date(row.confirm_token_expires) : null;
     if (!expires || expires.getTime() < Date.now()) {
-      return redirect(`${SITE_URL}/confirm-failed/?reason=expired`);
+      return redirect(`${getSiteUrl()}/confirm-failed/?reason=expired`);
     }
 
     if (row.confirmed) {
-      return redirect(`${SITE_URL}/confirmed/?status=already`);
+      return redirect(`${getSiteUrl()}/confirmed/?status=already`);
     }
 
     // letter_token: 32-byte URL-safe random, stable + revocable. Powers the
@@ -83,7 +82,7 @@ export const handler: Handler = async (event) => {
 
     if (updateError) {
       console.error('confirm update error:', updateError);
-      return redirect(`${SITE_URL}/confirm-failed/?reason=server_error`);
+      return redirect(`${getSiteUrl()}/confirm-failed/?reason=server_error`);
     }
 
     // Post-confirm "your links" email — gives the signer their letter +
@@ -124,11 +123,11 @@ export const handler: Handler = async (event) => {
     // can render the user's shareable letter URL without an extra DB lookup.
     const confirmedPath = persistedLocale === 'zh' ? 'zh/confirmed' : 'confirmed';
     return redirect(
-      `${SITE_URL}/${confirmedPath}/?status=ok&t=${encodeURIComponent(letterToken)}`
+      `${getSiteUrl()}/${confirmedPath}/?status=ok&t=${encodeURIComponent(letterToken)}`
     );
   } catch (err) {
     console.error('confirm-signature unhandled error:', err);
-    return redirect(`${SITE_URL}/confirm-failed/?reason=server_error`);
+    return redirect(`${getSiteUrl()}/confirm-failed/?reason=server_error`);
   }
 };
 
