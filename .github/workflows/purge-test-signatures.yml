@@ -1,0 +1,44 @@
+# Manual purge of test/smoke signatures from production.
+#
+# Deliberately workflow_dispatch only — never on schedule, never on push.
+# See CLAUDE.md "Test-data hygiene": auto-purging is too eager (it can
+# nuke a deliberate debug row mid-inspection). Each run is an explicit
+# user decision, with a dry_run gate so a typo can't destroy data.
+#
+# How to invoke:
+#   - GH UI: Repo → Actions → "Purge test signatures" → "Run workflow"
+#   - CLI:   gh workflow run purge-test-signatures.yml -f apply=true
+#
+# Default `apply=false` shows the preview only. Re-run with `apply=true`
+# after eyeballing the matched rows.
+
+name: Purge test signatures
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: 'Actually DELETE matched rows (default: dry-run preview only)'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run purge (dry-run preview)
+        if: ${{ inputs.apply == false }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: ./scripts/purge-test-signatures.sh
+
+      - name: Run purge (--apply, deletes rows)
+        if: ${{ inputs.apply == true }}
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: ./scripts/purge-test-signatures.sh --apply
