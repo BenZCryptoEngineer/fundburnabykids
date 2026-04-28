@@ -39,6 +39,27 @@
   node_bundler = "esbuild"
 
 # -----------------------------------------------------------------------------
+# Canonical-domain redirect. Netlify exposes the site at BOTH the custom
+# domain (fundburnabykids.ca) and the default deploy alias
+# (burnabykidsfirst-platform.netlify.app). When someone lands on the
+# alias — typically from an old confirmation email rendered before the
+# SITE_URL env var was fixed, or from sharing a Netlify deploy URL —
+# every relative link on the page (header brand, /letters/<token>,
+# /api/submit form action) stays on the alias subdomain, which is
+# confusing and splits the campaign across two URLs in users' bookmarks.
+# Force-301 every alias request to the primary custom domain.
+# Belt + suspenders: also set fundburnabykids.ca as the primary domain
+# in Netlify dashboard → Site settings → Domain management; that's the
+# canonical fix, this redirect is the in-repo defense if someone ever
+# unsets that.
+# -----------------------------------------------------------------------------
+[[redirects]]
+  from = "https://burnabykidsfirst-platform.netlify.app/*"
+  to   = "https://fundburnabykids.ca/:splat"
+  status = 301
+  force  = true
+
+# -----------------------------------------------------------------------------
 # Function aliases. force=true so /api/* always hits the Function even if
 # a like-named static path exists. Why /api/submit handles BOTH the
 # signature and pac-endorsement form POSTs (form-name dispatch) instead
