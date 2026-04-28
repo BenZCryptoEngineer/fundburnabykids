@@ -36,3 +36,9 @@ jobs:
 
       - name: Run smoke tests against production
         run: ./tests/smoke-test.sh https://fundburnabykids.ca
+
+      - name: Run database smoke tests
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
+        run: ./tests/smoke-db.sh
