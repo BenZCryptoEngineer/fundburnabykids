@@ -43,7 +43,8 @@ if (url && key) {
      data-supabase-url={url}
      data-supabase-key={key}
      data-poll-ms="60000"
-     data-limit={limit}>
+     data-limit={limit}
+     data-empty-text={lang === 'zh' ? '成为第一位签名者 →' : 'Be the first to sign →'}>
   <p class="signatories__caption sans">
     <I18nText
       en="Recent confirmed signatures"
@@ -102,15 +103,24 @@ if (url && key) {
       school: string; neighbourhood: string; signed_at: string;
     };
 
+    const emptyText = el.dataset.emptyText || 'Be the first to sign →';
+
     async function poll() {
       try {
         const res = await fetch(
           `${url}/rest/v1/public_signatures?select=first_name,last_initial,school,neighbourhood,signed_at&order=signed_at.desc&limit=${limit}`,
           { headers: { apikey: key!, Authorization: `Bearer ${key!}` } }
         );
-        if (!res.ok) return;
+        if (!res.ok) return;            // network/server glitch — keep last good
         const sigs: Sig[] = await res.json();
-        if (!Array.isArray(sigs) || sigs.length === 0) return;
+        if (!Array.isArray(sigs)) return; // shape unexpected — keep last good
+        // Empty array IS legitimate (e.g. fresh campaign / admin wipe);
+        // render the empty-state pill so stale SSR-baked entries don't
+        // ghost-linger on the page after the underlying rows go away.
+        if (sigs.length === 0) {
+          flow!.innerHTML = `<p class="signatories__empty">${escapeHtml(emptyText)}</p>`;
+          return;
+        }
         flow!.innerHTML = sigs.map((s) =>
           `<span class="sig-pill" title="${escapeHtml(s.school + ', ' + s.neighbourhood)}">` +
             `<span class="sig-pill__name sans">${escapeHtml(s.first_name)} ${escapeHtml(s.last_initial)}.</span>` +
