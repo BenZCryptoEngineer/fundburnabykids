@@ -47,14 +47,21 @@ fi
 # WHERE clause is duplicated in the SELECT (preview) and DELETE (apply)
 # branches. Keep them in sync — the preview must match exactly what the
 # apply step would delete.
-WHERE_CLAUSE="
-  first_name LIKE '\\\\_smoke\\\\_%' ESCAPE '\\\\'
-  OR email_hash LIKE 'smoke\\\\_%' ESCAPE '\\\\'
+#
+# Using POSIX regex (~) for the underscore-prefixed sentinels because
+# LIKE '\\_smoke\\_%' ESCAPE '\\' got mangled across the bash → python
+# json → JSON-over-HTTP → SQL pipeline (each layer doubles backslashes,
+# leaving the SQL parser with a 2-byte ESCAPE which Postgres rejects).
+# Regex underscores are literal — no escape ceremony.
+WHERE_CLAUSE=$(cat <<'EOF'
+  first_name ~ '^_smoke_'
+  OR email_hash ~ '^smoke_'
   OR pending_email LIKE '%@example.invalid'
   OR pending_email LIKE '%@example.com'
   OR pending_email LIKE '%@example.org'
   OR (first_name IN ('ClaudeTest', 'PlaywrightTest') AND last_initial = 'X')
-"
+EOF
+)
 
 run_sql() {
   local sql="$1"
