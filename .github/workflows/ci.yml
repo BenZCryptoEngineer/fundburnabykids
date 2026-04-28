@@ -1,0 +1,95 @@
+# CI: catch build, type, and missing-page errors BEFORE Netlify tries to deploy.
+#
+# Without this, a broken commit (type error, missing static page, etc.)
+# hits main → Netlify build fails → production silently keeps serving the
+# previous successful deploy → developer doesn't know their fix didn't ship.
+# This workflow gives a fast (~60-90s) red ❌ on the commit hash so the
+# author sees it immediately.
+#
+# Pipeline:
+#   1. Type-check the Netlify Functions (`tsc --noEmit`).
+#   2. Run the same `astro check && astro build` Netlify will run.
+#   3. Assert every expected static page exists in dist/. This is what
+#      saves us from "build succeeds but /confirm-thanks/ wasn't emitted"
+#      regressions — Astro doesn't fail the build if a page silently
+#      stops being a route, but our deploy does silently break.
+#
+# Doesn't yet test SSR routes (/letters/<token>, /mla/<id>,
+# /withdraw/<token>) — those need a live runtime; tests/smoke-test.sh
+# covers them post-deploy against the real URL.
+
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install root deps (Netlify Functions)
+        run: npm install
+
+      - name: Type-check Netlify Functions
+        run: npm run typecheck:functions
+
+      - name: Install platform deps
+        run: npm install --prefix platform
+
+      - name: Build platform (astro check + astro build)
+        run: cd platform && npm run build
+
+      - name: Verify all expected static pages emitted
+        run: |
+          set -e
+          MISSING=0
+          # All non-SSR pages that need to be in dist/. Trailing slash
+          # mirrors what production serves with trailingSlash: 'always'.
+          PAGES=(
+            "index.html"
+            "zh/index.html"
+            "confirm-thanks/index.html"
+            "zh/confirm-thanks/index.html"
+            "confirmed/index.html"
+            "zh/confirmed/index.html"
+            "confirm-failed/index.html"
+            "zh/confirm-failed/index.html"
+            "methodology/index.html"
+            "zh/methodology/index.html"
+            "privacy/index.html"
+            "zh/privacy/index.html"
+            "pac-kit/index.html"
+            "zh/pac-kit/index.html"
+            "withdrawn/index.html"
+            "zh/withdrawn/index.html"
+            "withdraw-failed/index.html"
+            "zh/withdraw-failed/index.html"
+          )
+          for page in "${PAGES[@]}"; do
+            if [ ! -f "platform/dist/$page" ]; then
+              echo "::error::missing emitted page — platform/dist/$page"
+              MISSING=$((MISSING + 1))
+            fi
+          done
+          if [ $MISSING -gt 0 ]; then
+            echo "$MISSING expected page(s) were not generated. Build is incomplete."
+            exit 1
+          fi
+          echo "All ${#PAGES[@]} expected static pages emitted."
+
+      - name: Verify SSR function bundle was emitted
+        run: |
+          if [ ! -f "platform/.netlify/v1/functions/ssr/ssr.mjs" ]; then
+            echo "::error::SSR function bundle missing — letter / mla / withdraw routes will 404 in production"
+            exit 1
+          fi
+          echo "SSR function bundle present."

@@ -1,0 +1,38 @@
+# Production smoke test: hit the live site and verify every expected URL
+# returns the right status + (where applicable) the right content marker.
+#
+# Catches the case CI alone can't catch: deploy succeeded but production
+# is broken in a way only the live runtime exposes — DNS not resolving,
+# SSR function not picked up, /confirm-thanks/ 404'ing because Netlify's
+# function path overrides the static file, etc.
+#
+# Triggers:
+#   - schedule: every 30 minutes during the campaign so a regression is
+#     caught within a short window even when nobody is actively pushing.
+#   - workflow_dispatch: manual button in the Actions UI for post-deploy
+#     verification ("I just merged X, smoke-test the live site now").
+#   - push to main: paired with the Netlify auto-deploy. Netlify build
+#     takes ~3 min; this workflow waits 4 min then runs, giving the
+#     deploy time to settle.
+
+name: Smoke test (production)
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Wait for Netlify deploy to settle (push trigger only)
+        if: github.event_name == 'push'
+        run: sleep 240
+
+      - name: Run smoke tests against production
+        run: ./tests/smoke-test.sh https://fundburnabykids.ca
