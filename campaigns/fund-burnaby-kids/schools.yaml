@@ -15,28 +15,32 @@ elementary:
   - { name: "Armstrong",            neighbourhood: "Capitol Hill" }
   - { name: "Aubrey",               neighbourhood: "Edmonds" }
   - { name: "Brantford",            neighbourhood: "Lochdale" }
+  - { name: "Brentwood Park",       neighbourhood: "Brentwood" }
   - { name: "Buckingham",           neighbourhood: "Buckingham" }
   - { name: "Cameron",              neighbourhood: "Lochdale" }
   - { name: "Capitol Hill",         neighbourhood: "Capitol Hill" }
   - { name: "Cascade Heights",      neighbourhood: "Cascade Heights" }
   - { name: "Chaffey-Burke",        neighbourhood: "Garden Village" }
   - { name: "Clinton",              neighbourhood: "South Burnaby" }
-  - { name: "Confederation Park",   neighbourhood: "Capitol Hill" }
+  - { name: "Confederation Park",   neighbourhood: "Burnaby Heights" }
   - { name: "Douglas Road",         neighbourhood: "Edmonds" }
   - { name: "Edmonds",              neighbourhood: "Edmonds" }
   - { name: "Forest Grove",         neighbourhood: "Forest Grove" }
   - { name: "Gilmore",              neighbourhood: "Willingdon Heights" }
+  - { name: "Gilpin",               neighbourhood: "Cascade Heights" }
   - { name: "Glenwood",             neighbourhood: "Edmonds" }
-  - { name: "Inman",                neighbourhood: "Highgate" }
+  - { name: "Inman",                neighbourhood: "Garden Village" }
   - { name: "Kitchener",            neighbourhood: "Brentwood" }
   - { name: "Lakeview",             neighbourhood: "Sperling-Duthie" }
   - { name: "Lochdale",             neighbourhood: "Lochdale" }
   - { name: "Lyndhurst",            neighbourhood: "Lochdale" }
   - { name: "Marlborough",          neighbourhood: "Maywood" }
-  - { name: "Maywood",              neighbourhood: "Metrotown" }
+  - { name: "Maywood",              neighbourhood: "Maywood" }
+  - { name: "Montecito",            neighbourhood: "Sperling-Duthie" }
   - { name: "Morley",               neighbourhood: "South Burnaby" }
   - { name: "Nelson",               neighbourhood: "Burnaby Heights" }
   - { name: "Parkcrest",            neighbourhood: "Brentwood" }
+  - { name: "Rosser",               neighbourhood: "Burnaby Heights" }
   - { name: "Seaforth",             neighbourhood: "Forest Grove" }
   - { name: "Second Street",        neighbourhood: "Edmonds" }
   - { name: "Sperling",             neighbourhood: "Sperling-Duthie" }
@@ -50,10 +54,10 @@ elementary:
   - { name: "Windsor",              neighbourhood: "Burnaby Heights" }
 
 secondary:
-  - { name: "Alpha",            neighbourhood: "Capitol Hill" }
+  - { name: "Alpha",            neighbourhood: "Willingdon Heights" }
   - { name: "Burnaby Central",  neighbourhood: "Central Burnaby" }
   - { name: "Burnaby Mountain", neighbourhood: "Burnaby Mountain" }
-  - { name: "Burnaby North",    neighbourhood: "Capitol Hill" }
+  - { name: "Burnaby North",    neighbourhood: "Sperling-Duthie" }
   - { name: "Burnaby South",    neighbourhood: "South Burnaby" }
   - { name: "Byrne Creek",      neighbourhood: "Edmonds" }
   - { name: "Cariboo Hill",     neighbourhood: "Edmonds" }
