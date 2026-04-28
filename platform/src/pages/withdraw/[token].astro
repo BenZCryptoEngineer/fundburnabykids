@@ -14,10 +14,11 @@ export const prerender = false;
 
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
 import { localizedUrl, formatDate } from '~/lib/i18n';
 import { fetchLetterByToken } from '~/lib/supabase';
 
-const lang = 'en';
+const lang: Lang = 'en';
 const token = (Astro.params.token ?? '').trim();
 
 const letter = /^[A-Za-z0-9_-]{16,128}$/.test(token)
@@ -108,7 +109,7 @@ const title = letter
                   lang={lang}
                 />
               </span>
-              <textarea name="reason" rows="3" maxlength="1000" placeholder={lang === 'zh' ? '可留空' : 'Optional'}></textarea>
+              <textarea name="reason" rows="3" maxlength="1000" placeholder="Optional"></textarea>
             </label>
 
             <label class="withdraw-form__consent">

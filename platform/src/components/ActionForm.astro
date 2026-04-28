@@ -32,7 +32,6 @@ const schoolGroups: Array<{ groupKey: 'elementary' | 'secondary' | 'other'; labe
   { groupKey: 'secondary',  labelEn: 'Secondary',  labelZh: '中学', items: schools?.secondary ?? [] },
   { groupKey: 'other',      labelEn: 'Other',      labelZh: '其它', items: schools?.other ?? [] },
 ];
-const allSchools: SchoolEntry[] = schoolGroups.flatMap((g) => g.items);
 
 const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
 const subjectEn = letter?.subject?.en ?? '';
