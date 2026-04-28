@@ -52,7 +52,13 @@ const coalitionParas = aboutCoalition.split(/\n\s*\n/).filter(Boolean);
         )}
       </header>
       <div class="founder-card__bio">
-        {bioParas.map((p) => <p>{p}</p>)}
+        {/* set:html so meta.yaml `founder.bio` can include inline anchors
+            (e.g. linking "Expeta Technologies" to the company site).
+            Source is maintainer-controlled YAML, never user input —
+            no XSS surface. Block structure still comes from the
+            paragraph splitter above; HTML inside each paragraph is the
+            authoring affordance. */}
+        {bioParas.map((p) => <p set:html={p} />)}
       </div>
     </div>
 
