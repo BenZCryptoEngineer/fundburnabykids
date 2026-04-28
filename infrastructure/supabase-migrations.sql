@@ -143,6 +143,29 @@ CREATE TABLE IF NOT EXISTS signatures (
   )
 );
 
+-- Idempotent column adds. MUST run BEFORE the CREATE INDEX block below —
+-- on an existing DB, CREATE TABLE IF NOT EXISTS above is a no-op (so the
+-- columns listed there don't actually get added), and any partial index
+-- referencing one of those columns (e.g. WHERE letter_token IS NOT NULL)
+-- fails with `42703: column "letter_token" does not exist` and aborts the
+-- whole migration. Adding the column here first makes the indexes valid
+-- on both fresh and migrated databases.
+
+-- For projects already migrated before riding_id existed.
+ALTER TABLE signatures ADD COLUMN IF NOT EXISTS riding_id TEXT;
+
+-- v0.2 additions: per-signer letter system. Adds long-lived locale + public
+-- letter_token. See TODO.md item 2 ("Per-signer letter system, mode A + C").
+ALTER TABLE signatures ADD COLUMN IF NOT EXISTS locale TEXT;
+ALTER TABLE signatures ADD COLUMN IF NOT EXISTS letter_token TEXT;
+ALTER TABLE signatures DROP CONSTRAINT IF EXISTS signatures_locale_valid;
+ALTER TABLE signatures
+  ADD CONSTRAINT signatures_locale_valid
+  CHECK (locale IS NULL OR locale IN ('en','zh'));
+ALTER TABLE signatures DROP CONSTRAINT IF EXISTS signatures_letter_token_unique;
+ALTER TABLE signatures
+  ADD CONSTRAINT signatures_letter_token_unique UNIQUE (letter_token);
+
 CREATE INDEX IF NOT EXISTS idx_signatures_confirmed_recent
   ON signatures (signed_at DESC)
   WHERE confirmed = TRUE;
@@ -169,23 +192,6 @@ CREATE INDEX IF NOT EXISTS idx_signatures_riding_id
 CREATE INDEX IF NOT EXISTS idx_signatures_letter_token
   ON signatures (letter_token)
   WHERE letter_token IS NOT NULL;
-
--- For projects already migrated before riding_id existed, this adds the
--- column idempotently (CREATE TABLE IF NOT EXISTS above won't add new columns
--- to an existing table).
-ALTER TABLE signatures ADD COLUMN IF NOT EXISTS riding_id TEXT;
-
--- v0.2 additions: per-signer letter system. Adds long-lived locale + public
--- letter_token. See TODO.md item 2 ("Per-signer letter system, mode A + C").
-ALTER TABLE signatures ADD COLUMN IF NOT EXISTS locale TEXT;
-ALTER TABLE signatures ADD COLUMN IF NOT EXISTS letter_token TEXT;
-ALTER TABLE signatures DROP CONSTRAINT IF EXISTS signatures_locale_valid;
-ALTER TABLE signatures
-  ADD CONSTRAINT signatures_locale_valid
-  CHECK (locale IS NULL OR locale IN ('en','zh'));
-ALTER TABLE signatures DROP CONSTRAINT IF EXISTS signatures_letter_token_unique;
-ALTER TABLE signatures
-  ADD CONSTRAINT signatures_letter_token_unique UNIQUE (letter_token);
 
 ALTER TABLE signatures ENABLE ROW LEVEL SECURITY;
 -- No policy granted to anon — anon cannot SELECT/INSERT/UPDATE/DELETE directly.
