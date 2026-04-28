@@ -19,7 +19,14 @@ name: Smoke test (production)
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    # Every 6 hours instead of every 30 minutes. Tightening from 48
+    # runs/day to 4 runs/day after the Netlify Starter site-pause
+    # incident on 2026-04-28: smoke was hitting ~37 URLs per run + 2
+    # POSTs through SSR functions, and across the day was a meaningful
+    # share of the function-invocation / bandwidth quota. 6h is still
+    # tight enough to catch a regression within a quarter-day; if the
+    # campaign goes paid-tier (Pro), this can be moved back down.
+    - cron: '0 */6 * * *'
   workflow_dispatch:
   push:
     branches: [main]

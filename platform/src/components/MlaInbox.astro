@@ -31,7 +31,10 @@ const { mla, letters, total, page, perPage, lang } = Astro.props;
 const ridingName = t(mla.riding, lang);
 const totalPages = Math.max(1, Math.ceil(total / perPage));
 const letterPathBase = lang === 'zh' ? '/zh/letters/' : '/letters/';
-const mlaPathBase = lang === 'zh' ? `/zh/mla/${mla.id}` : `/mla/${mla.id}`;
+// Trailing slash matches the trailingSlash:'always' invariant — without
+// it, pagination links like /mla/kang?page=2 fire a 301 hop before
+// resolving (also costs an extra Netlify function invocation per click).
+const mlaPathBase = lang === 'zh' ? `/zh/mla/${mla.id}/` : `/mla/${mla.id}/`;
 ---
 
 <section class="mla-inbox">
@@ -65,7 +68,7 @@ const mlaPathBase = lang === 'zh' ? `/zh/mla/${mla.id}` : `/mla/${mla.id}`;
       {letters.map((l) => (
         <li class="mla-inbox__row">
           <span class="mla-inbox__bullet" aria-hidden="true">▸</span>
-          <a class="mla-inbox__link" href={`${letterPathBase}${encodeURIComponent(l.letter_token)}`}>
+          <a class="mla-inbox__link" href={`${letterPathBase}${encodeURIComponent(l.letter_token)}/`}>
             <span class="mla-inbox__signer sans">
               <strong>{l.first_name} {l.last_initial}.</strong>, {l.school}
             </span>

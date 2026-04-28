@@ -11,7 +11,7 @@
 
 import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
-import { formatDate } from '~/lib/i18n';
+import { formatDate, t } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
 
 interface Props {
@@ -24,7 +24,10 @@ type Status = 'awaiting' | 'acknowledged' | 'committed' | 'opposed';
 type Mla = {
   id: string;
   name: string;
-  riding: string;
+  // Bilingual per mlas.yaml ({ en, zh }). Type was previously declared
+  // as `string` and the template used `{m.riding}` directly, which JS
+  // toString'd the object to "[object Object]" on the live site.
+  riding: { en: string; zh: string };
   riding_id: string | null;
   is_minister?: boolean;
   email: string;
@@ -84,7 +87,7 @@ function statusLabel(s: Status, l: Lang): string {
             </div>
             <div class="mla-card__id">
               <h3 class="mla-card__name sans">{m.name}</h3>
-              <p class="mla-card__riding sans">{m.riding}</p>
+              <p class="mla-card__riding sans">{t(m.riding, lang)}</p>
             </div>
           </header>
 
@@ -114,7 +117,7 @@ function statusLabel(s: Status, l: Lang): string {
           {!m.is_minister && m.riding_id && (
             <a
               class="mla-card__letters sans"
-              href={lang === 'zh' ? `/zh/mla/${m.id}` : `/mla/${m.id}`}
+              href={lang === 'zh' ? `/zh/mla/${m.id}/` : `/mla/${m.id}/`}
             >
               <I18nText
                 en="View constituent letters →"
