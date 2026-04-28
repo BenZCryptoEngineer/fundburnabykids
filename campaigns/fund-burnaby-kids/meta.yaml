@@ -30,15 +30,23 @@ deadline_label:
 founder:
   name: "Ben Zhou"
   role:
-    en: "Burnaby parent, founder"
+    en: "Burnaby parent · founder, Expeta Technologies"
     zh: "Burnaby家长，联盟创始人"
   avatar_text: "BZ"
   contact: "ben@fundburnabykids.ca"
+  # `bio` is rendered via Astro's `set:html` in AboutSection.astro so we
+  # can link "Expeta Technologies" inline below. Keep markup minimal —
+  # only inline anchors. Block-level structure still comes from the
+  # paragraph splitter in the component (blank-line delimited).
   bio:
     en: |
-      Burnaby parent with two daughters; founder of Expeta Technologies, a Burnaby-based research company. I've published academic work on AI alignment and on the boundary conditions of cognitive systems — the same analytical habits that applied to the BC Budget 2026 documents and the arbitration ruling.
+      Burnaby parent of two daughters at SD41 schools.
 
-      This site started because I read the arbitration ruling carefully and realized the Province's own Contingencies Vote already covers this exact case. The public record shouldn't have to be a form letter. It should be precise. That's what this campaign is trying to be.
+      I started this campaign after reading the BCPSEA arbitration ruling and the BC Budget 2026 documents in full. The funding mechanism exists in the Contingencies Vote; the application is the missing piece.
+
+      Day job: founder of <a href="https://expeta.ca" target="_blank" rel="noopener noreferrer">Expeta Technologies</a>, a Burnaby-based research company studying how humans hold up under pressure. The same analytical habits applied to budget documents and arbitration filings.
+
+      Available to brief PACs, journalists, or MLA offices on the documents directly.
     zh: |
       Burnaby家长，有两个女儿；Expeta Technologies（设在Burnaby的研究公司）创始人。在AI alignment和认知系统边界条件方面发表过学术工作——就是用同样的分析习惯读完了BC Budget 2026的预算文件和仲裁裁决。
 
