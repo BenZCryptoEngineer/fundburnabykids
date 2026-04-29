@@ -146,23 +146,32 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
 
         dlg.showModal();
 
-        const svg = dlg.querySelector<SVGElement>('.svg-lightbox__media svg');
-        if (svg && !dlg.__pz) {
-          dlg.__pz = Panzoom(svg as unknown as HTMLElement, {
+        // Bind panzoom to the .svg-lightbox__media wrapper rather than
+        // the inner SVG. The wrapper is 100% × 100% of the viewport so
+        // the user's finger drag registers anywhere in the lightbox
+        // content area, not just on the (narrow, ~90px tall in 1x view)
+        // SVG element. Without this, on a phone the user has to land
+        // their drag exactly on the visible SVG to pan, which felt
+        // broken — touches in the empty space around the SVG fell
+        // through to the dialog and were ignored. CSS transform on the
+        // wrapper still moves the inline SVG inside.
+        const media = dlg.querySelector<HTMLElement>('.svg-lightbox__media');
+        if (media && !dlg.__pz) {
+          dlg.__pz = Panzoom(media, {
             maxScale: 5,
             minScale: 1,
             startScale: 1,
             step: 0.3,
             // No `contain` option — neither 'inside' nor 'outside' fits:
-            //   - 'outside' scales the SVG up to fill parent height,
+            //   - 'outside' scales the wrapper up to fill parent height,
             //     making narrow horizontal timelines display as
             //     already-zoomed-in on initial open.
             //   - 'inside' refuses to let zoom-in exceed parent bounds,
             //     so the +/pinch buttons appear broken.
             // Without containment, panzoom lets the user freely zoom
             // up to maxScale and drag-pan anywhere. The trade-off is
-            // the SVG can be panned off-screen — the reset (⟲) button
-            // and lightbox close-and-reopen both bring it back.
+            // the wrapper can be panned off-screen — the reset (⟲)
+            // button and lightbox close-and-reopen both bring it back.
           });
           // Desktop: scroll wheel zooms (instead of scrolling the page).
           const container = dlg.querySelector<HTMLElement>('.svg-lightbox__viewport');
