@@ -171,6 +171,17 @@ const animate = initial.length >= MARQUEE_FLOOR;
       placeholder={lang === 'zh' ? '搜索名字或学校…' : 'Search name or school…'}
       autocomplete="off"
     />
+    {/* Neighbourhood filter — populated client-side once data loads.
+        Per UX research, proximity-based social proof (Capitol Hill
+        parents seeing 8 Capitol Hill names) is stronger than the
+        diffuse all-neighbourhoods view. */}
+    <select
+      class="signatories-modal__select sans"
+      data-signatories-neighbourhood
+      aria-label={lang === 'zh' ? '按街区筛选' : 'Filter by neighbourhood'}
+    >
+      <option value="">{lang === 'zh' ? '全部街区' : 'All neighbourhoods'}</option>
+    </select>
     <p class="signatories-modal__count sans muted" data-signatories-count>—</p>
   </div>
   <div class="signatories-modal__list-wrap">
@@ -341,6 +352,7 @@ const animate = initial.length >= MARQUEE_FLOOR;
     const noMatchEl = modal.querySelector<HTMLElement>('[data-signatories-no-match]');
     const loadingEl = modal.querySelector<HTMLElement>('[data-signatories-loading]');
     const searchEl = modal.querySelector<HTMLInputElement>('[data-signatories-search]');
+    const neighbourhoodEl = modal.querySelector<HTMLSelectElement>('[data-signatories-neighbourhood]');
     const triggers = document.querySelectorAll<HTMLButtonElement>('[data-view-all]');
 
     let allSigs: Sig[] = [];
@@ -406,15 +418,46 @@ const animate = initial.length >= MARQUEE_FLOOR;
     }
 
     function applyFilter() {
-      if (!searchEl) return;
-      const q = searchEl.value.trim().toLowerCase();
-      if (!q) { render(allSigs); return; }
-      const filtered = allSigs.filter((s) =>
-        (s.first_name + ' ' + s.last_initial).toLowerCase().includes(q) ||
-        s.school.toLowerCase().includes(q) ||
-        s.neighbourhood.toLowerCase().includes(q)
-      );
+      const q = searchEl ? searchEl.value.trim().toLowerCase() : '';
+      const neighbourhood = neighbourhoodEl ? neighbourhoodEl.value : '';
+      let filtered = allSigs;
+      if (neighbourhood) {
+        filtered = filtered.filter((s) => s.neighbourhood === neighbourhood);
+      }
+      if (q) {
+        filtered = filtered.filter((s) =>
+          (s.first_name + ' ' + s.last_initial).toLowerCase().includes(q) ||
+          s.school.toLowerCase().includes(q) ||
+          s.neighbourhood.toLowerCase().includes(q)
+        );
+      }
       render(filtered);
+    }
+
+    // Build the neighbourhood select options from the loaded data.
+    // Each option shows "Name (count)" so the user immediately sees
+    // where the cluster of signers actually is.
+    function populateNeighbourhoodOptions() {
+      if (!neighbourhoodEl) return;
+      const counts = new Map<string, number>();
+      for (const s of allSigs) {
+        if (!s.neighbourhood) continue;
+        counts.set(s.neighbourhood, (counts.get(s.neighbourhood) ?? 0) + 1);
+      }
+      // Sort alphabetically; counts shown inline next to each label.
+      const sorted = Array.from(counts.entries()).sort((a, b) =>
+        a[0].localeCompare(b[0])
+      );
+      // Preserve the leading "All neighbourhoods" option, replace the rest.
+      const allOption = neighbourhoodEl.options[0];
+      neighbourhoodEl.innerHTML = '';
+      if (allOption) neighbourhoodEl.appendChild(allOption);
+      for (const [name, count] of sorted) {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.textContent = `${name} (${count})`;
+        neighbourhoodEl.appendChild(opt);
+      }
     }
 
     async function loadAll() {
@@ -440,6 +483,7 @@ const animate = initial.length >= MARQUEE_FLOOR;
         }
       } catch { /* allSigs stays empty */ }
       if (loadingEl) loadingEl.hidden = true;
+      populateNeighbourhoodOptions();
       render(allSigs);
     }
 
@@ -447,8 +491,9 @@ const animate = initial.length >= MARQUEE_FLOOR;
       btn.addEventListener('click', () => {
         savedScrollY = window.scrollY;
         modal.showModal();
-        // Reset search + scroll-to-top of list on each open.
+        // Reset search + neighbourhood + scroll-to-top of list on each open.
         if (searchEl) searchEl.value = '';
+        if (neighbourhoodEl) neighbourhoodEl.value = '';
         if (listEl?.parentElement) listEl.parentElement.scrollTop = 0;
         // If first open AND we have credentials: show loading, fetch.
         // Otherwise (cached data, or no env to fetch): hide loading
@@ -479,6 +524,7 @@ const animate = initial.length >= MARQUEE_FLOOR;
     });
 
     searchEl?.addEventListener('input', applyFilter);
+    neighbourhoodEl?.addEventListener('change', applyFilter);
   })();
 </script>
 
@@ -675,7 +721,8 @@ const animate = initial.length >= MARQUEE_FLOOR;
     gap: 6px;
     flex-shrink: 0;
   }
-  .signatories-modal__input {
+  .signatories-modal__input,
+  .signatories-modal__select {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid var(--line, #e5e7eb);
@@ -684,8 +731,10 @@ const animate = initial.length >= MARQUEE_FLOOR;
     color: var(--ink, #1a1a1a);
     background: var(--paper, #fff);
     box-sizing: border-box;
+    font-family: inherit;
   }
-  .signatories-modal__input:focus {
+  .signatories-modal__input:focus,
+  .signatories-modal__select:focus {
     outline: none;
     border-color: var(--accent, #1C3F8F);
     box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
