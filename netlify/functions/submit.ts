@@ -248,6 +248,11 @@ async function processPacEndorsement(
     return;
   }
 
+  // verify_token: 32-byte CSPRNG, single-use. Embedded in the admin
+  // notification email so Ben can verify the PAC by clicking a button.
+  // NULLed by /api/verify-pac on consumption.
+  const verifyToken = randomBytes(32).toString('base64url');
+
   const supabase = getSupabase();
   const { error: insertError } = await supabase.from('pac_endorsements').insert({
     school: school.substring(0, 80),
@@ -260,6 +265,7 @@ async function processPacEndorsement(
     status: 'pending',
     ip_address: ip,
     petition_slug: 'fund-burnaby-kids',
+    verify_token: verifyToken,
   });
 
   if (insertError) {
@@ -282,10 +288,15 @@ async function processPacEndorsement(
     console.error('pac chair confirmation send failed (non-fatal):', err);
   }
 
-  // Admin notification with a one-click "Reply to chair" mailto + the
-  // verify SQL (so Ben can paste it into Supabase Studio).
+  // Admin notification with two one-click buttons:
+  //  - Step 1 ✓ Verify  → /api/verify-pac?t=<token> (single-use)
+  //  - Step 2 📨 Reply to chair → mailto: pre-filled
+  // Plus the SQL snippet kept as a fallback in case the link doesn't
+  // fire (token expired by mistake, function down, email-client
+  // blocked, etc.) — Ben can always paste it into Supabase Studio.
   const safeSchoolForSql = school.replace(/'/g, "''");
   const verifySql = `UPDATE pac_endorsements SET status='verified', verified_at=NOW() WHERE school='${safeSchoolForSql}' AND status='pending';`;
+  const verifyUrl = `${getSiteUrl()}/api/verify-pac?t=${encodeURIComponent(verifyToken)}`;
   const replySubject = `Re: ${school} PAC endorsement — verified`;
   const replyBody =
     `Hi ${chairName},\n\n` +
@@ -307,8 +318,9 @@ async function processPacEndorsement(
       `Students: ${students}\n` +
       `Approval date: ${approvalDate || 'pending'}\n` +
       `Future interest: ${futureInterest}\n\n` +
-      `Verify via Supabase Studio:\n${verifySql}\n\n` +
-      `After verifying, reply to chair:\n${replyMailto}`,
+      `One-click verify:\n${verifyUrl}\n\n` +
+      `After verifying, reply to chair:\n${replyMailto}\n\n` +
+      `Fallback (paste into Supabase Studio if the link above fails):\n${verifySql}`,
     html:
       `<!doctype html><html><body style="font-family:system-ui,sans-serif;max-width:560px;margin:24px auto;padding:0 16px;line-height:1.6;color:#1a1a1a;">` +
       `<h2 style="font-size:18px;margin:0 0 16px;">PAC endorsement received — needs verify</h2>` +
@@ -320,10 +332,14 @@ async function processPacEndorsement(
       `<tr><td style="padding:6px 12px 6px 0;color:#666;">Approval date</td><td style="padding:6px 0;">${escapeHtml(approvalDate || 'pending')}</td></tr>` +
       `<tr><td style="padding:6px 12px 6px 0;color:#666;">Future interest</td><td style="padding:6px 0;">${futureInterest ? 'yes' : 'no'}</td></tr>` +
       `</table>` +
-      `<h3 style="font-size:14px;text-transform:uppercase;letter-spacing:0.05em;color:#666;margin:0 0 8px;">Step 1 — Verify in Supabase Studio</h3>` +
-      `<pre style="background:#f4f1ea;padding:12px;border-radius:4px;font-size:12px;overflow-x:auto;">${escapeHtml(verifySql)}</pre>` +
+      `<h3 style="font-size:14px;text-transform:uppercase;letter-spacing:0.05em;color:#666;margin:0 0 8px;">Step 1 — Verify the endorsement</h3>` +
+      `<p style="margin:0 0 8px;"><a href="${escapeAttr(verifyUrl)}" style="display:inline-block;background:#15803D;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-weight:600;">✓ Verify ${escapeHtml(school)}</a></p>` +
+      `<p style="margin:0 0 0;font-size:12px;color:#888;">One click flips status to verified and clears the token. Single-use.</p>` +
       `<h3 style="font-size:14px;text-transform:uppercase;letter-spacing:0.05em;color:#666;margin:24px 0 8px;">Step 2 — Reply to chair</h3>` +
       `<p style="margin:0;"><a href="${escapeAttr(replyMailto)}" style="display:inline-block;background:#1C3F8F;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-weight:600;">📨 Reply to ${escapeHtml(chairName)}</a></p>` +
+      `<details style="margin-top:24px;font-size:12px;color:#888;"><summary style="cursor:pointer;">Manual SQL fallback (if the verify button above fails)</summary>` +
+      `<pre style="background:#f4f1ea;padding:12px;border-radius:4px;font-size:12px;overflow-x:auto;margin-top:8px;">${escapeHtml(verifySql)}</pre>` +
+      `</details>` +
       `</body></html>`,
   });
 }

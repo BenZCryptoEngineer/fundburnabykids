@@ -1,0 +1,178 @@
+---
+// Landing page for the one-click PAC verify flow. /api/verify-pac
+// redirects here after consuming a token. Read query params to render
+// the right state:
+//   ?ok=1&school=Xxx       → success
+//   ?already=1[&school=Xxx] → already verified / token already used
+//   ?error=invalid         → bad / missing token
+//   ?error=server          → DB error
+//
+// Static page (no SSR) — query params are read client-side. This avoids
+// needing a per-request render and keeps the page cached at the CDN.
+
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import I18nText from '~/components/I18nText.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+---
+
+<CampaignLayout
+  lang={lang}
+  noindex
+  title={lang === 'zh' ? 'PAC 验证 — Fund Burnaby Kids' : 'PAC verified — Fund Burnaby Kids'}
+>
+  <section class="pac-verified">
+    <div class="wrap">
+      <div class="pac-verified__card">
+        <div class="pac-verified__icon" aria-hidden="true" data-icon>✓</div>
+        <h1 data-title>
+          <I18nText
+            en="Endorsement verified"
+            zh="endorsement 已验证"
+            lang={lang}
+          />
+        </h1>
+        <p class="pac-verified__body" data-body>
+          <I18nText
+            en="The PAC's endorsement is now publicly listed on fundburnabykids.ca."
+            zh="该 PAC 的 endorsement 已公开列在 fundburnabykids.ca。"
+            lang={lang}
+          />
+        </p>
+        <p class="pac-verified__school sans" data-school></p>
+        <p class="pac-verified__back">
+          <a href={localizedUrl('/', lang)}>
+            ← <I18nText en="Back to campaign" zh="返回主页" lang={lang} />
+          </a>
+        </p>
+      </div>
+    </div>
+  </section>
+</CampaignLayout>
+
+<script>
+  // Render state from query params client-side. The page itself is a
+  // static document; this just rewrites the title/body/icon text.
+  (() => {
+    const params = new URLSearchParams(window.location.search);
+    const ok = params.get('ok') === '1';
+    const already = params.get('already') === '1';
+    const error = params.get('error');
+    const school = params.get('school') || '';
+    const lang = (document.documentElement.lang === 'zh' ? 'zh' : 'en') as 'en' | 'zh';
+
+    const iconEl = document.querySelector<HTMLElement>('[data-icon]');
+    const titleEl = document.querySelector<HTMLElement>('[data-title]');
+    const bodyEl = document.querySelector<HTMLElement>('[data-body]');
+    const schoolEl = document.querySelector<HTMLElement>('[data-school]');
+
+    if (school && schoolEl) {
+      schoolEl.textContent = school;
+    }
+
+    if (already) {
+      if (iconEl) iconEl.textContent = 'ℹ';
+      if (iconEl) iconEl.setAttribute('data-state', 'already');
+      if (titleEl) {
+        titleEl.textContent = lang === 'zh'
+          ? '此 endorsement 已验证'
+          : 'This endorsement is already verified';
+      }
+      if (bodyEl) {
+        bodyEl.textContent = lang === 'zh'
+          ? '链接已使用过 — 不需要再次操作。'
+          : 'The verify link was already consumed. No further action needed.';
+      }
+    } else if (error === 'invalid') {
+      if (iconEl) iconEl.textContent = '⚠';
+      if (iconEl) iconEl.setAttribute('data-state', 'error');
+      if (titleEl) {
+        titleEl.textContent = lang === 'zh'
+          ? '链接无效或已过期'
+          : 'Invalid or expired link';
+      }
+      if (bodyEl) {
+        bodyEl.textContent = lang === 'zh'
+          ? '请用 admin 邮件里的 SQL fallback 在 Supabase Studio 手动 verify。'
+          : 'Use the SQL fallback in the admin email to verify manually in Supabase Studio.';
+      }
+    } else if (error === 'server') {
+      if (iconEl) iconEl.textContent = '⚠';
+      if (iconEl) iconEl.setAttribute('data-state', 'error');
+      if (titleEl) {
+        titleEl.textContent = lang === 'zh'
+          ? '服务器错误'
+          : 'Server error';
+      }
+      if (bodyEl) {
+        bodyEl.textContent = lang === 'zh'
+          ? '请重试，或用 admin 邮件里的 SQL fallback。'
+          : 'Try again, or use the SQL fallback in the admin email.';
+      }
+    }
+    // Default state (ok=1) keeps the SSR-rendered success copy.
+  })();
+</script>
+
+<style>
+  .pac-verified { padding: 64px 0; }
+  .pac-verified__card {
+    max-width: 560px;
+    margin: 0 auto;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 40px 32px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+  }
+  .pac-verified__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--success, #15803D);
+    color: #fff;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 64px;
+    margin: 0 auto 20px;
+  }
+  .pac-verified__icon[data-state="already"] {
+    background: var(--accent);
+  }
+  .pac-verified__icon[data-state="error"] {
+    background: var(--warm);
+  }
+  h1 {
+    font-size: 24px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .pac-verified__body {
+    font-size: 16px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0 0 16px;
+  }
+  .pac-verified__school {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0 0 24px;
+  }
+  .pac-verified__school:empty { display: none; }
+  .pac-verified__back a {
+    color: var(--accent);
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+  }
+  .pac-verified__back a:hover { text-decoration: underline; }
+
+  @media (max-width: 560px) {
+    .pac-verified__card { padding: 28px 20px; }
+    h1 { font-size: 22px; }
+  }
+</style>

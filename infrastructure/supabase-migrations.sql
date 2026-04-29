@@ -348,6 +348,19 @@ CREATE TABLE IF NOT EXISTS pac_endorsements (
 -- pattern stays consistent for future fields).
 ALTER TABLE pac_endorsements ADD COLUMN IF NOT EXISTS chair_phone TEXT;
 
+-- v0.5: one-click verify token for PAC endorsements. Generated at INSERT
+-- time, embedded as a magic-link in the admin notification email so Ben
+-- can verify a PAC by clicking a button instead of pasting an UPDATE
+-- query into Supabase Studio. Token is NULLed once consumed (single-use).
+-- Admin email is the only place this token is ever surfaced; security
+-- model is the same as the signer letter_token (32-byte CSPRNG, only
+-- delivered via authenticated channel).
+ALTER TABLE pac_endorsements ADD COLUMN IF NOT EXISTS verify_token TEXT;
+DROP INDEX IF EXISTS pac_endorsements_verify_token_unique;
+CREATE UNIQUE INDEX IF NOT EXISTS pac_endorsements_verify_token_unique
+  ON pac_endorsements (verify_token)
+  WHERE verify_token IS NOT NULL;
+
 CREATE INDEX IF NOT EXISTS idx_pac_status ON pac_endorsements (status);
 CREATE INDEX IF NOT EXISTS idx_pac_petition_slug ON pac_endorsements (petition_slug);
 

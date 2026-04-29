@@ -90,6 +90,12 @@
   status = 200
   force  = true
 
+[[redirects]]
+  from = "/api/verify-pac"
+  to   = "/.netlify/functions/verify-pac"
+  status = 200
+  force  = true
+
 # -----------------------------------------------------------------------------
 # Trailing-slash 301s for every static page.
 #
@@ -170,6 +176,14 @@
 [[redirects]]
   from = "/zh/withdraw-failed"
   to   = "/zh/withdraw-failed/"
+  status = 301
+[[redirects]]
+  from = "/pac-verified"
+  to   = "/pac-verified/"
+  status = 301
+[[redirects]]
+  from = "/zh/pac-verified"
+  to   = "/zh/pac-verified/"
   status = 301
 
 # Note: a `submission_created` webhook used to fire on-signature.ts when
