@@ -44,8 +44,10 @@ jobs:
       - name: Run smoke tests against production
         run: ./tests/smoke-test.sh https://fundburnabykids.ca
 
-      - name: Run database smoke tests
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_PAT: ${{ secrets.SUPABASE_PAT }}
-        run: ./tests/smoke-db.sh
+      # NOTE: tests/smoke-db.sh is intentionally NOT invoked here.
+      # It INSERTs `_smoke_*` sentinel rows + DELETEs them on a trap.
+      # During live campaign traffic those writes touch the same
+      # `signatures` table that holds real signer PII, and the cron
+      # would fire 4×/day + every push. If a schema regression check
+      # is ever needed again, run smoke-db.sh manually with explicit
+      # approval — do not re-wire it into automation without buy-in.

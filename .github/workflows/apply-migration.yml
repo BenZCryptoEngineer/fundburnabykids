@@ -19,14 +19,15 @@
 
 name: Apply Supabase migration
 
+# Manual-only. The `push:` trigger that auto-applied migrations on any
+# commit touching infrastructure/supabase-migrations.sql /
+# scripts/apply-supabase-migration.sh / this workflow itself was removed
+# during live campaign traffic — a misclick committing a SQL edit could
+# silently re-run DROP INDEX / DROP CONSTRAINT / cron.unschedule
+# against a table holding real signer PII. Migrations now require an
+# explicit "Run workflow" press in the Actions UI, after the same
+# operator reviews the SQL diff.
 on:
-  push:
-    branches: [main]
-    paths:
-      - infrastructure/supabase-migrations.sql
-      - scripts/apply-supabase-migration.sh
-      - .github/workflows/apply-migration.yml
-  # Manual trigger so a fresh DB or out-of-band re-apply is one click.
   workflow_dispatch:
 
 jobs:
