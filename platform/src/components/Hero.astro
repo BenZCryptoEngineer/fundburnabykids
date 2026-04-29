@@ -42,10 +42,57 @@ function normalizeDeadline(raw: unknown): string {
 }
 const deadline = normalizeDeadline(meta?.deadline);
 const goal = thresholds?.goal ?? 2000;
+
+// PAC endorsement banner (Prompt 12). Fetched server-side from
+// public_pac_endorsements view (only `verified` rows, no PII). Renders
+// only when there's at least 1 PAC. The first PAC is psychologically
+// the most valuable — surfacing it here, not just in the coalition
+// section below, makes "at least one school's PAC has signed off"
+// visible to every visitor in the first viewport.
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseKey = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+type HeroPac = { school: string; students: number };
+let pacEndorsements: HeroPac[] = [];
+if (supabaseUrl && supabaseKey) {
+  try {
+    const res = await fetch(
+      `${supabaseUrl}/rest/v1/public_pac_endorsements?select=school,students&order=approval_date.desc.nullslast`,
+      { headers: { apikey: supabaseKey, Authorization: `Bearer ${supabaseKey}` } }
+    );
+    if (res.ok) pacEndorsements = await res.json();
+  } catch { /* keep empty */ }
+}
+const firstPac = pacEndorsements[0];
+const totalPacs = pacEndorsements.length;
 ---
 
 <section class="hero">
   <div class="wrap-wide hero__inner">
+
+    {/* PAC endorsement banner (Prompt 12) — only renders when at least
+        one PAC has been verified. Above the countdown so the trust
+        signal lands first. */}
+    {firstPac && (
+      <a class="hero__pac-banner sans" href="#coalition">
+        <span class="hero__pac-banner__badge" aria-hidden="true">✓</span>
+        <span class="hero__pac-banner__text">
+          <I18nText en="Endorsed by" zh="已获 endorse：" lang={lang} />
+          {' '}
+          <strong>{firstPac.school}</strong>
+          {totalPacs > 1 && (
+            <span class="hero__pac-banner__more muted">
+              {' · '}
+              <I18nText
+                en={`+${totalPacs - 1} more PAC${totalPacs - 1 > 1 ? 's' : ''}`}
+                zh={`+${totalPacs - 1} 个 PAC`}
+                lang={lang}
+              />
+            </span>
+          )}
+        </span>
+        <span class="hero__pac-banner__chevron" aria-hidden="true">→</span>
+      </a>
+    )}
 
     {/* Countdown pill + consequence (Prompt 11). The pill alone reads
         as abstract time scarcity ("28 days" — feels far away). Pairing
@@ -139,6 +186,52 @@ const goal = thresholds?.goal ?? 2000;
   .hero__inner {
     max-width: 820px;
   }
+  /* PAC endorsement banner (Prompt 12). Subtle but unmissable verified-
+     style chip; clickable as a jump-link to the coalition section. */
+  .hero__pac-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--paper);
+    border: 1px solid var(--success, #15803D);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    margin-bottom: 12px;
+    transition: background 0.15s, transform 0.15s;
+    max-width: 100%;
+  }
+  .hero__pac-banner:hover {
+    background: rgba(21, 128, 61, 0.06);
+    transform: translateY(-1px);
+  }
+  .hero__pac-banner__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--success, #15803D);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .hero__pac-banner__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .hero__pac-banner__chevron {
+    color: var(--success, #15803D);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
   .hero__countdown-row {
     margin-bottom: 8px;
   }
