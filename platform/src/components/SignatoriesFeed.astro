@@ -74,6 +74,15 @@ const animate = initial.length >= MARQUEE_FLOOR;
       zh="最近确认的签名"
       lang={lang}
     />
+    <button
+      type="button"
+      class="signatories-view-all sans"
+      data-view-all
+      aria-haspopup="dialog"
+      aria-controls="signatories-modal"
+    >
+      <I18nText en="View all →" zh="查看全部 →" lang={lang} />
+    </button>
   </p>
 
   <div class="signatories-flow">
@@ -108,6 +117,43 @@ const animate = initial.length >= MARQUEE_FLOOR;
     )}
   </div>
 </div>
+
+<dialog class="signatories-modal" id="signatories-modal" aria-labelledby="signatories-modal-title">
+  <header class="signatories-modal__header">
+    <h2 id="signatories-modal-title" class="sans">
+      <I18nText en="All confirmed signatures" zh="全部确认签名" lang={lang} />
+    </h2>
+    <button
+      type="button"
+      class="signatories-modal__close"
+      data-close-signatories
+      aria-label={lang === 'zh' ? '关闭' : 'Close'}
+    >×</button>
+  </header>
+  <div class="signatories-modal__search">
+    <input
+      type="search"
+      class="signatories-modal__input sans"
+      data-signatories-search
+      placeholder={lang === 'zh' ? '搜索名字或学校…' : 'Search name or school…'}
+      autocomplete="off"
+    />
+    <p class="signatories-modal__count sans muted" data-signatories-count>—</p>
+  </div>
+  <div class="signatories-modal__list-wrap">
+    <ol class="signatories-modal__list" data-signatories-list role="list"></ol>
+    <p class="signatories-modal__empty sans muted" data-signatories-no-match hidden>
+      <I18nText
+        en="No signatures match your search."
+        zh="没有符合搜索的签名。"
+        lang={lang}
+      />
+    </p>
+    <p class="signatories-modal__loading sans muted" data-signatories-loading>
+      <I18nText en="Loading…" zh="加载中…" lang={lang} />
+    </p>
+  </div>
+</dialog>
 
 <script>
   // Format an ISO timestamp as a short relative time ("just now",
@@ -218,6 +264,171 @@ const animate = initial.length >= MARQUEE_FLOOR;
     poll();
     setInterval(poll, pollMs);
   });
+
+  // ─── "View all signatures" modal ────────────────────────────────
+  // Lazily fetches the full public_signatures list on first open
+  // (no limit), populates a searchable scrollable list. Saves +
+  // restores window.scrollY around open/close to dodge iOS Safari's
+  // body-overflow-toggle scroll-loss quirk (same pattern as the
+  // SvgVisual lightbox).
+  (() => {
+    const modal = document.getElementById('signatories-modal') as HTMLDialogElement | null;
+    if (!modal || typeof modal.showModal !== 'function') return;
+
+    type Sig = {
+      first_name: string; last_initial: string;
+      school: string; neighbourhood: string; signed_at: string;
+    };
+
+    const feed = document.querySelector<HTMLElement>('.signatories');
+    const url = feed?.dataset.supabaseUrl;
+    const key = feed?.dataset.supabaseKey;
+    const lang = (feed?.dataset.lang === 'zh' ? 'zh' : 'en') as 'en' | 'zh';
+
+    const listEl = modal.querySelector<HTMLOListElement>('[data-signatories-list]');
+    const countEl = modal.querySelector<HTMLElement>('[data-signatories-count]');
+    const noMatchEl = modal.querySelector<HTMLElement>('[data-signatories-no-match]');
+    const loadingEl = modal.querySelector<HTMLElement>('[data-signatories-loading]');
+    const searchEl = modal.querySelector<HTMLInputElement>('[data-signatories-search]');
+    const triggers = document.querySelectorAll<HTMLButtonElement>('[data-view-all]');
+
+    let allSigs: Sig[] = [];
+    let savedScrollY = 0;
+
+    function escapeHtml(s: string) {
+      return s.replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[c]!));
+    }
+
+    function formatDate(iso: string): string {
+      const d = new Date(iso);
+      if (!Number.isFinite(d.getTime())) return '';
+      return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-CA', {
+        year: 'numeric', month: 'short', day: 'numeric',
+      }).format(d);
+    }
+
+    function rowHtml(s: Sig): string {
+      return (
+        `<li class="sig-row">` +
+          `<span class="sig-row__name sans">${escapeHtml(s.first_name)} ${escapeHtml(s.last_initial)}.</span>` +
+          `<span class="sig-row__school sans">${escapeHtml(s.school)}</span>` +
+          `<span class="sig-row__date sans">${escapeHtml(formatDate(s.signed_at))}</span>` +
+        `</li>`
+      );
+    }
+
+    function render(filtered: Sig[]) {
+      if (!listEl) return;
+      // Three render states managed mutually-exclusively:
+      //   1. allSigs.length === 0 → DB has zero confirmed sigs (or
+      //      pre-fetch). Hide list, hide no-match, show empty caption.
+      //   2. allSigs.length > 0 && filtered.length === 0 → search
+      //      excluded everything. Show no-match.
+      //   3. filtered.length > 0 → render rows.
+      if (allSigs.length === 0) {
+        listEl.innerHTML = '';
+        if (noMatchEl) noMatchEl.hidden = true;
+        if (countEl) {
+          countEl.textContent = lang === 'zh'
+            ? '尚无确认签名'
+            : 'No confirmed signatures yet';
+        }
+        return;
+      }
+      if (countEl) {
+        countEl.textContent = lang === 'zh'
+          ? `共 ${allSigs.length} 个签名 · 显示 ${filtered.length}`
+          : `${allSigs.length} total signatures · showing ${filtered.length}`;
+      }
+      if (filtered.length === 0) {
+        listEl.innerHTML = '';
+        if (noMatchEl) noMatchEl.hidden = false;
+      } else {
+        // Cap at 2000 rows for DOM perf — campaigns this size are rare
+        // but the cap protects older phones from a Long Task spike on
+        // initial render. Search still applies to the full list.
+        listEl.innerHTML = filtered.slice(0, 2000).map(rowHtml).join('');
+        if (noMatchEl) noMatchEl.hidden = true;
+      }
+    }
+
+    function applyFilter() {
+      if (!searchEl) return;
+      const q = searchEl.value.trim().toLowerCase();
+      if (!q) { render(allSigs); return; }
+      const filtered = allSigs.filter((s) =>
+        (s.first_name + ' ' + s.last_initial).toLowerCase().includes(q) ||
+        s.school.toLowerCase().includes(q) ||
+        s.neighbourhood.toLowerCase().includes(q)
+      );
+      render(filtered);
+    }
+
+    async function loadAll() {
+      if (!url || !key) {
+        if (loadingEl) loadingEl.hidden = true;
+        return;
+      }
+      if (loadingEl) loadingEl.hidden = false;
+      // Skip refetch if we already have rows (open-close-reopen reuses cache).
+      if (allSigs.length > 0) {
+        if (loadingEl) loadingEl.hidden = true;
+        return;
+      }
+      try {
+        // Range header lets us pull more than the default 1000-row cap.
+        const res = await fetch(
+          `${url}/rest/v1/public_signatures?select=first_name,last_initial,school,neighbourhood,signed_at&order=signed_at.desc`,
+          { headers: { apikey: key, Authorization: `Bearer ${key}`, Range: '0-9999' } }
+        );
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json)) allSigs = json;
+        }
+      } catch { /* allSigs stays empty */ }
+      if (loadingEl) loadingEl.hidden = true;
+      render(allSigs);
+    }
+
+    triggers.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        savedScrollY = window.scrollY;
+        modal.showModal();
+        // Reset search + scroll-to-top of list on each open.
+        if (searchEl) searchEl.value = '';
+        if (listEl?.parentElement) listEl.parentElement.scrollTop = 0;
+        // If first open AND we have credentials: show loading, fetch.
+        // Otherwise (cached data, or no env to fetch): hide loading
+        // immediately and render whatever state we have. Without the
+        // explicit hide here, the SSR-rendered loading paragraph
+        // shows indefinitely whenever url/key aren't available.
+        if (allSigs.length === 0 && url && key) {
+          if (loadingEl) loadingEl.hidden = false;
+          if (noMatchEl) noMatchEl.hidden = true;
+          if (listEl) listEl.innerHTML = '';
+          loadAll();
+        } else {
+          if (loadingEl) loadingEl.hidden = true;
+          applyFilter();
+        }
+      });
+    });
+
+    modal.addEventListener('close', () => {
+      window.scrollTo({ top: savedScrollY, left: 0, behavior: 'instant' as ScrollBehavior });
+    });
+
+    modal.querySelector('[data-close-signatories]')?.addEventListener('click', () => modal.close());
+
+    // Backdrop click closes (only when the click landed on the dialog itself).
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.close();
+    });
+
+    searchEl?.addEventListener('input', applyFilter);
+  })();
 </script>
 
 <style is:global>
@@ -234,6 +445,27 @@ const animate = initial.length >= MARQUEE_FLOOR;
     font-size: 13px;
     color: var(--ink-soft);
     margin-bottom: 12px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .signatories-view-all {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    color: var(--accent, #1C3F8F);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .signatories-view-all:hover,
+  .signatories-view-all:focus-visible {
+    text-decoration: underline;
+    outline: none;
   }
 
   /* Outer mask — clips the marquee track and softens the edges so
@@ -318,6 +550,167 @@ const animate = initial.length >= MARQUEE_FLOOR;
   }
   .sig-card__sep {
     margin: 0 4px;
+  }
+
+  /* "View all" modal — searchable list of every confirmed signature.
+     Note `display: flex` is bound to [open] so the browser's default
+     `dialog:not([open]) { display: none }` continues to apply when
+     the dialog is closed; otherwise our explicit display value would
+     leak the modal markup into the page even when it shouldn't show. */
+  .signatories-modal {
+    width: min(560px, calc(100vw - 32px));
+    max-width: 560px;
+    height: 80vh;
+    max-height: 80vh;
+    padding: 0;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 12px;
+    background: var(--paper, #fff);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+  }
+  .signatories-modal[open] {
+    display: flex;
+    flex-direction: column;
+  }
+  .signatories-modal::backdrop {
+    background: rgba(15, 23, 36, 0.55);
+    backdrop-filter: blur(2px);
+  }
+  .signatories-modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--line, #e5e7eb);
+    flex-shrink: 0;
+  }
+  .signatories-modal__header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink, #1a1a1a);
+  }
+  .signatories-modal__close {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--muted, #6B7280);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .signatories-modal__close:hover {
+    background: var(--cream, #f4f1ea);
+    color: var(--ink, #1a1a1a);
+  }
+  .signatories-modal__search {
+    padding: 14px 20px 10px;
+    border-bottom: 1px solid var(--line, #e5e7eb);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .signatories-modal__input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--ink, #1a1a1a);
+    background: var(--paper, #fff);
+    box-sizing: border-box;
+  }
+  .signatories-modal__input:focus {
+    outline: none;
+    border-color: var(--accent, #1C3F8F);
+    box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
+  }
+  .signatories-modal__count {
+    font-size: 11px;
+    color: var(--muted, #6B7280);
+    margin: 0;
+  }
+  .signatories-modal__list-wrap {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0;
+    -webkit-overflow-scrolling: touch;
+  }
+  .signatories-modal__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .sig-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "name date"
+      "school date";
+    column-gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--line-soft, #f0eee8);
+    line-height: 1.4;
+  }
+  .sig-row:last-child { border-bottom: none; }
+  .sig-row__name {
+    grid-area: name;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent, #1C3F8F);
+  }
+  .sig-row__school {
+    grid-area: school;
+    font-size: 12px;
+    color: var(--ink-soft, #4b5563);
+  }
+  .sig-row__date {
+    grid-area: date;
+    align-self: center;
+    font-size: 11px;
+    color: var(--muted, #6B7280);
+    white-space: nowrap;
+  }
+  .signatories-modal__empty,
+  .signatories-modal__loading {
+    padding: 24px 20px;
+    text-align: center;
+    margin: 0;
+    font-size: 14px;
+  }
+
+  @media (max-width: 560px) {
+    .signatories-modal {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      height: 100dvh;
+      max-height: 100dvh;
+      border-radius: 0;
+      margin: 0;
+      border: none;
+    }
+    .signatories-modal__header { padding: 14px 16px; }
+    .signatories-modal__search { padding: 12px 16px 8px; }
+    .sig-row { padding: 12px 16px; }
+  }
+
+  /* Lock background page scroll while the signatories modal is open
+     (same rationale as SvgVisual lightbox: dialog.showModal() does not
+     guarantee scroll lock on Safari + some Chromiums). */
+  :global(body:has(dialog.signatories-modal[open])) {
+    overflow: hidden;
   }
 
   /* Mobile: stop the marquee, stack the first few cards vertically.
