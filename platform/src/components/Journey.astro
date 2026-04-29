@@ -91,6 +91,109 @@ const clientData = {
       <I18nText en="← swipe to scan all grades →" zh="← 左右滑动查看全部年级 →" lang={lang} />
     </div>
 
+    {/* ─── Mobile-only personalized impact view ──────────────────────
+        Phones get a different presentation than desktop. The 13-grade
+        table on a 360px viewport is unreadable; horizontal scroll
+        kills the at-a-glance pattern that makes the table valuable.
+        Mobile users get: pick your grade → see exactly what your
+        child loses, in three colour-coded sections. Per Prompt 07. */}
+    <div class="journey-mobile" data-mobile-impact>
+      <div class="journey-mobile__selector">
+        <p class="journey-mobile__prompt sans">
+          <I18nText en="My child is in Grade:" zh="我的孩子在：" lang={lang} />
+        </p>
+        <div class="journey-mobile__grade-grid" role="group" aria-label={lang === 'zh' ? '选择年级' : 'Select grade'}>
+          {grades.map((g) => (
+            <button
+              type="button"
+              class="journey-mobile__grade-btn sans"
+              data-mobile-grade={g.id}
+              aria-pressed="false"
+            >{g.label}</button>
+          ))}
+        </div>
+      </div>
+
+      <div class="journey-mobile__empty" data-mobile-empty>
+        <p>
+          <span aria-hidden="true">👆</span>{' '}
+          <I18nText
+            en="Pick your child's grade to see what they specifically lose."
+            zh="选择你孩子的年级，看 ta 具体失去了什么。"
+            lang={lang}
+          />
+        </p>
+      </div>
+
+      <div class="journey-mobile__result" data-mobile-result hidden>
+        <header class="journey-mobile__result-head">
+          <h3 class="sans" data-mobile-result-title></h3>
+          <button
+            type="button"
+            class="journey-mobile__share sans"
+            data-mobile-share
+            aria-label={lang === 'zh' ? '分享' : 'Share'}
+          >
+            <span aria-hidden="true">📲</span>{' '}
+            <I18nText en="Share" zh="分享" lang={lang} />
+          </button>
+        </header>
+
+        <section class="journey-mobile__section journey-mobile__section--gone" data-mobile-gone-section hidden>
+          <h4 class="sans">
+            <span aria-hidden="true">🔴</span>{' '}
+            <I18nText en="Already eliminated for your child" zh="已经从你孩子那里取消" lang={lang} />
+          </h4>
+          <ul data-mobile-gone></ul>
+        </section>
+
+        <section class="journey-mobile__section journey-mobile__section--lost" data-mobile-lost-section hidden>
+          <h4 class="sans">
+            <span aria-hidden="true">⚪</span>{' '}
+            <I18nText en="Already cut last year" zh="去年已被削减" lang={lang} />
+          </h4>
+          <ul data-mobile-lost></ul>
+        </section>
+
+        <section class="journey-mobile__section journey-mobile__section--risk" data-mobile-risk-section hidden>
+          <h4 class="sans">
+            <span aria-hidden="true">🟠</span>{' '}
+            <I18nText en="At risk if not funded" zh="若未拨款则有风险" lang={lang} />
+          </h4>
+          <ul data-mobile-risk></ul>
+        </section>
+
+        <section class="journey-mobile__section journey-mobile__section--have" data-mobile-have-section hidden>
+          <h4 class="sans">
+            <span aria-hidden="true">🟫</span>{' '}
+            <I18nText en="Still available (for now)" zh="目前还在（暂时）" lang={lang} />
+          </h4>
+          <ul data-mobile-have></ul>
+        </section>
+
+        <a class="journey-mobile__cta sans" href="#act">
+          <I18nText
+            en="Sign + email your MLA — 60 seconds →"
+            zh="签名 + 给你的 MLA 发邮件 — 60 秒 →"
+            lang={lang}
+          />
+        </a>
+
+        <details class="journey-mobile__full-table">
+          <summary class="sans">
+            <I18nText
+              en="See full grade-by-grade table"
+              zh="查看完整的年级对照表"
+              lang={lang}
+            />
+          </summary>
+          <p class="journey-mobile__full-hint sans muted">
+            <I18nText en="← swipe to see all grades →" zh="← 左右滑动看所有年级 →" lang={lang} />
+          </p>
+        </details>
+      </div>
+    </div>
+
     <div class="journey__table-wrap">
       <table class="journey__table" data-journey>
         <thead>
@@ -270,6 +373,134 @@ const clientData = {
         }
         renderSummary(gradeId);
       });
+    });
+
+    // ─── Mobile personalized impact ─────────────────────────────────
+    // Buttons populate four sections (gone / lost / risk / have)
+    // grouped from the same per-cell data already serialized for the
+    // desktop summary. Empty sections are hidden so the result feels
+    // tailored to the picked grade rather than padded with placeholders.
+    const mobileEmpty = document.querySelector<HTMLElement>('[data-mobile-empty]');
+    const mobileResult = document.querySelector<HTMLElement>('[data-mobile-result]');
+    const mobileResultTitle = document.querySelector<HTMLElement>('[data-mobile-result-title]');
+    const mobileGoneSection = document.querySelector<HTMLElement>('[data-mobile-gone-section]');
+    const mobileLostSection = document.querySelector<HTMLElement>('[data-mobile-lost-section]');
+    const mobileRiskSection = document.querySelector<HTMLElement>('[data-mobile-risk-section]');
+    const mobileHaveSection = document.querySelector<HTMLElement>('[data-mobile-have-section]');
+    const mobileGoneList = document.querySelector<HTMLElement>('[data-mobile-gone]');
+    const mobileLostList = document.querySelector<HTMLElement>('[data-mobile-lost]');
+    const mobileRiskList = document.querySelector<HTMLElement>('[data-mobile-risk]');
+    const mobileHaveList = document.querySelector<HTMLElement>('[data-mobile-have]');
+    const mobileShareBtn = document.querySelector<HTMLElement>('[data-mobile-share]');
+    const mobileGradeBtns = document.querySelectorAll<HTMLButtonElement>('[data-mobile-grade]');
+
+    let currentMobileGrade = '';
+    let currentMobileCounts = { gone: 0, lost: 0, risk: 0, have: 0 };
+
+    function escapeHtmlMobile(s: string) {
+      return s.replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[c]!));
+    }
+
+    function firstSentence(s: string): string {
+      // Use first sentence of the description. "Without EA hours: ..."
+      // splits on either "." or "。" — keeps it concise per UX research.
+      const m = s.match(/^[^.。]*[.。]/);
+      return m ? m[0] : s.split(/\s+/).slice(0, 16).join(' ');
+    }
+
+    function renderMobile(gradeId: string) {
+      if (!mobileResult || !mobileEmpty || !mobileResultTitle) return;
+
+      const gradeLabel = data.grades.find((g) => g.id === gradeId)?.label ?? gradeId;
+      const titleEn = `Showing impacts for Grade ${gradeLabel}`;
+      const titleZh = `${gradeLabel} 年级的影响`;
+      mobileResultTitle.textContent = data.lang === 'zh' ? titleZh : titleEn;
+
+      const buckets: Record<'gone'|'lost'|'risk'|'have', string[]> = {
+        gone: [], lost: [], risk: [], have: [],
+      };
+
+      for (const s of data.services) {
+        const cell = s.grades[gradeId];
+        if (!cell || !cell.state) continue;
+        const note = s.note ? firstSentence(s.note) : '';
+        const li =
+          `<li class="jm-item">` +
+            `<strong class="jm-item__name">${escapeHtmlMobile(s.name)}</strong>` +
+            (note ? `<span class="jm-item__note muted">${escapeHtmlMobile(note)}</span>` : '') +
+          `</li>`;
+        buckets[cell.state].push(li);
+      }
+
+      currentMobileCounts = {
+        gone: buckets.gone.length,
+        lost: buckets.lost.length,
+        risk: buckets.risk.length,
+        have: buckets.have.length,
+      };
+
+      const sections: Array<['gone'|'lost'|'risk'|'have', HTMLElement | null, HTMLElement | null]> = [
+        ['gone', mobileGoneSection, mobileGoneList],
+        ['lost', mobileLostSection, mobileLostList],
+        ['risk', mobileRiskSection, mobileRiskList],
+        ['have', mobileHaveSection, mobileHaveList],
+      ];
+      for (const [state, section, list] of sections) {
+        if (!section || !list) continue;
+        if (buckets[state].length === 0) {
+          section.hidden = true;
+          list.innerHTML = '';
+        } else {
+          list.innerHTML = buckets[state].join('');
+          section.hidden = false;
+        }
+      }
+
+      mobileEmpty.hidden = true;
+      mobileResult.hidden = false;
+    }
+
+    mobileGradeBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const gradeId = btn.dataset.mobileGrade;
+        if (!gradeId) return;
+        currentMobileGrade = gradeId;
+        // Visual selected state
+        mobileGradeBtns.forEach((b) => {
+          const pressed = b.dataset.mobileGrade === gradeId;
+          b.setAttribute('aria-pressed', pressed ? 'true' : 'false');
+        });
+        renderMobile(gradeId);
+      });
+    });
+
+    // Share handler — navigator.share when available, clipboard fallback.
+    mobileShareBtn?.addEventListener('click', async () => {
+      if (!currentMobileGrade) return;
+      const gradeLabel = data.grades.find((g) => g.id === currentMobileGrade)?.label ?? currentMobileGrade;
+      const lostCount = currentMobileCounts.gone + currentMobileCounts.lost;
+      const riskCount = currentMobileCounts.risk;
+      const text = data.lang === 'zh'
+        ? `我在本拿比读 ${gradeLabel} 年级的孩子已经失去了 ${lostCount} 项服务，另有 ${riskCount} 项面临削减风险。BC 省政府有 50 亿元 Contingencies Vote 可以解决，但还没拨款。https://fundburnabykids.ca`
+        : `My Grade ${gradeLabel} child at Burnaby schools has lost ${lostCount} services and ${riskCount} more are at risk. BC has $5B in the Contingencies Vote that could fix this. They haven't. Sign at https://fundburnabykids.ca`;
+      const title = data.lang === 'zh'
+        ? 'Fund Burnaby Kids — 我家孩子失去了什么'
+        : 'Fund Burnaby Kids — what my child is losing';
+      const url = 'https://fundburnabykids.ca/';
+      try {
+        if (navigator.share) {
+          await navigator.share({ title, text, url });
+        } else if (navigator.clipboard) {
+          await navigator.clipboard.writeText(`${text} ${url}`);
+          const original = mobileShareBtn.innerHTML;
+          mobileShareBtn.innerHTML = data.lang === 'zh' ? '已复制 ✓' : 'Copied ✓';
+          setTimeout(() => { if (mobileShareBtn) mobileShareBtn.innerHTML = original; }, 2200);
+        } else {
+          window.prompt(data.lang === 'zh' ? '复制以下文字并分享：' : 'Copy + paste to share:', `${text} ${url}`);
+        }
+      } catch { /* user cancelled */ }
     });
   }
 </script>
@@ -460,6 +691,201 @@ const clientData = {
       linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%, transparent 90%, rgba(255,255,255,0.7) 90%),
       linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%);
     background-color: #DC2626;
+  }
+
+  /* ─── Mobile personalized impact ──────────────────────────────────
+     Hidden on desktop (>=768px), shown on mobile. The desktop table is
+     hidden on mobile via the matching media query at the bottom of
+     this stylesheet. Two views, one source of truth (journey.yaml). */
+  .journey-mobile {
+    display: none; /* desktop: hidden */
+  }
+  @media (max-width: 768px) {
+    .journey-mobile { display: block; }
+    .journey__table-wrap,
+    .journey__scroll-hint {
+      display: none;
+    }
+    /* The desktop summary panel is also hidden on mobile — the mobile
+       result panel below replaces it. */
+    .journey__summary { display: none; }
+  }
+
+  .journey-mobile__selector {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .journey-mobile__prompt {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 10px;
+  }
+  .journey-mobile__grade-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+  .journey-mobile__grade-btn {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 0;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+  .journey-mobile__grade-btn:hover {
+    background: var(--cream);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .journey-mobile__grade-btn[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  @media (max-width: 420px) {
+    .journey-mobile__grade-grid {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  .journey-mobile__empty {
+    background: var(--paper);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius-md);
+    padding: 28px 20px;
+    text-align: center;
+    color: var(--ink-soft);
+  }
+  .journey-mobile__empty p { margin: 0; line-height: 1.5; }
+
+  .journey-mobile__result {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 16px;
+  }
+  .journey-mobile__result-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .journey-mobile__result-head h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+  }
+  .journey-mobile__share {
+    flex-shrink: 0;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .journey-mobile__share:hover { background: var(--accent-deep, #15296b); }
+
+  .journey-mobile__section {
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 12px;
+  }
+  .journey-mobile__section h4 {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .journey-mobile__section ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .jm-item {
+    background: var(--paper);
+    border-radius: 6px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+  }
+  .jm-item__name {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+  .jm-item__note {
+    display: block;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.45;
+  }
+  .journey-mobile__section--gone {
+    background: rgba(220, 38, 38, 0.08);
+    border-left: 3px solid #DC2626;
+  }
+  .journey-mobile__section--lost {
+    background: rgba(156, 163, 175, 0.12);
+    border-left: 3px solid #9CA3AF;
+  }
+  .journey-mobile__section--risk {
+    background: rgba(249, 115, 22, 0.10);
+    border-left: 3px solid #F97316;
+  }
+  .journey-mobile__section--have {
+    background: rgba(245, 241, 232, 0.6);
+    border-left: 3px solid #E5E0D5;
+  }
+
+  .journey-mobile__cta {
+    display: block;
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--accent);
+    color: #fff;
+    text-align: center;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    text-decoration: none;
+    font-size: 15px;
+  }
+  .journey-mobile__cta:hover { background: var(--accent-deep, #15296b); }
+
+  .journey-mobile__full-table {
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .journey-mobile__full-table summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-weight: 600;
+    padding: 8px 0;
+  }
+  .journey-mobile__full-hint { margin: 8px 0 0; font-size: 12px; }
+  /* When the user opens the full-table details on mobile, re-show the
+     desktop horizontal-scroll table inside it. */
+  .journey-mobile__full-table[open] ~ .journey__table-wrap,
+  .journey-mobile__full-table[open] + .journey__scroll-hint {
+    display: block;
   }
 
   /* Sources block — every claim traceable to a primary source. */
