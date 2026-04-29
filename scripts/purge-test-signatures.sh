@@ -99,8 +99,17 @@ if [[ "$LIST" == "true" ]]; then
 fi
 
 # --wipe-all: nuclear. Drops EVERY signature row regardless of pattern.
-# Only sane before public launch when the table is just self-test data.
-# Requires --apply too — otherwise it's a dry-run count.
+# Once the campaign launched and real signers showed up, this stopped
+# being a "self-test cleanup" tool — `DELETE FROM signatures` with no
+# WHERE would silently empty the table holding real PII. Two safety
+# gates now stand between intent and damage:
+#   1. --apply must be passed (this was always required).
+#   2. The env var I_REALLY_MEAN_IT must equal exactly "yes" (case-
+#      sensitive), passed inline so it can't sit cached in shell
+#      history. Tab-completing or recall-from-history a stale command
+#      no longer reaches the DELETE.
+# To genuinely wipe the table (e.g. final campaign tear-down):
+#   I_REALLY_MEAN_IT=yes scripts/purge-test-signatures.sh --wipe-all --apply
 if [[ "$WIPE_ALL" == "true" ]]; then
   echo "== preview: rows that would be deleted (WIPE ALL) =="
   body=$(run_sql "SELECT id, first_name, last_initial, school, signed_at, confirmed FROM signatures ORDER BY signed_at DESC;")
@@ -110,8 +119,18 @@ if [[ "$WIPE_ALL" == "true" ]]; then
   echo "== matched: $count row(s) (ALL signatures) =="
   if [[ "$APPLY" != "true" ]]; then
     echo
-    echo "(dry-run — pass --wipe-all --apply to actually DELETE EVERY ROW)"
+    echo "(dry-run — pass --wipe-all --apply AND I_REALLY_MEAN_IT=yes to actually DELETE EVERY ROW)"
     exit 0
+  fi
+  if [[ "${I_REALLY_MEAN_IT:-}" != "yes" ]]; then
+    echo >&2
+    echo "  REFUSING TO WIPE: campaign-traffic guard active." >&2
+    echo "  Re-run with the env var inline:" >&2
+    echo "    I_REALLY_MEAN_IT=yes $0 --wipe-all --apply" >&2
+    echo "  This guard exists so a stale shell-history recall or a tab-" >&2
+    echo "  completed --wipe-all --apply cannot empty the table. Set the" >&2
+    echo "  env var deliberately each time." >&2
+    exit 1
   fi
   if [[ "$count" == "0" ]]; then
     echo "(nothing to delete)"
