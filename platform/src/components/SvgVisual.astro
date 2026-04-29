@@ -177,14 +177,45 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--muted);
-    padding: 4px 8px;
+    padding: 4px 10px;
     margin: 0 0 8px;
-    opacity: 0.7;
+    opacity: 1;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+  }
+  .svg-visual__zoom-hint::before {
+    content: "⊕ ";
+    margin-right: 2px;
+    font-weight: 700;
   }
   .svg-visual__zoom:hover .svg-visual__zoom-hint,
   .svg-visual__zoom:focus-visible .svg-visual__zoom-hint {
-    opacity: 1;
     color: var(--accent);
+    border-color: var(--accent);
+  }
+  /* Touch devices have no :hover state, so the button affordance has to
+     ship in the default style. On hover-capable wide viewports we keep
+     the subtler look so the SVG visualization stays the visual focus.
+     `(hover: none)` covers real phones; `(max-width: 560px)` covers
+     desktop browsers resized narrow (and the preview tool's mobile
+     viewport, which does not emulate `hover: none`). Either condition
+     promotes the hint to a full pill button. */
+  @media (hover: none), (max-width: 560px) {
+    .svg-visual__zoom-hint {
+      color: var(--accent);
+      border-color: var(--line);
+      background: var(--cream);
+      font-size: 12px;
+      padding: 7px 14px;
+    }
+  }
+  /* Press feedback (touch tap, mouse click, keyboard Enter) — confirms
+     the user that the tap registered before the dialog opens. */
+  .svg-visual__zoom:active .svg-visual__zoom-hint {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
   }
   .svg-visual__takeaway {
     font-size: 14px;
