@@ -35,7 +35,8 @@ const meta = (metaEntry?.data ?? {}) as any;
 const founderName = meta.founder?.name ?? 'Ben Zhou';
 const campaignTitle = meta.title ? t(meta.title, lang) : 'Burnaby Kids First';
 const tagline = meta.tagline ? t(meta.tagline, lang) : '';
-const mailingAddress = import.meta.env.MAILING_ADDRESS ?? '(Mailing address being established)';
+const mailingAddress = import.meta.env.MAILING_ADDRESS
+  ?? 'PO Box 44021 Burnaby RPO Kensington Sq, BC, V5B 4Y2';
 ---
 
 <!doctype html>

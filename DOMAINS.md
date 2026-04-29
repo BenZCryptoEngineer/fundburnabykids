@@ -69,6 +69,26 @@ Set up 2026-04-29 to let Ben write personal replies + PAC outreach + MLA staff c
 
 ---
 
+## Physical mailing address
+
+CASL (Canadian Anti-Spam Legislation) requires every commercial / advocacy email to include a physical address where the sender can be reached. Burnaby Kids First's address:
+
+> **PO Box 44021 Burnaby RPO Kensington Sq, BC, V5B 4Y2**
+
+Used in:
+- All confirmation / "your links" / recovery email footers (rendered server-side via `MAILING_ADDRESS` env var)
+- `/privacy/` and `/zh/privacy/` page footers
+- CampaignLayout's site-wide footer fallback
+
+Configured via `MAILING_ADDRESS` env var:
+- **Netlify Production**: set in Site settings → Build & deploy → Environment
+- **Local dev**: read from `credentials.env`
+- **Build-time fallback**: hardcoded in `platform/src/layouts/CampaignLayout.astro` and the privacy pages so the address appears even if the env var is missing in any context.
+
+When the address changes, update **all four** locations (Netlify env, `credentials.env`, `credentials.env.example`, and the hardcoded fallbacks in the three .astro files) so no stale value can leak through any path. `docs/FOUNDATION_SETUP.md` keeps an example value for new deployments.
+
+---
+
 ## Health monitoring
 
 Weekly check in `agent-instructions/MONITOR_HEALTH.md`:

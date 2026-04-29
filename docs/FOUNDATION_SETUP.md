@@ -86,7 +86,7 @@ Canada
 
 **Save to credentials file:**
 ```
-MAILING_ADDRESS=PO Box XXXX, Station Willingdon, Burnaby BC V5C 5W6, Canada
+MAILING_ADDRESS=PO Box 44021 Burnaby RPO Kensington Sq, BC, V5B 4Y2
 ```
 
 ---
