@@ -73,12 +73,41 @@ const clientData = {
       </h2>
       <p class="journey__lede">
         <I18nText
-          en="Each row is a service. Each column is a grade. Click a column header to see what your child loses, year by year."
-          zh="每一行是一项服务。每一列是一个年级。点击列标题查看你孩子在每一年会失去什么。"
+          en="Each row is a service. Each column is a grade. Pick your child's grade below to see exactly what they lose."
+          zh="每一行是一项服务。每一列是一个年级。在下方选择孩子的年级，看 ta 具体失去了什么。"
           lang={lang}
         />
       </p>
     </header>
+
+    {/* Desktop grade selector bar — explicit affordance per Prompt 03.
+        Mobile uses .journey-mobile__grade-grid (different layout, also
+        wired to the same renderSummary call). The "Click a column
+        header" hint copy is removed since the bar makes the picker
+        discoverable on its own. */}
+    <div class="journey__selector-bar sans" data-journey-selector>
+      <span class="journey__selector-prompt">
+        <I18nText en="My child is in:" zh="我的孩子在：" lang={lang} />
+      </span>
+      <div class="journey__selector-buttons" role="group" aria-label={lang === 'zh' ? '选择年级' : 'Select grade'}>
+        {grades.map((g) => (
+          <button
+            type="button"
+            class="journey__selector-btn"
+            data-pick-grade={g.id}
+            aria-pressed="false"
+          >{g.label}</button>
+        ))}
+        <button
+          type="button"
+          class="journey__selector-btn journey__selector-btn--all"
+          data-pick-grade-clear
+          aria-pressed="true"
+        >
+          <I18nText en="Show all" zh="全部" lang={lang} />
+        </button>
+      </div>
+    </div>
 
     <div class="journey__legend sans">
       <span class="legend-item"><span class="legend-cell legend-cell--have"></span><I18nText en="Currently available (after last year's cuts)" zh="目前还在（去年砍剩的）" lang={lang} /></span>
@@ -371,8 +400,29 @@ const clientData = {
             cell.classList.toggle('journey__highlighted', cell.dataset.grade === gradeId);
           });
         }
+        // Sync aria-pressed on the new selector-bar buttons.
+        document.querySelectorAll<HTMLButtonElement>('[data-pick-grade]').forEach((b) => {
+          b.setAttribute('aria-pressed', b.dataset.pickGrade === gradeId ? 'true' : 'false');
+        });
+        const showAllBtn = document.querySelector<HTMLButtonElement>('[data-pick-grade-clear]');
+        if (showAllBtn) showAllBtn.setAttribute('aria-pressed', 'false');
         renderSummary(gradeId);
       });
+    });
+
+    // "Show all" button — clears column highlight and hides summary.
+    const showAllBtn = document.querySelector<HTMLButtonElement>('[data-pick-grade-clear]');
+    showAllBtn?.addEventListener('click', () => {
+      if (table) {
+        table.querySelectorAll<HTMLElement>('.journey__highlighted').forEach((cell) => {
+          cell.classList.remove('journey__highlighted');
+        });
+      }
+      document.querySelectorAll<HTMLButtonElement>('[data-pick-grade]').forEach((b) => {
+        b.setAttribute('aria-pressed', 'false');
+      });
+      showAllBtn.setAttribute('aria-pressed', 'true');
+      if (summary) summary.hidden = true;
     });
 
     // ─── Mobile personalized impact ─────────────────────────────────
@@ -534,6 +584,63 @@ const clientData = {
   .journey__lede {
     color: var(--ink-soft);
     margin: 0;
+  }
+
+  /* Desktop grade selector bar (Prompt 03). The legacy mechanism of
+     clicking column headers is preserved (data-pick-grade is on
+     both the bar buttons and the headers), but visitors can now
+     discover the picker without reading the lede. Hidden on mobile
+     because .journey-mobile has its own grade grid. */
+  .journey__selector-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    margin: 16px 0;
+  }
+  .journey__selector-prompt {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    flex-shrink: 0;
+  }
+  .journey__selector-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .journey__selector-btn {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    min-width: 36px;
+  }
+  .journey__selector-btn:hover {
+    background: var(--cream);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .journey__selector-btn[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .journey__selector-btn--all {
+    margin-left: 6px;
+  }
+  @media (max-width: 768px) {
+    .journey__selector-bar { display: none; }
   }
 
   .journey__legend {
