@@ -19,8 +19,8 @@ services:
       en: "Classroom EA (support aide)"
       zh: "课堂助教 (EA)"
     note:
-      en: "EAs support students with IEPs, behavioural needs, and early literacy. Reductions disproportionately affect the students who need the most."
-      zh: "EA为IEP学生、行为需求和早期识字困难的学生提供支持。削减对最需要帮助的学生影响最大。"
+      en: "Without EA hours: your child's teacher splits attention 28 ways instead of having a second adult in the room. Students with IEPs feel it first. Then everyone feels it."
+      zh: "没有EA：老师要把注意力分给28个孩子，而不是再有一个成年人在教室里。IEP学生先感受到。然后所有人感受到。"
     grades:
       K:  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
       "1":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
@@ -41,8 +41,8 @@ services:
       en: "Elementary counsellor"
       zh: "小学辅导员"
     note:
-      en: "Elementary counsellors catch early mental health and learning concerns. Already stretched thin — reduction ratios vary by school."
-      zh: "小学辅导员负责发现早期心理健康和学习问题。已经捉襟见肘——各校削减比例不同。"
+      en: "When your Grade 3 starts having anxiety attacks at drop-off: you can talk to the teacher, but there's no one trained to actually help. The crisis becomes a referral. The referral has a 6-month wait."
+      zh: "当你三年级的孩子早上送学时焦虑发作：你可以找老师谈，但没有受过专业训练的人能真正帮上忙。危机变成转介。转介排队 6 个月。"
     grades:
       K:  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
       "1":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
@@ -58,8 +58,8 @@ services:
       en: "High school counsellor"
       zh: "高中辅导员"
     note:
-      en: "High school counsellor positions were cut in the 2025-26 budget. Already impacts post-secondary planning, mental health referrals, and crisis response times."
-      zh: "高中辅导员岗位在2025-26预算中已被削减。已影响升学规划、心理健康转介和危机响应。"
+      en: "When your Grade 11 needs help with university applications: 1 counsellor, 400 students, 6-week wait. Your child's UBC application is thinner than it should be — not because they're less capable, but because no one had time."
+      zh: "当你十一年级的孩子需要申请大学：1 个辅导员对 400 个学生，等 6 周。你孩子的 UBC 申请比应该的更单薄——不是因为他不够优秀，是因为没人有时间。"
     grades:
       "8":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
       "9":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
@@ -72,8 +72,8 @@ services:
       en: "Grade 7 band program"
       zh: "7年级乐队课"
     note:
-      en: "Grade 7 band served 1,200 students before being eliminated in 2025-26. Feeder programs into high school music are now disrupted."
-      zh: "7年级乐队原本服务1,200名学生，在2025-26年被取消。高中音乐项目的生源通道被破坏。"
+      en: "1,200 students lost this in 2025-26. Feeder programs into high school music are now broken. If your child plays an instrument, the path forward got harder."
+      zh: "2025-26 年 1,200 个学生失去了这个项目。高中音乐项目的生源通道被打断。如果你的孩子在学乐器，往后的路变难了。"
     grades:
       "7": { state: gone, tip: { en: "Eliminated 25-26 in all 41 elementary schools (1,200 students). Source: SD41 budget + CBC", zh: "2025-26 已在全部41所小学取消 (1,200学生)。来源: SD41预算 + CBC" } }
 
@@ -82,8 +82,8 @@ services:
       en: "Mandarin language program"
       zh: "中文课程"
     note:
-      en: "Mandarin program reduced in 2025-26. Further cuts in 2026-27 likely given the scale of pressure."
-      zh: "中文项目在2025-26年被削减。鉴于2026-27年的压力规模，可能进一步削减。"
+      en: "Burnaby's Mandarin program was a competitive advantage for university applications and dual-language fluency. Already reduced in 2025-26. Further cuts mean your child won't have this option even if they want it."
+      zh: "本拿比的中文课程曾是申请大学和双语流利度的竞争优势。2025-26 已削减。再砍下去，你的孩子即使想学也没得选。"
     grades:
       "4":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
       "5":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
@@ -100,8 +100,8 @@ services:
       en: "Advanced / enrichment learning"
       zh: "Advanced Learning 拓展课程"
     note:
-      en: "Advanced Learning streams (MACC, serving Grades 4-7) were cut for 2025-26. These programs are how strong students build a competitive post-secondary profile."
-      zh: "Advanced Learning（MACC，服务4-7年级）课程在2025-26年被取消。这些课程是学生打造有竞争力升学背景的关键。"
+      en: "How strong students build the academic profile that gets them into UBC's selective programs, scholarships, and specialty admissions. Already cut for 2025-26 (MACC, Grades 4-7). Without enrichment, top students sit in undifferentiated classes for 12 years."
+      zh: "学生用这个建立学术档案，去申请 UBC 的选拔项目、奖学金、特殊招生。2025-26 已被砍（MACC，4-7 年级）。没有拓展课程，最优秀的学生在 12 年里坐在没有分层的普通班里。"
     grades:
       "4":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
       "5":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
@@ -118,8 +118,8 @@ services:
       en: "Teacher-librarian time"
       zh: "图书管理员课时"
     note:
-      en: "Teacher-librarian positions are historically among the first to be reduced in budget pressure. Research literacy and inquiry skills suffer across all grades."
-      zh: "图书管理员是预算压力下最早被削减的岗位之一。所有年级的研究能力和探究技能都会受影响。"
+      en: "When your child needs to learn how to research, evaluate sources, and write a real paper: a teacher-librarian is who teaches that. Without one: your child enters Grade 11 having never been taught research literacy."
+      zh: "当你的孩子需要学如何做研究、评估资料、写一篇真正的论文：图书管理员是教这个的人。没有他：你的孩子进入十一年级时，从未被教过研究素养。"
     grades:
       K:  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
       "1":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
@@ -140,8 +140,8 @@ services:
       en: "High school electives"
       zh: "高中选修课"
     note:
-      en: "Electives like specialty sciences, arts streams, and language options get cut when course allocations drop. Directly affects university admissions."
-      zh: "当课时分配减少，专业科学、艺术、语言选修课被砍。直接影响大学录取。"
+      en: "Specialty sciences, arts streams, language options. The classes that make your child's transcript distinctive. When course allocations drop, electives go first. Your Grade 12's transcript starts looking like everyone else's."
+      zh: "专业科学、艺术、语言。让你孩子成绩单与众不同的那些课。课时分配减少，选修课首先被砍。你十二年级孩子的成绩单开始看起来和其他人一样了。"
     grades:
       "8":  { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
       "9":  { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
@@ -154,8 +154,8 @@ services:
       en: "Daily cleaning & upkeep"
       zh: "日常清洁维护"
     note:
-      en: "Custodial positions reduced in 2025-26. Schools are less clean; maintenance issues accumulate. Affects health and learning environment for everyone."
-      zh: "清洁岗位在2025-26年减少。学校环境变差，维护问题累积。影响所有人的健康和学习环境。"
+      en: "Bathrooms cleaned every other day. Spills wait. Repair tickets sit for weeks. Your child's school physically gets worse every term until something breaks."
+      zh: "厕所隔天清洁一次。洒了等着擦。报修单挂着好几周。你孩子的学校每个学期都在变差，直到某样东西真的坏掉。"
     grades:
       K:  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
       "1":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
@@ -176,8 +176,8 @@ services:
       en: "Class size & composition"
       zh: "班级规模与组成"
     note:
-      en: "Without the $9.4M funded, class sizes in Burnaby are projected to grow. Every student feels this — but students with IEPs or high needs feel it most."
-      zh: "如果$9.4M不到位，Burnaby的班级规模预计扩大。每个学生都会感受到——但IEP学生和高需求学生感受最深。"
+      en: "32 kids in a Grade 4 class instead of 24. Three students with IEPs, one with severe anxiety, one English language learner — and one teacher. Every child gets less of the teacher's attention. The students with the most needs get the least support."
+      zh: "32 个孩子的四年级班级，而不是 24 个。三个 IEP 学生，一个严重焦虑，一个英语学习者——一个老师。每个孩子分到的老师注意力更少。需要最多的学生得到的支持最少。"
     grades:
       K:  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
       "1":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
