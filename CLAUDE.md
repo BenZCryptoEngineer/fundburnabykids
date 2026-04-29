@@ -45,6 +45,62 @@ tests/                          smoke-test.sh (pre-deploy + post-deploy)
 
 `credentials.env` at repo root (gitignored) has every key — `source credentials.env` before any script that needs Supabase / Resend / Netlify / Turnstile / Cloudflare / Buttondown access.
 
+## Architecture state (post-v0.3)
+
+v0.3 work pass (2026-04-28) rebuilt the form submission off Netlify Forms and added cross-session dedup, recovery, and durable post-confirm links. The v0.2 description below still applies; this section is what's NEW since v0.2.
+
+### Form submission via custom Function (replaces Netlify Forms)
+- All forms POST to `/api/submit` → `netlify/functions/submit.ts`. The Function dispatches by `form-name` (signature | pac-endorsement), validates, runs Turnstile + honeypot, writes Supabase, sends Resend email, returns 303. No more Netlify Forms detection magic to debug.
+- `netlify/functions/recover-signature.ts` (`/api/recover`) handles the recovery flow — POST email → look up `email_hash` → re-send the "Your links" email.
+- `_shared.ts` exports `getSiteUrl()` (precedence: SITE_URL env → Netlify-injected URL → hardcoded prod) so deploy-preview / branch deploys self-link to themselves without env tweaking, and `sendLinksEmail()` / `emailHashHex()` shared between submit + confirm + recover.
+
+### Email-hash dedup
+- `signatures.email_hash` (SHA-256 of normalized lowercase email, long-lived, NOT cleared at confirm).
+- Partial UNIQUE index `signatures_email_hash_confirmed_unique ON (email_hash, petition_slug) WHERE confirmed=TRUE`. DB-level backstop.
+- submit.ts dedup logic: confirmed-row found → silent no-op (defense vs. enumeration); pending-row in 48h window → UPDATE same row with fresh token + re-send email; nothing → INSERT.
+
+### Three outbound emails
+1. **Confirmation** (signer → "click to confirm" link) — `submit.ts:sendConfirmationEmail`. Sent on every fresh INSERT or pending re-issue.
+2. **Post-confirm "Your links"** — `confirm-signature.ts` calls `_shared.ts:sendLinksEmail({mode: 'post_confirm'})` immediately after flipping `confirmed=TRUE`. Carries the letter URL + withdraw URL so the signer has them in their inbox forever, not just on the one-shot /confirmed/ page.
+3. **Recovery "Your links"** — same template (`mode: 'recovery'`), triggered from `/find-my-signature/` form via `/api/recover`.
+
+### `/find-my-signature/` page
+Static page (en + zh) with email-input form. Two panels (form + sent confirmation), toggled client-side from `?sent=1` query (page is static-prerendered so SSR can't read query). Defense vs. enumeration: identical 303 → `?sent=1` whether or not the email matched.
+
+### Withdraw URL surfaced on `/confirmed/`
+Full block matching the letter-URL block (heading + URL display + Open + Copy buttons), not just a footer link. Same `letter_token` doubles as the withdraw credential.
+
+### Letter preview before signing
+ActionForm (above the form fields) has a `<details>` block titled "Read the letter you're co-signing →" that renders the actual mailto body with `{FIRST}` etc. replaced by `[Your first name]` placeholders. Surfaces what the signer is attaching their name to without them having to submit first.
+
+### Recent-signers feed redesigned
+`SignatoriesFeed.astro` switched from blue pill chips to white cards (1px border, 8px radius, shadow-sm). Marquee at ~40 px/s; hover/focus-within pauses; sparse-state floor at <6 items renders static; mobile becomes vertical stack of 5. Relative time via `Intl.RelativeTimeFormat` ("just now / 2h ago / Apr 25"). **See "Astro scoped-CSS + JS innerHTML" gotcha below — this component documents the workaround.**
+
+### Domain canonicalization
+- Netlify primary domain set to `fundburnabykids.ca` (not the netlify.app default alias).
+- netlify.toml has a host-level 301 from `https://burnabykidsfirst-platform.netlify.app/*` → `https://fundburnabykids.ca/:splat` as in-repo defense.
+- SITE_URL env set to `https://fundburnabykids.ca` only on Production context; unset on Deploy Preview / Branch deploys / Preview Server / Local CLI so `getSiteUrl()` falls back to Netlify-injected `URL` per deploy.
+
+### Migration ordering rule
+`infrastructure/supabase-migrations.sql` runs ALL `ALTER TABLE ... ADD COLUMN IF NOT EXISTS` blocks BEFORE any `CREATE INDEX` that filters on those columns. CREATE TABLE IF NOT EXISTS is a no-op on existing DBs, so the in-table column declarations don't take effect there — partial indexes referencing columns added "later" in the file will fail with `42703 column does not exist` and abort the whole migration. v0.3 fixed this regression (`77e3d4c`) and ends the file with `NOTIFY pgrst, 'reload schema';` for self-healing PostgREST cache after any apply.
+
+### DB-level smoke + manual purge
+- `tests/smoke-db.sh` runs alongside HTTP smoke (every push + every 6h via cron). Schema check + dedup-constraint check + happy-path INSERT/UPDATE/SELECT. Uses existing `SUPABASE_PAT` GH secret.
+- `scripts/purge-test-signatures.sh` with `--list / --apply / --wipe-all` modes. Workflow_dispatch entry: GH Actions → "Purge test signatures" → mode + apply inputs.
+- Auto-purge cron is INTENTIONALLY DISABLED. See "Test-data hygiene" below — when user says "clean prod DB", use the script, do NOT add a schedule.
+
+## Astro scoped-CSS + JS innerHTML — gotcha
+
+When a component has BOTH a `<style>` block AND a JavaScript handler that rebuilds its DOM via `innerHTML = templateString`, the JS-rendered elements **silently lose all the component's CSS** after the first render.
+
+**Why**: Astro auto-scopes `<style>` blocks by appending a per-build `data-astro-cid-XXXX` attribute to every selector AND to every element emitted by the component template. The HTML you build via `innerHTML` from a string has no way to inject that attribute (the CID changes per build, and even if you pin it, it's brittle). After the first JS render, the rebuilt elements no longer match `.foo[data-astro-cid-XXXX]` rules.
+
+**Symptom**: components look correct on initial SSR, then visually degrade after JS hydration. Pills lose backgrounds. Cards collapse to plain text. Spacing vanishes. The browser dev tools show "no matching CSS rule" on the freshly-rendered elements.
+
+**Fix**: use `<style is:global>` and prefix every class name with the component's name (e.g. `signatories-`, `sig-card-`) to avoid collisions. The styles are now real global rules that match BOTH the SSR markup AND any innerHTML-built DOM.
+
+**Reference implementation**: `platform/src/components/SignatoriesFeed.astro` (`6c6b7b1`). Read the comment at the top of its `<style is:global>` block when you next need to add a polling component.
+
 ## Architecture state (post-v0.2)
 
 This repo passed through a major v0.2 work pass that added the per-signer letter system and the privacy hardening. Current shape:
@@ -102,11 +158,25 @@ A **Claude Code Local** session has no such allowlist — the same code can run 
 
 Test rows can land in the production `signatures` table from three sources: smoke-db.sh sentinels, manual end-to-end debugging, and submissions to RFC-2606 reserved test domains. The cleanup story is **deliberately manual**, not scheduled.
 
-- **`scripts/purge-test-signatures.sh`** — the only entry point. Dry-run by default (lists matching rows, exits without deleting). Pass `--apply` to actually DELETE. Patterns matched: `first_name LIKE '_smoke_%'`, `email_hash LIKE 'smoke_%'`, `pending_email` ending in `@example.invalid` / `@example.com` / `@example.org`, and `(first_name IN ('ClaudeTest','PlaywrightTest') AND last_initial='X')`. The patterns are conservative — a real signer named "Test" with a real email won't be caught.
-- **`tests/smoke-db.sh` cleanup trap** — runs DELETE on `_smoke_*` rows on every exit (success or fail). This is the only auto-cleanup; it's per-run, not periodic, and only catches its own sentinels.
+- **`scripts/purge-test-signatures.sh`** — local entry point. Three modes:
+  - default: dry-run preview of pattern-matched test rows; pass `--apply` to actually DELETE
+  - `--list`: dump every row with non-PII columns only (id, first_name, last_initial, school, signed_at, confirmed). Use to reconcile what's actually in the table when sentinel patterns don't match expected test data.
+  - `--wipe-all`: nuclear DELETE of every row. Only safe pre-launch. Pair with `--apply` to execute.
+  Patterns matched: `first_name ~ '^_smoke_'`, `email_hash ~ '^smoke_'`, `pending_email` LIKE `%@example.invalid` / `%@example.com` / `%@example.org`, and `(first_name IN ('ClaudeTest','PlaywrightTest') AND last_initial='X')`. Conservative — a real signer named "Test" with a real email won't be caught.
+- **`.github/workflows/purge-test-signatures.yml`** — workflow_dispatch entry running the same script. Inputs: `mode` (list / sentinels / wipe-all) + `apply` (boolean). Use this when you don't have credentials.env locally; it consumes the same SUPABASE_PAT GH secret apply-migration uses.
+- **`tests/smoke-db.sh` cleanup trap** — runs DELETE on `_smoke_*` rows on every exit (success or fail). Only auto-cleanup; per-run, not periodic, only catches its own sentinels.
 - **What's NOT scheduled** — there is no `pg_cron` job for test-data purging. We tried `purge-test-signatures` on `*/10 * * * *` for one push (`097f307`) and reverted: automatic deletion of test rows is too eager (a developer might be inspecting a deliberate debug row when the job fires). Re-enabling needs an explicit user request and a code change.
 
-When the user says "clean up the prod DB" or similar, the right move is `scripts/purge-test-signatures.sh` — first dry-run to show what would go, then `--apply` once they confirm. Do NOT add a cron schedule unless asked.
+When the user says "clean up the prod DB" or similar, the right move is `scripts/purge-test-signatures.sh` (or the workflow_dispatch) — first dry-run to show what would go, then `--apply` once they confirm. Do NOT add a cron schedule unless asked.
+
+## Ops playbooks (campaign-day operations)
+
+- **`infrastructure/HAND_DELIVERY_PLAYBOOK.md`** — what to execute when the homepage counter hits 500 confirmed signatures. T-7 days through T+1 day checklist + per-MLA cover letter template + 500-milestone press release template + tone constraints (no party attribution, no future-cut speculation, no signer PII in releases).
+- **`infrastructure/PAC_OUTREACH_TEMPLATES.md`** — 5 PAC outreach email templates (Ben-direct, parent-forward, follow-up, decline-graceful, endorsed thank-you) + variables table + 14-day order-of-operations for working a list of ~30 PACs.
+- **`infrastructure/MLA_REPLY_WORKFLOW.md`** — how MLA replies get curated onto the public scorecard (v1 manual; v2 inbound parsing trigger criteria documented).
+- **`infrastructure/PRIVACY_DELETION_RUNBOOK.md`** — manual deletion fallback when a signer lost their letter URL and self-serve withdraw isn't accessible.
+
+When the user mentions a milestone or a delivery date, check whether one of these playbooks already covers it before designing from scratch.
 
 ## Pending work
 

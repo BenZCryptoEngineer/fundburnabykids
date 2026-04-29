@@ -1,121 +1,73 @@
-# HANDOFF — for an incoming local Claude Code session
+# HANDOFF — current state snapshot
 
-You're picking up mid-task from a previous Claude Code session that ran in the
-claude.ai web sandbox. That sandbox had outbound network restrictions
-(allowlist blocked `api.supabase.com`, `api.netlify.com`, `*.netlify.app`,
-`fundburnabykids.ca`, Cloudflare DoH, the Edge Functions runtime download URL).
-You're on the user's actual machine — none of those restrictions apply, you
-can hit production directly, run `netlify dev`, run Playwright, etc.
+For an incoming session that wants to be productive in five minutes. Updated **2026-04-28** at the end of the v0.3 work pass.
 
-## First read these, in order
+## What's working in production right now
 
-1. **TODO.md § "ACTIVE BUG"** — top of the file. The user reports filling the
-   signature form, clicking Sign, and landing on Netlify's default "Page not
-   found." Two redirect-rule fixes shipped (`c16b2a9`, `b489d44`) didn't
-   resolve it. Hypotheses are listed; previous session couldn't test live
-   because of the allowlist.
-2. **CLAUDE.md** — full architecture state. The "Architecture state (post-v0.2)"
-   section is new and describes the SSR adapter setup, trailing-slash
-   invariant, and per-signer letter system that landed in the last session.
-3. `git log --oneline | head -25` — the v0.2 commit chain.
+`https://fundburnabykids.ca` is live. `https://burnabykidsfirst-platform.netlify.app` 301s to the canonical domain. Counter is 0 (DB was wiped at the end of testing — see "Test-data hygiene" below). Campaign launch date is 2026-05-01; budget adoption deadline is 2026-05-27.
 
-## What you should do first
+The full signer journey is end-to-end functional:
 
-```bash
-# 1. You're on b489d44 (or later). Confirm.
-git log --oneline -3
+1. **Sign** — homepage form POSTs to `/api/submit` (Netlify Function). Honeypot + Turnstile + email-hash dedup runs server-side. New signer → row inserted, confirmation email sent. Same email signing again while pending → token re-issued on the same row, fresh email. Same email signing after confirming → silent no-op (defense vs. enumeration).
+2. **Confirm** — signer clicks the link in the email. `confirm-signature.ts` flips `confirmed=TRUE`, generates `letter_token`, sends a second "Your signature is in — here are your links" email with the public letter URL + the withdraw URL.
+3. **Public surfaces** — confirmed signature appears in the homepage counter, in the recent-signatories card marquee, in the riding-map tally, and at `/letters/<token>/`. Per-MLA aggregate at `/mla/<id>/`.
+4. **Withdraw** — `/withdraw/<token>/` two-step confirmation page → DELETE row + Buttondown unsubscribe → `/withdrawn/`. Link surfaced on `/confirmed/`, in the post-confirm email, and on `/letters/<token>/`.
+5. **Recovery** — signer who lost the email can recover at `/find-my-signature/`. Form posts email → `/api/recover` looks up `email_hash` → re-sends "Your links" email. Identical 303 response whether or not the email matched (no enumeration leak).
 
-# 2. Run the curl tests from TODO.md § "How a local session can confirm root
-#    cause in 5 minutes". You can actually run these — the previous session
-#    couldn't.
-curl -sI -L https://fundburnabykids.ca/confirm-thanks
-curl -sI -X POST https://fundburnabykids.ca/confirm-thanks/ \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  --data-urlencode "form-name=signature" \
-  --data-urlencode "firstname=ClaudeTest" \
-  --data-urlencode "lastname=DontStore" \
-  --data-urlencode "email=claude-smoke-test@example.invalid" \
-  --data-urlencode "school=Capitol Hill" \
-  --data-urlencode "grade=2" \
-  --data-urlencode "postal=V5B 3X6" \
-  --data-urlencode "consent-public=on" \
-  --data-urlencode "school_neighbourhood=Capitol Hill" \
-  --data-urlencode "locale=en"
+## What you can do without re-asking the user
 
-# 3. If the redirect / form POST tests don't pinpoint it, run a real browser
-#    test. The previous session shipped a smoke-test.sh but no Playwright; add
-#    one as part of the fix so this regression can never silently ship again.
-cd platform
-npm install --save-dev @playwright/test
-npx playwright install chromium
-# Then write tests/e2e-form-submit.spec.ts that:
-# - navigates to https://fundburnabykids.ca/
-# - fills the form with throwaway data
-# - clicks Sign
-# - asserts the next page contains "Check your email"
+- Read `TODO.md` — it lists the work shipped in v0.2 + v0.3 + the smaller follow-ups (A through H).
+- Read `CLAUDE.md` — architecture state, ops playbooks, the Astro scoped-CSS + JS innerHTML gotcha, and the test-data hygiene rule (manual purge only — do NOT add a `pg_cron` schedule).
+- Read `infrastructure/HAND_DELIVERY_PLAYBOOK.md` if the user mentions the 500-signature milestone.
+- Read `infrastructure/PAC_OUTREACH_TEMPLATES.md` if the user mentions PAC outreach.
 
-# 4. Check Netlify dashboard → Forms tab → is the "signature" form listed
-#    under detected forms? If not, that's the smoking gun for hypothesis 1
-#    (Netlify Forms detection failing, possibly because the SSR adapter is
-#    making something about index.html not look "static" to Netlify's scanner).
-```
-
-## How to run a full production simulation locally
+## How to run things locally
 
 ```bash
-# Edge Functions runtime download was the blocker for the previous session.
-# On a real machine it should just work.
-cd /path/to/fundburnabykids
-npx netlify dev --port 8888
-# Visit http://localhost:8888 — full simulation including Forms, redirects, SSR.
-# Submit the form; observe whether you hit the same 404 or whether it works
-# locally (would tell us the bug is production-only).
+# Fastest iteration, frontend only:
+cd platform && npm run dev      # http://localhost:4321 — Astro dev, no Functions
+
+# Full Netlify simulation (Functions + redirects + SSR):
+npx netlify dev --port 8888     # http://localhost:8888
+
+# Run smoke tests against prod:
+tests/smoke-test.sh https://fundburnabykids.ca
+source credentials.env && tests/smoke-db.sh
+
+# Apply Supabase migration:
+source credentials.env && scripts/apply-supabase-migration.sh
+
+# Purge test data (interactive — dry-run by default):
+source credentials.env && scripts/purge-test-signatures.sh
+# or via GH Actions: Repo → Actions → "Purge test signatures" → mode + apply inputs
 ```
-
-## Repository conventions you should follow
-
-- **Reply in Chinese** to the user (Simplified or Traditional, mirror them).
-- **Repo files stay English** — code, YAML, SQL, commit messages.
-- **Commits**: single coherent feature per commit, message body explains the
-  *why*. Co-author trailer
-  `Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>`.
-- **Always `astro check && astro build` before pushing**. CI now gates this
-  but local feedback is faster.
-- **Never push to a different branch without explicit permission.** Current
-  branch contract: `claude/review-todo-files-2WYo5` for development; the user
-  has previously authorized direct push to main for this repo (see CLAUDE.md
-  "When committing"). Confirm authorization is still in effect for any push
-  to main.
 
 ## Credentials
 
-`credentials.env` at repo root (gitignored) has every key. `source
-credentials.env` before scripts that need Supabase / Resend / Netlify /
-Turnstile / Cloudflare / Buttondown access. The previous session's GH Actions
-secrets (`SUPABASE_URL`, `SUPABASE_PAT`) are already configured — see
-`docs/DEPLOY.md` for the playbook.
+`credentials.env` at repo root (gitignored) has every key. `source credentials.env` before any script that needs Supabase / Resend / Netlify / Turnstile / Cloudflare / Buttondown access. GH Actions secrets `SUPABASE_URL` + `SUPABASE_PAT` are configured for the apply-migration + smoke-db workflows.
 
-## What's expected to be working
+## Known constraints / contracts
 
-- Production deploy at `b489d44` includes: trailing-slash redirects, withdrawal
-  endpoint at `/withdraw/<token>/`, school-derived neighbourhood UI, OG cards
-  on letter pages.
-- CI workflow (`.github/workflows/ci.yml`) validates every push.
-- Smoke test workflow (`.github/workflows/smoke-test-prod.yml`) runs against
-  prod every 30 min.
-- `/letters/<token>/`, `/mla/<id>/`, `/withdraw/<token>/` are all SSR routes
-  served by the `@astrojs/netlify` v6 function. They worked end-to-end in
-  manual testing before the form-submit issue surfaced.
+- **Branch contract** — push directly to `main` is fine for this repo (single maintainer). Netlify auto-builds on push. `apply-migration.yml` fires on push when SQL changes; `smoke-test-prod.yml` fires on push to main + every 6 hours.
+- **Always `astro check && astro build` before push.** CI gates this but local feedback is faster.
+- **Reply in Chinese** to the user (Simplified or Traditional, mirror them). Repo files stay English.
+- **No personal-domain leakage** — Burnaby Kids First repo only. Don't reference Ben's personal projects, writing, or other frameworks here.
+- **Test-data hygiene** is manual on purpose. Don't add scheduled DELETE jobs for sentinel patterns unless explicitly asked.
 
-## What's known broken (one item)
+## Outstanding follow-ups (none blocking the campaign)
 
-The active bug in TODO.md: form submit lands on 404. Fix this first.
+See `TODO.md § Smaller follow-ups`:
+- A: PNG fallback for OG card (only if WeChat / Facebook share previews matter)
+- B: `letter.yaml` public-letter template tokens (currently inline in `LetterRender.astro`)
+- C: IP anonymization `pg_cron` schedule (manual UPDATE documented; not yet automated)
+- E: ZH translation of the new EN founder bio
+- F: Verify two medium-confidence school neighbourhood corrections (Confederation Park, Alpha)
+- G: Playwright e2e for the PAC modal
+- H: PAC verify shortcut script
 
-Once fixed:
-- Add a Playwright e2e test so the regression can't silently re-ship.
-- Update `tests/smoke-test.sh` if the fix changes any URLs/expectations.
-- Confirm CI green + smoke-test green before declaring done.
-- Reply to the user with what the actual root cause was — they've been waiting
-  on confirmation.
+## When you finish a task
 
-Welcome aboard.
+- Update `TODO.md` with what shipped, including commit hash + file paths
+- If you added or changed a workflow / process, cross-link it from `CLAUDE.md`
+- If you added a campaign-day artifact (cover letter / press release / PAC outreach), put it under `infrastructure/` and mention it in `CLAUDE.md § Ops playbooks`
+- Reply to the user in Chinese with what changed, what was tested, and what (if anything) needs their action
