@@ -23,11 +23,13 @@ import type { Lang } from '~/lib/i18n';
 
 interface Props {
   lang: Lang;
-  /** How many to show; default 60 */
+  /** How many to show in the marquee; default 20 (per UX research:
+      'most recent 20' is a stronger recency-bias signal than 'all 80'
+      and the visible marquee duplication is less noticeable). */
   limit?: number;
 }
 
-const { lang, limit = 60 } = Astro.props;
+const { lang, limit = 20 } = Astro.props;
 
 const url = import.meta.env.PUBLIC_SUPABASE_URL;
 const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
@@ -41,13 +43,30 @@ type Sig = {
 };
 
 let initial: Sig[] = [];
+let totalCount = 0;
 if (url && key) {
   try {
+    // `Prefer: count=exact` causes PostgREST to include the total row
+    // count in the Content-Range response header (format: "0-19/123").
+    // We read the `/total` portion to display "X total signatures"
+    // alongside the 20-item recency window.
     const res = await fetch(
       `${url}/rest/v1/public_signatures?select=first_name,last_initial,school,neighbourhood,signed_at&order=signed_at.desc&limit=${limit}`,
-      { headers: { apikey: key, Authorization: `Bearer ${key}` } }
+      {
+        headers: {
+          apikey: key,
+          Authorization: `Bearer ${key}`,
+          Prefer: 'count=exact',
+        },
+      }
     );
-    if (res.ok) initial = await res.json();
+    if (res.ok) {
+      initial = await res.json();
+      const range = res.headers.get('content-range');
+      const after = range?.split('/')[1];
+      const parsed = after ? parseInt(after, 10) : NaN;
+      if (Number.isFinite(parsed)) totalCount = parsed;
+    }
   } catch {
     /* keep empty */
   }
@@ -69,11 +88,25 @@ const animate = initial.length >= MARQUEE_FLOOR;
      data-animate={animate ? 'true' : 'false'}
      data-empty-text={lang === 'zh' ? '成为第一位签名者 →' : 'Be the first to sign →'}>
   <p class="signatories-caption sans">
-    <I18nText
-      en="Recent confirmed signatures"
-      zh="最近确认的签名"
-      lang={lang}
-    />
+    <span class="signatories-caption__primary">
+      <I18nText
+        en={`Showing ${limit} most recent`}
+        zh={`显示最近 ${limit} 个`}
+        lang={lang}
+      />
+      {totalCount > 0 && (
+        <>
+          {' · '}
+          <span class="signatories-caption__total" data-signatories-total>
+            <I18nText
+              en={`${totalCount} total verified signatures`}
+              zh={`共 ${totalCount} 个已验证签名`}
+              lang={lang}
+            />
+          </span>
+        </>
+      )}
+    </span>
     <button
       type="button"
       class="signatories-view-all sans"
@@ -235,11 +268,29 @@ const animate = initial.length >= MARQUEE_FLOOR;
       try {
         const res = await fetch(
           `${url}/rest/v1/public_signatures?select=first_name,last_initial,school,neighbourhood,signed_at&order=signed_at.desc&limit=${limit}`,
-          { headers: { apikey: key!, Authorization: `Bearer ${key!}` } }
+          {
+            headers: {
+              apikey: key!,
+              Authorization: `Bearer ${key!}`,
+              Prefer: 'count=exact',
+            },
+          }
         );
         if (!res.ok) return;
         const sigs: Sig[] = await res.json();
         if (!Array.isArray(sigs)) return;
+        // Live-update the total signatures caption from Content-Range.
+        const range = res.headers.get('content-range');
+        const after = range?.split('/')[1];
+        const total = after ? parseInt(after, 10) : NaN;
+        if (Number.isFinite(total)) {
+          const totalEl = el.querySelector<HTMLElement>('[data-signatories-total]');
+          if (totalEl) {
+            totalEl.textContent = lang === 'zh'
+              ? `共 ${total} 个已验证签名`
+              : `${total} total verified signatures`;
+          }
+        }
         if (sigs.length === 0) {
           flowOuter!.innerHTML =
             `<p class="signatories-empty" data-signatories-flow>${escapeHtml(emptyText)}</p>`;
@@ -449,6 +500,12 @@ const animate = initial.length >= MARQUEE_FLOOR;
     align-items: baseline;
     justify-content: space-between;
     gap: 12px;
+  }
+  .signatories-caption__primary {
+    display: inline;
+  }
+  .signatories-caption__total {
+    color: var(--muted, #6B7280);
   }
   .signatories-view-all {
     background: transparent;
