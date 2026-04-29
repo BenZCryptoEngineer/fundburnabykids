@@ -45,15 +45,27 @@ When the 2nd campaign deploys, this flips: `burnabykidsfirst.ca` becomes the umb
 
 ## Email identity
 
-All mailboxes are **aliases only** (ImprovMX → Ben's personal inbox). No real mailboxes.
+All mailboxes are **forwarded aliases** (ImprovMX inbound → Ben's personal Gmail). No real mailboxes on the domain. One alias (`ben@`) additionally has **outbound SMTP** so Ben can write personal email from Gmail with `ben@fundburnabykids.ca` as the visible From address — see "Outbound for `ben@`" below.
 
-| Address | Forward target | Purpose |
-|---|---|---|
-| `ben@fundburnabykids.ca` | Ben's personal | Founder public contact |
-| `hello@fundburnabykids.ca` | Ben's personal | General inquiries |
-| `privacy@fundburnabykids.ca` | Ben's personal | PIPA data requests |
-| `campaign@fundburnabykids.ca` | — (send-only via Buttondown) | Newsletter sender address |
-| `dmarc@fundburnabykids.ca` | Ben's personal | DMARC aggregate reports |
+| Address | Forward target | Purpose | Outbound from this address? |
+|---|---|---|---|
+| `ben@fundburnabykids.ca` | Ben's personal | Founder public contact | **Yes** — ImprovMX SMTP + Gmail Send-as |
+| `hello@fundburnabykids.ca` | Ben's personal | General inquiries | No (forward-only) |
+| `privacy@fundburnabykids.ca` | Ben's personal | PIPA data requests | No (forward-only) |
+| `campaign@fundburnabykids.ca` | — (send-only) | Transactional sender (Resend) + newsletter (Buttondown) | Automated only |
+| `dmarc@fundburnabykids.ca` | Ben's personal | DMARC aggregate reports | No (forward-only) |
+
+### Outbound for `ben@`
+
+Set up 2026-04-29 to let Ben write personal replies + PAC outreach + MLA staff correspondence from Gmail with `ben@fundburnabykids.ca` as the visible From, instead of his personal `benz92124@gmail.com`. The mechanism:
+
+- **ImprovMX Premium** ($9/mo billed yearly = ~$92/yr, 15% off). Premium unlocks outbound SMTP that Free does not have. The free-tier forwarding everything in the table above stays unchanged.
+- **Gmail "Send mail as"** wired to ImprovMX's SMTP server (`smtp.improvmx.com:587`, TLS, username = `ben@fundburnabykids.ca`, password = a per-alias key generated in the ImprovMX dashboard, NOT the ImprovMX account password).
+- Gmail's Reply auto-defaults `From` to whichever address received the email — so when ImprovMX forwards `ben@` mail into Ben's Gmail, replying back picks `ben@` automatically.
+
+**Capacity**: Premium plan caps outbound at 6,000 emails/month. Personal correspondence + PAC outreach is well under that. **Transactional / automated email continues to flow through Resend** (signature confirmation, PAC chair confirmation, "your links", recovery, admin notifications) — those are `from: campaign@fundburnabykids.ca`, not `ben@`. Don't route Resend traffic through ImprovMX SMTP — Resend's deliverability is purpose-built for transactional volume.
+
+**Rotation / re-issue**: if the per-alias SMTP password is suspected leaked, regenerate it in the ImprovMX dashboard → Domain → SMTP Credentials. Then update Gmail's Send-as configuration with the new password (Settings → Accounts → "edit info" on the alias). No DNS change needed.
 
 ---
 
@@ -74,5 +86,6 @@ Weekly check in `agent-instructions/MONITOR_HEALTH.md`:
 | Date | Change | By | Commit |
 |---|---|---|---|
 | 2026-04-22 | Initial scaffold; domains registered in Foundation, DNS not yet provisioned | Ben + Claude Code | (this commit) |
+| 2026-04-29 | ImprovMX upgraded Free → Premium (yearly); outbound SMTP enabled for `ben@`; wired into Gmail Send-as so Ben can reply from `ben@fundburnabykids.ca`. Other aliases stay forward-only. No DNS change. | Ben + Claude Code | (this commit) |
 
 Append one row per DNS or domain change. Never silently mutate DNS.
