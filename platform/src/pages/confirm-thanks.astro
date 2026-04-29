@@ -1,9 +1,16 @@
 ---
-// Post-form-submit landing. User just signed; now they need to click the
-// confirmation link in the email to complete the signature.
+// Post-form-submit landing.
 //
-// This is DIFFERENT from /confirmed: that one is reached AFTER they click
-// the email link.
+// Two-step UX for signature submissions:
+//   STEP 1 — confirm your email (the link sent by submit.ts:sendConfirmationEmail)
+//   STEP 2 — open the prefilled mailto to MLAs (URL stashed by ActionForm on submit)
+//
+// PAC submissions land here too via ?form=pac. The two-step layout is
+// hidden and replaced with a simple "endorsement received" card —
+// PAC chairs get a separate confirmation email from submit.ts.
+//
+// This is DIFFERENT from /confirmed: that one is reached AFTER the
+// signer clicks the email confirmation link.
 
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import I18nText from '~/components/I18nText.astro';
@@ -20,157 +27,240 @@ const lang = pickLang(Astro.url.pathname);
   <section class="thanks-page">
     <div class="wrap">
       <div class="thanks-card" data-variant="signature">
-        {/* PAC submission lands here too via ?form=pac. We swap the headline
-            client-side so the signature flow renders without flicker for the
-            common case (the signature 303 has no query string). */}
-        <div class="thanks-icon" aria-hidden="true">📬</div>
-        <h1 data-pac-headline-target>
-          <I18nText
-            en="Check your email"
-            zh="请查收邮件"
-            lang={lang}
-          />
-        </h1>
-        <p class="thanks-lede" data-pac-lede-target>
-          <I18nText
-            en="We just sent a confirmation link to your email. Click it within 48 hours to add your name to the public count."
-            zh="我们刚向你的邮箱发了一封确认邮件。请在 48 小时内点击链接，将你的名字加入公开计数。"
-            lang={lang}
-          />
-        </p>
-        <p class="thanks-lede" data-pac-only hidden>
-          <I18nText
-            en="We received your PAC endorsement. We'll verify it personally — usually within 24 hours — and email the chair address you provided."
-            zh="我们已收到你的 PAC endorsement，会人工核实（通常 24 小时内）并通过邮件回复你填写的主席邮箱。"
-            lang={lang}
-          />
-        </p>
-
-        <div class="thanks-next">
-          <h2 class="sans">
-            <I18nText en="If you don't see it" zh="如果没收到" lang={lang} />
-          </h2>
-          <ul>
-            <li>
-              <I18nText
-                en="Check your spam / promotions folder. New domains sometimes land there."
-                zh="检查垃圾邮件 / 促销标签。新域名有时会被分到那里。"
-                lang={lang}
-              />
-            </li>
-            <li>
-              <I18nText
-                en="The email comes from"
-                zh="邮件发件人是"
-                lang={lang}
-              />
-              <strong>campaign@fundburnabykids.ca</strong>
-              {' '}
-              <I18nText
-                en="with subject"
-                zh="主题是"
-                lang={lang}
-              />
-              {' '}
-              <em>"One click left: confirm your signature for Burnaby kids"</em>
-            </li>
-            <li>
-              <I18nText
-                en="Still nothing after 5 minutes? Email"
-                zh="5 分钟还没收到？邮件给"
-                lang={lang}
-              />{' '}
-              <a href="mailto:hello@fundburnabykids.ca">hello@fundburnabykids.ca</a>
-              {' '}
-              <I18nText en="and we'll fix it." zh="，我们处理。" lang={lang} />
-            </li>
-          </ul>
+        <div class="thanks-header">
+          <div class="thanks-icon" aria-hidden="true">📬</div>
+          <h1 data-pac-headline-target>
+            <I18nText
+              en="We got your signature — 2 quick steps left"
+              zh="签名收到了 — 还差 2 步把它送出去"
+              lang={lang}
+            />
+          </h1>
+          <p class="thanks-progress sans" data-progress-indicator>
+            <span class="progress-dot">●</span>
+            <span class="progress-bar"></span>
+            <span class="progress-dot">●</span>
+            <span class="progress-label">
+              <I18nText en="2 of 2 to send your voice" zh="2 / 2 把你的声音送出去" lang={lang} />
+            </span>
+          </p>
         </div>
 
-        <div class="thanks-letter-note" data-mailto-block hidden>
-          <h2 class="sans">
+        {/* PAC variant — completely different flow. submit.ts redirects
+            PAC submissions to ?form=pac and we hide the two-step block. */}
+        <div data-pac-only hidden>
+          <p class="thanks-lede">
             <I18nText
-              en="The email to your MLA is ready"
-              zh="给 MLA 的邮件已准备好"
-              lang={lang}
-            />
-          </h2>
-          <p>
-            <I18nText
-              en="Pre-filled with your name, school, and grade. Click to open it in your default email app, then hit Send."
-              zh="已经预填了你的姓名、学校、年级。点击下面的按钮在你的默认邮件应用中打开，按 Send 发送即可。"
+              en="We received your PAC endorsement. We'll verify it personally — usually within 24 hours — and email the chair address you provided."
+              zh="我们已收到你的 PAC endorsement，会人工核实（通常 24 小时内）并通过邮件回复你填写的主席邮箱。"
               lang={lang}
             />
           </p>
-          <p class="thanks-letter-actions">
-            <a class="btn btn--primary" href="#" data-mailto-link target="_blank" rel="noopener">
+        </div>
+
+        {/* Signature variant — two-step layout */}
+        <div data-signature-only>
+          {/* ─── Step 1: confirm email ─────────────────────────────── */}
+          <div class="step-card">
+            <div class="step-card__head">
+              <span class="step-num sans">STEP 1</span>
+              <span class="step-time sans">
+                · <I18nText en="5 sec, 48h window" zh="5 秒，48 小时内" lang={lang} />
+              </span>
+            </div>
+            <h2 class="step-card__title">
               <I18nText
-                en="Open the email →"
-                zh="打开邮件 →"
+                en="Confirm your email"
+                zh="确认你的邮箱"
                 lang={lang}
               />
-            </a>
-          </p>
-          <p class="sans muted small">
-            <I18nText
-              en="No email app set up? You can copy the email body below and paste it into your webmail."
-              zh="还没设默认邮件应用？可以复制下方内容，贴到 Gmail / Outlook 等网页邮箱中发送。"
-              lang={lang}
-            />
-          </p>
-          <details class="thanks-letter-fallback">
-            <summary class="sans">
-              <I18nText en="Show plain text + addresses" zh="显示纯文本和邮件地址" lang={lang} />
-            </summary>
-            <div class="thanks-letter-fallback__body">
-              <p><strong><I18nText en="To:" zh="收件人：" lang={lang} /></strong> <code data-mailto-to></code></p>
-              <p><strong><I18nText en="Cc:" zh="抄送：" lang={lang} /></strong> <code data-mailto-cc></code></p>
-              <p><strong><I18nText en="Subject:" zh="主题：" lang={lang} /></strong> <span data-mailto-subject></span></p>
-              <pre data-mailto-body class="thanks-letter-body"></pre>
+            </h2>
+            <p class="step-card__desc">
+              <I18nText
+                en="We just sent a confirmation link to your inbox. Click it within 48 hours. Without confirmation your name stays private and isn't counted."
+                zh="我们刚向你的邮箱发了一封确认邮件。请在 48 小时内点击链接。没有确认的签名是私密的、不计入统计。"
+                lang={lang}
+              />
+            </p>
+            <ul class="step-card__meta sans">
+              <li>
+                <span class="meta-label">
+                  <I18nText en="Sender" zh="发件人" lang={lang} />
+                </span>
+                <strong>campaign@fundburnabykids.ca</strong>
+              </li>
+              <li>
+                <span class="meta-label">
+                  <I18nText en="Subject" zh="主题" lang={lang} />
+                </span>
+                <em>"One click left: confirm your signature for Burnaby kids"</em>
+              </li>
+            </ul>
+            <details class="step-card__fallback">
+              <summary class="sans">
+                <I18nText en="Don't see it?" zh="还没看到？" lang={lang} />
+              </summary>
+              <ul>
+                <li>
+                  <I18nText
+                    en="Check your spam / promotions folder. New domains sometimes land there."
+                    zh="检查垃圾邮件 / 促销标签。新域名有时会被分到那里。"
+                    lang={lang}
+                  />
+                </li>
+                <li>
+                  <I18nText
+                    en="Still nothing after 5 minutes? Email"
+                    zh="5 分钟还没收到？邮件给"
+                    lang={lang}
+                  />{' '}
+                  <a href="mailto:hello@fundburnabykids.ca">hello@fundburnabykids.ca</a>
+                  {' '}
+                  <I18nText en="and we'll fix it." zh="，我们处理。" lang={lang} />
+                </li>
+              </ul>
+            </details>
+          </div>
+
+          {/* ─── Step 2: send the MLA email ────────────────────────── */}
+          <div class="step-card">
+            <div class="step-card__head">
+              <span class="step-num sans">STEP 2</span>
+              <span class="step-time sans">
+                · <I18nText en="1 min" zh="1 分钟" lang={lang} />
+              </span>
             </div>
-          </details>
+            <h2 class="step-card__title">
+              <I18nText
+                en="Send the email to your MLA"
+                zh="把信发出去给你的 MLA"
+                lang={lang}
+              />
+            </h2>
+            <p class="step-card__desc">
+              <I18nText
+                en="We've drafted an email to all 7 Burnaby + provincial MLAs with your name, school, and grade. You just press Send."
+                zh="我们已经把你的姓名、学校、年级写进一封发给 7 位 MLA 的邮件里。你只需要按 Send。"
+                lang={lang}
+              />
+            </p>
+            <p class="step-card__action" data-mailto-block>
+              <a class="btn btn--primary btn--lg" href="#" data-mailto-link target="_blank" rel="noopener">
+                <I18nText
+                  en="📨 Open the email →"
+                  zh="📨 打开邮件 →"
+                  lang={lang}
+                />
+              </a>
+            </p>
+            <p class="step-card__action-fallback" data-mailto-fallback hidden>
+              <I18nText
+                en="Couldn't find your prefilled email here?"
+                zh="这里没看到预填邮件？"
+                lang={lang}
+              />
+              {' '}
+              <a href={localizedUrl('/find-my-signature', lang)}>
+                <I18nText
+                  en="Recover your link →"
+                  zh="找回你的链接 →"
+                  lang={lang}
+                />
+              </a>
+            </p>
+            <p class="sans muted small step-card__webmail-note">
+              <I18nText
+                en="No email app set up? Copy the body below and paste it into Gmail / Outlook web."
+                zh="还没设默认邮件应用？复制下方内容贴到 Gmail / Outlook 等网页邮箱发送。"
+                lang={lang}
+              />
+            </p>
+            <details class="step-card__letter-fallback">
+              <summary class="sans">
+                <I18nText en="Show plain text + addresses" zh="显示纯文本和邮件地址" lang={lang} />
+              </summary>
+              <div class="step-card__letter-body">
+                <p><strong><I18nText en="To:" zh="收件人：" lang={lang} /></strong> <code data-mailto-to></code></p>
+                <p><strong><I18nText en="Cc:" zh="抄送：" lang={lang} /></strong> <code data-mailto-cc></code></p>
+                <p><strong><I18nText en="Subject:" zh="主题：" lang={lang} /></strong> <span data-mailto-subject></span></p>
+                <pre data-mailto-body class="step-card__letter-pre"></pre>
+              </div>
+            </details>
+          </div>
+
+          {/* ─── Why both steps matter ────────────────────────────── */}
+          <div class="why-block">
+            <h3 class="sans why-block__title">
+              <I18nText en="Why both steps matter" zh="为什么需要两步" lang={lang} />
+            </h3>
+            <ul>
+              <li>
+                <I18nText
+                  en="Your email lands in 7 MLA inboxes today."
+                  zh="你那封邮件今天就会进 7 位 MLA 的收件箱。"
+                  lang={lang}
+                />
+              </li>
+              <li>
+                <I18nText
+                  en="At 500 confirmed signers (press milestone), the campaign prints every letter and hand-delivers them to all 5 Burnaby MLA constituency offices, alongside local press outreach."
+                  zh="累积到 500 名家长时（press milestone），campaign 会把所有信件打印出来 hand-deliver 到 5 位 MLA 的选区办公室 + 同步联系本地媒体。"
+                  lang={lang}
+                />
+              </li>
+              <li>
+                <I18nText
+                  en="Goal: 2,000 parents by May 27 budget vote (~400 per riding) — at that scale the petition becomes a political object the Education Minister must respond to in writing."
+                  zh="目标：5 月 27 日预算通过日前到 2000 名（每区平均 400），让 Education Minister 必须书面回应。"
+                  lang={lang}
+                />
+              </li>
+              <li>
+                <I18nText
+                  en="Your name joins the public count on fundburnabykids.ca."
+                  zh="你的签名进入 fundburnabykids.ca 公开计数。"
+                  lang={lang}
+                />
+              </li>
+            </ul>
+          </div>
         </div>
 
         <script>
-          // PAC variant swap. submit.ts redirects PAC endorsements to
-          // /confirm-thanks/?form=pac so they don't see "Check your email"
-          // (PAC chairs don't get a confirmation email, only an admin
-          // notification fires). Signature flow has no ?form param.
+          // PAC variant swap. submit.ts redirects PAC to ?form=pac so we
+          // hide the two-step block and show the simple PAC card.
           (function pacSwap() {
             const params = new URLSearchParams(window.location.search);
             if (params.get('form') !== 'pac') return;
             const card = document.querySelector<HTMLElement>('.thanks-card[data-variant="signature"]');
             if (card) card.setAttribute('data-variant', 'pac');
             const headline = document.querySelector<HTMLElement>('[data-pac-headline-target]');
-            const lede = document.querySelector<HTMLElement>('[data-pac-lede-target]');
-            const pacLede = document.querySelector<HTMLElement>('[data-pac-only]');
+            const sigOnly = document.querySelector<HTMLElement>('[data-signature-only]');
+            const pacOnly = document.querySelector<HTMLElement>('[data-pac-only]');
+            const progress = document.querySelector<HTMLElement>('[data-progress-indicator]');
             const lang = document.documentElement.lang;
             if (headline) headline.textContent = lang === 'zh' ? '已收到你的 endorsement' : 'Endorsement received';
-            if (lede) lede.hidden = true;
-            if (pacLede) pacLede.hidden = false;
+            if (sigOnly) sigOnly.hidden = true;
+            if (pacOnly) pacOnly.hidden = false;
+            if (progress) progress.hidden = true;
           })();
 
-          // Read the mailto URL stashed by ActionForm's submit handler and
-          // wire up the actionable button + plain-text fallback. We render
-          // a real <a href="mailto:..."> click target instead of opening
-          // mailto from JS (current-tab nav hazard on browsers without a
-          // mailto handler — see the corresponding comment in
-          // ActionForm.astro).
+          // Wire Step 2 mailto button. ActionForm stashes the URL on
+          // submit; if it's missing (private mode, navigated here directly,
+          // sessionStorage cleared), show the recovery fallback so the
+          // signer always has a path forward.
           const KEY = 'fbk_mailto';
           let url = '';
           try { url = sessionStorage.getItem(KEY) || ''; } catch { /* ignore */ }
-          if (!url) {
-            // Nothing stashed — leave the block hidden (not everyone opts
-            // in to "also open the email"; some skip the consent box).
-          } else {
-            const block = document.querySelector<HTMLElement>('[data-mailto-block]');
-            const link = document.querySelector<HTMLAnchorElement>('[data-mailto-link]');
-            const toEl = document.querySelector<HTMLElement>('[data-mailto-to]');
-            const ccEl = document.querySelector<HTMLElement>('[data-mailto-cc]');
-            const subjEl = document.querySelector<HTMLElement>('[data-mailto-subject]');
-            const bodyEl = document.querySelector<HTMLElement>('[data-mailto-body]');
+          const mailtoBlock = document.querySelector<HTMLElement>('[data-mailto-block]');
+          const mailtoFallback = document.querySelector<HTMLElement>('[data-mailto-fallback]');
+          const link = document.querySelector<HTMLAnchorElement>('[data-mailto-link]');
+          const toEl = document.querySelector<HTMLElement>('[data-mailto-to]');
+          const ccEl = document.querySelector<HTMLElement>('[data-mailto-cc]');
+          const subjEl = document.querySelector<HTMLElement>('[data-mailto-subject]');
+          const bodyEl = document.querySelector<HTMLElement>('[data-mailto-body]');
+          if (url) {
             if (link) link.href = url;
-            // Parse the mailto URL into displayable parts for the fallback.
             try {
               const afterMailto = url.replace(/^mailto:/, '');
               const [toPart, queryPart = ''] = afterMailto.split('?');
@@ -180,7 +270,11 @@ const lang = pickLang(Astro.url.pathname);
               if (subjEl) subjEl.textContent = params.get('subject') || '';
               if (bodyEl) bodyEl.textContent = params.get('body') || '';
             } catch { /* leave fallback empty if parse fails */ }
-            if (block) block.hidden = false;
+          } else {
+            // No stash — hide the button + plain-text fallback, show the
+            // /find-my-signature/ recovery link instead.
+            if (mailtoBlock) mailtoBlock.hidden = true;
+            if (mailtoFallback) mailtoFallback.hidden = false;
           }
         </script>
 
@@ -200,72 +294,178 @@ const lang = pickLang(Astro.url.pathname);
     background: var(--paper);
     border: 1px solid var(--line);
     border-radius: var(--radius-lg);
-    padding: 48px 32px;
+    padding: 40px 32px;
     box-shadow: var(--shadow-sm);
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .thanks-header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
   }
   .thanks-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
+    font-size: 44px;
+    margin-bottom: 12px;
   }
-  h1 { font-size: 28px; margin-bottom: 12px; }
-  .thanks-lede {
-    font-size: 18px;
-    color: var(--ink-soft);
-    margin-bottom: 32px;
+  h1 {
+    font-size: 26px;
+    margin: 0 0 14px;
+    line-height: 1.3;
+    color: var(--ink);
   }
-  .thanks-next {
-    border-top: 1px solid var(--line);
-    padding-top: 24px;
-    margin-bottom: 24px;
-  }
-  .thanks-next h2 {
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+
+  .thanks-progress {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
     color: var(--muted);
-    margin-bottom: 12px;
-    font-weight: 600;
+    margin: 0;
+    flex-wrap: wrap;
+    justify-content: center;
   }
-  .thanks-next ul {
-    list-style: none;
-    padding: 0;
+  /* HTML `hidden` default is `display: none`, but our flex/inline-flex
+     declarations above override that. Re-assert the hidden semantic. */
+  .thanks-progress[hidden] { display: none; }
+  .progress-dot {
+    color: var(--accent);
+    font-size: 14px;
   }
-  .thanks-next li {
-    padding-left: 24px;
-    position: relative;
-    margin-bottom: 12px;
+  .progress-bar {
+    width: 28px;
+    height: 2px;
+    background: var(--accent);
+    display: inline-block;
+  }
+  .progress-label {
+    margin-left: 4px;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+
+  /* Step cards */
+  .step-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 22px 24px 18px;
+    margin-bottom: 14px;
+    background: var(--paper);
+  }
+  .step-card__head {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+  .step-num { color: var(--accent); }
+  .step-time { color: var(--muted); font-weight: 500; }
+  .step-card__title {
+    font-family: var(--font-sans);
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 10px;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .step-card__desc {
+    margin: 0 0 14px;
+    color: var(--ink-soft);
     line-height: 1.6;
+    font-size: 15px;
   }
-  .thanks-next li::before {
+  .step-card__meta {
+    list-style: none;
+    padding: 12px 16px;
+    margin: 0 0 14px;
+    background: var(--cream);
+    border-radius: var(--radius);
+  }
+  .step-card__meta li {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 3px 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .meta-label {
+    flex-shrink: 0;
+    width: 64px;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .step-card__meta strong { color: var(--ink); font-weight: 600; }
+  .step-card__meta em { color: var(--ink); font-style: italic; }
+
+  .step-card__fallback,
+  .step-card__letter-fallback {
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .step-card__fallback summary,
+  .step-card__letter-fallback summary {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    padding: 4px 0;
+  }
+  .step-card__fallback ul {
+    list-style: none;
+    padding: 6px 0 0;
+    margin: 0;
+  }
+  .step-card__fallback li {
+    padding-left: 16px;
+    position: relative;
+    margin-top: 6px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+  }
+  .step-card__fallback li::before {
     content: "·";
     position: absolute;
     left: 4px;
     color: var(--accent);
     font-weight: 700;
   }
-  .thanks-letter-note {
-    background: var(--cream);
-    border-left: 3px solid var(--warm);
-    padding: 16px 20px;
-    border-radius: 4px;
-    margin: 24px 0;
+  .step-card__fallback a { color: var(--accent); }
+
+  .step-card__action {
+    margin: 16px 0 12px;
   }
-  .thanks-letter-note h2 {
-    font-family: var(--font-sans);
+  .step-card__action-fallback {
+    margin: 14px 0;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    padding: 10px 14px;
+    background: var(--cream);
+    border-radius: var(--radius);
     font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--warm);
-    margin: 0 0 8px;
+  }
+  .step-card__action-fallback a {
+    color: var(--accent);
     font-weight: 600;
   }
-  .thanks-letter-note p { margin: 0 0 12px; line-height: 1.5; }
-  .thanks-letter-actions { margin: 16px 0 !important; }
+  .step-card__webmail-note { margin: 4px 0 0; }
+
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 10px 18px;
+    padding: 12px 24px;
     border-radius: var(--radius-md);
     border: 2px solid transparent;
     font-family: var(--font-sans);
@@ -273,6 +473,7 @@ const lang = pickLang(Astro.url.pathname);
     text-decoration: none;
     cursor: pointer;
   }
+  .btn--lg { font-size: 16px; padding: 14px 28px; }
   .btn--primary {
     background: var(--accent);
     color: #fff;
@@ -282,33 +483,23 @@ const lang = pickLang(Astro.url.pathname);
     background: var(--accent-deep);
     border-color: var(--accent-deep);
   }
-  .thanks-letter-fallback {
-    margin-top: 12px;
-    font-size: 13px;
-  }
-  .thanks-letter-fallback summary {
-    cursor: pointer;
-    color: var(--accent);
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .thanks-letter-fallback__body {
+
+  .step-card__letter-body {
     margin-top: 8px;
     padding: 12px;
-    background: var(--paper);
+    background: var(--cream);
     border: 1px solid var(--line);
     border-radius: 4px;
   }
-  .thanks-letter-fallback__body p { margin: 0 0 6px; word-break: break-word; }
-  .thanks-letter-fallback__body code {
+  .step-card__letter-body p { margin: 0 0 6px; word-break: break-word; }
+  .step-card__letter-body code {
     font-size: 12px;
     color: var(--ink-soft);
   }
-  .thanks-letter-body {
+  .step-card__letter-pre {
     margin: 8px 0 0;
     padding: 12px;
-    background: var(--cream);
+    background: var(--paper);
     border: 1px solid var(--line);
     border-radius: 4px;
     font-family: var(--font-mono, ui-monospace, monospace);
@@ -319,8 +510,58 @@ const lang = pickLang(Astro.url.pathname);
     max-height: 280px;
     overflow-y: auto;
   }
-  .thanks-back {
+
+  /* Why both steps */
+  .why-block {
     margin-top: 24px;
+    padding: 20px 22px;
+    background: var(--cream);
+    border-left: 3px solid var(--warm);
+    border-radius: var(--radius);
+  }
+  .why-block__title {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--warm);
+    font-weight: 700;
+    margin: 0 0 12px;
+  }
+  .why-block ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .why-block li {
+    padding-left: 22px;
+    position: relative;
+    margin-bottom: 10px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .why-block li:last-child { margin-bottom: 0; }
+  .why-block li::before {
+    content: "✦";
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: var(--warm);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  /* PAC variant — bare card */
+  .thanks-lede {
+    font-size: 17px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .thanks-back {
+    margin-top: 28px;
+    text-align: center;
   }
   .thanks-back a {
     text-decoration: none;
@@ -329,6 +570,19 @@ const lang = pickLang(Astro.url.pathname);
     font-size: 14px;
     font-weight: 500;
   }
+  .thanks-back a:hover { text-decoration: underline; }
+
   .small { font-size: 13px; }
   .muted { color: var(--muted); }
+
+  @media (max-width: 560px) {
+    .thanks-card { padding: 28px 20px; }
+    h1 { font-size: 22px; }
+    .step-card { padding: 18px 16px 14px; }
+    .step-card__title { font-size: 17px; }
+    .step-card__desc { font-size: 14px; }
+    .meta-label { width: 56px; font-size: 10px; }
+    .step-card__meta li { flex-wrap: wrap; }
+    .why-block { padding: 16px 18px; }
+  }
 </style>

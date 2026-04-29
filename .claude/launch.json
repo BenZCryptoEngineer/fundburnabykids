@@ -12,6 +12,12 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev", "--prefix", "platform", "--", "--port", "4322"],
       "port": 4322
+    },
+    {
+      "name": "platform-static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["http-server", "platform/dist", "-p", "4323", "-c-1", "--silent"],
+      "port": 4323
     }
   ]
 }

@@ -265,6 +265,37 @@ async function processPacEndorsement(
     return;
   }
 
+  // Confirmation to PAC chair (was missing — confirm-thanks.astro promises
+  // "we'll email the chair address you provided" but the email never went).
+  // Best-effort: log a send failure but don't fail the request — the row is
+  // already inserted and the admin notification will still fire.
+  try {
+    await sendPacChairConfirmation({
+      to: chairEmail,
+      chairName,
+      school,
+      students,
+    });
+  } catch (err) {
+    console.error('pac chair confirmation send failed (non-fatal):', err);
+  }
+
+  // Admin notification with a one-click "Reply to chair" mailto + the
+  // verify SQL (so Ben can paste it into Supabase Studio).
+  const safeSchoolForSql = school.replace(/'/g, "''");
+  const verifySql = `UPDATE pac_endorsements SET status='verified', verified_at=NOW() WHERE school='${safeSchoolForSql}' AND status='pending';`;
+  const replySubject = `Re: ${school} PAC endorsement — verified`;
+  const replyBody =
+    `Hi ${chairName},\n\n` +
+    `Thanks again for the ${school} PAC endorsement. We've verified it ` +
+    `on our side and you're now listed publicly on https://fundburnabykids.ca/.\n\n` +
+    `If anything in the listing looks wrong, just reply to this email.\n\n` +
+    `— Ben`;
+  const replyMailto =
+    `mailto:${encodeURIComponent(chairEmail)}` +
+    `?subject=${encodeURIComponent(replySubject)}` +
+    `&body=${encodeURIComponent(replyBody)}`;
+
   await sendAdminNotification({
     subject: `[PAC pending] ${school} — verify endorsement`,
     text:
@@ -273,8 +304,23 @@ async function processPacEndorsement(
       `Students: ${students}\n` +
       `Approval date: ${approvalDate || 'pending'}\n` +
       `Future interest: ${futureInterest}\n\n` +
-      `Verify via Supabase: UPDATE pac_endorsements SET status='verified', ` +
-      `verified_at=NOW() WHERE school='${school.replace(/'/g, "''")}' AND status='pending';`,
+      `Verify via Supabase Studio:\n${verifySql}\n\n` +
+      `After verifying, reply to chair:\n${replyMailto}`,
+    html:
+      `<!doctype html><html><body style="font-family:system-ui,sans-serif;max-width:560px;margin:24px auto;padding:0 16px;line-height:1.6;color:#1a1a1a;">` +
+      `<h2 style="font-size:18px;margin:0 0 16px;">PAC endorsement received — needs verify</h2>` +
+      `<table style="border-collapse:collapse;width:100%;font-size:14px;margin-bottom:20px;">` +
+      `<tr><td style="padding:6px 12px 6px 0;color:#666;width:140px;">School</td><td style="padding:6px 0;"><strong>${escapeHtml(school)}</strong></td></tr>` +
+      `<tr><td style="padding:6px 12px 6px 0;color:#666;">Chair</td><td style="padding:6px 0;">${escapeHtml(chairName)} &lt;${escapeHtml(chairEmail)}&gt;</td></tr>` +
+      `<tr><td style="padding:6px 12px 6px 0;color:#666;">Students</td><td style="padding:6px 0;">${students}</td></tr>` +
+      `<tr><td style="padding:6px 12px 6px 0;color:#666;">Approval date</td><td style="padding:6px 0;">${escapeHtml(approvalDate || 'pending')}</td></tr>` +
+      `<tr><td style="padding:6px 12px 6px 0;color:#666;">Future interest</td><td style="padding:6px 0;">${futureInterest ? 'yes' : 'no'}</td></tr>` +
+      `</table>` +
+      `<h3 style="font-size:14px;text-transform:uppercase;letter-spacing:0.05em;color:#666;margin:0 0 8px;">Step 1 — Verify in Supabase Studio</h3>` +
+      `<pre style="background:#f4f1ea;padding:12px;border-radius:4px;font-size:12px;overflow-x:auto;">${escapeHtml(verifySql)}</pre>` +
+      `<h3 style="font-size:14px;text-transform:uppercase;letter-spacing:0.05em;color:#666;margin:24px 0 8px;">Step 2 — Reply to chair</h3>` +
+      `<p style="margin:0;"><a href="${escapeAttr(replyMailto)}" style="display:inline-block;background:#1C3F8F;color:#fff;text-decoration:none;padding:10px 20px;border-radius:6px;font-weight:600;">📨 Reply to ${escapeHtml(chairName)}</a></p>` +
+      `</body></html>`,
   });
 }
 
@@ -381,7 +427,7 @@ async function sendConfirmationEmail(opts: {
   }
 }
 
-async function sendAdminNotification(opts: { subject: string; text: string }): Promise<void> {
+async function sendAdminNotification(opts: { subject: string; text: string; html?: string }): Promise<void> {
   if (!RESEND_API_KEY) return;
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
@@ -394,9 +440,95 @@ async function sendAdminNotification(opts: { subject: string; text: string }): P
       to: [ADMIN_NOTIFICATION_EMAIL],
       subject: opts.subject,
       text: opts.text,
+      ...(opts.html ? { html: opts.html } : {}),
       tags: [{ name: 'type', value: 'admin_notification' }],
     }),
   }).catch((err) => console.error('admin notification failed:', err));
+}
+
+// PAC chair confirmation — closes the gap where confirm-thanks.astro
+// promised "we'll email the chair" but no email was actually sent.
+async function sendPacChairConfirmation(opts: {
+  to: string;
+  chairName: string;
+  school: string;
+  students: number;
+}): Promise<void> {
+  if (!RESEND_API_KEY) {
+    console.warn('RESEND_API_KEY not set; skipping PAC chair confirmation send');
+    return;
+  }
+  const subject = `We received the ${opts.school} PAC endorsement — Fund Burnaby Kids`;
+  const text = `Hi ${opts.chairName},
+
+Thank you. We received the ${opts.school} PAC endorsement (representing ${opts.students} students) for the Fund Burnaby Kids campaign asking the BC Province to fully fund the $9.4M arbitration liability before SD41 adopts its 2026-27 budget on May 27.
+
+What happens next:
+  1. We will personally verify the endorsement, usually within 24 hours.
+  2. You'll get a follow-up reply from Ben confirming verification + a public listing on https://fundburnabykids.ca/.
+  3. Your endorsement strengthens the petition. We hand-deliver a printed letter stack to all 5 Burnaby MLAs at 500 confirmed parent signatures.
+
+Full case + primary sources: https://fundburnabykids.ca/
+
+Questions? Just reply to this email — it goes straight to Ben.
+
+—
+Fund Burnaby Kids
+A campaign of Burnaby Kids First
+${MAILING_ADDRESS}
+
+You are receiving this email because you submitted a PAC endorsement at fundburnabykids.ca on behalf of ${opts.school}.
+`;
+
+  const html = `<!doctype html>
+<html lang="en"><body style="font-family:system-ui,-apple-system,'Segoe UI',sans-serif;max-width:560px;margin:32px auto;padding:0 20px;line-height:1.6;color:#1a1a1a;">
+<p>Hi ${escapeHtml(opts.chairName)},</p>
+
+<p>Thank you. We received the <strong>${escapeHtml(opts.school)} PAC endorsement</strong> (representing ${opts.students} students) for the Fund Burnaby Kids campaign asking the BC Province to fully fund the <strong>$9.4M arbitration liability</strong> before SD41 adopts its 2026-27 budget on <strong>May 27</strong>.</p>
+
+<h3 style="font-size:16px;margin-top:28px;">What happens next</h3>
+<ol style="padding-left:20px;line-height:1.7;">
+  <li>We will personally verify the endorsement, usually within 24 hours.</li>
+  <li>You'll get a follow-up reply from Ben confirming verification + a public listing on <a href="https://fundburnabykids.ca" style="color:#1C3F8F;">fundburnabykids.ca</a>.</li>
+  <li>Your endorsement strengthens the petition. We hand-deliver a printed letter stack to all 5 Burnaby MLAs at 500 confirmed parent signatures.</li>
+</ol>
+
+<p>Full case + primary sources: <a href="https://fundburnabykids.ca" style="color:#1C3F8F;">fundburnabykids.ca</a></p>
+
+<p>Questions? Just reply to this email — it goes straight to Ben.</p>
+
+<hr style="border:none;border-top:1px solid #e0e0e0;margin:32px 0 16px;">
+
+<p style="font-size:13px;color:#666;">
+Fund Burnaby Kids — A campaign of Burnaby Kids First<br>
+${escapeHtml(MAILING_ADDRESS)}
+</p>
+
+<p style="font-size:12px;color:#888;">
+You are receiving this email because you submitted a PAC endorsement at <a href="https://fundburnabykids.ca" style="color:#1C3F8F;">fundburnabykids.ca</a> on behalf of ${escapeHtml(opts.school)}.
+</p>
+</body></html>`;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: RESEND_FROM,
+      to: [opts.to],
+      subject,
+      html,
+      text,
+      tags: [{ name: 'type', value: 'pac_chair_confirmation' }],
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text();
+    console.error(`pac chair confirmation send failed (${res.status}):`, body);
+  }
 }
 
 // ---------------------------------------------------------------------------

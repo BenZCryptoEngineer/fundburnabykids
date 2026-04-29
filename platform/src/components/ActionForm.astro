@@ -281,16 +281,6 @@ const dataMailto = JSON.stringify({
           </span>
         </label>
 
-        <label class="consent">
-          <input type="checkbox" name="consent-letter" checked />
-          <span>
-            <I18nText
-              en="Also open a pre-filled email to my MLA + the Education Minister when I submit."
-              zh="提交时同时打开一封预填给我 MLA 和教育部长的邮件。"
-              lang={lang}
-            />
-          </span>
-        </label>
       </fieldset>
 
       {turnstileSiteKey && (
@@ -465,7 +455,7 @@ const dataMailto = JSON.stringify({
     });
 
     // On submit: build the mailto URL and STASH it in sessionStorage so
-    // /confirm-thanks can render it as a real anchor for the user to click.
+    // /confirm-thanks can render it as a real anchor on Step 2.
     //
     // Earlier revisions called window.open('mailto:...') during submit.
     // Browsers without a registered mailto: handler (Chrome on a fresh
@@ -473,15 +463,12 @@ const dataMailto = JSON.stringify({
     // to the mailto: URL — the form's POST is cancelled, the user lands
     // on a blank "mailto:..." page, and the signature is never recorded.
     //
-    // Stashing instead means: form POST → Netlify Forms → /confirm-thanks
-    // happens cleanly, and the email opens on user gesture from a real
-    // <a href="mailto:..."> anchor on that page.
+    // Stashing instead means: form POST → /api/submit Function → 303 to
+    // /confirm-thanks/ happens cleanly, and the email opens on user
+    // gesture from a real <a href="mailto:..."> anchor on Step 2.
     form.addEventListener('submit', () => {
-      const sendLetter = (form.elements.namedItem('consent-letter') as HTMLInputElement | null)?.checked;
-      // Always clear stale data, even if user UNCHECKED the letter consent
-      // — otherwise a previous submission's mailto would resurface.
+      // Always clear stale data so a previous submission's mailto can't resurface.
       try { sessionStorage.removeItem('fbk_mailto'); } catch { /* private mode */ }
-      if (!sendLetter) return;
 
       const mailtoData = form.dataset.mailto;
       if (!mailtoData) return;
