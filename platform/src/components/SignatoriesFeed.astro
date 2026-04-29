@@ -53,9 +53,14 @@ if (url && key) {
     />
   </p>
 
-  <div class="signatories__flow" data-signatories-flow>
+  <div class="signatories__flow">
+    {/* Two render modes: empty-state (single message) or marquee track.
+        The track wraps the pills and gets a CSS animation that scrolls
+        them left infinitely. To make the loop seamless, the same pill
+        list is rendered twice in the track — at -50% translateX the
+        second copy lands exactly where the first started. */}
     {initial.length === 0 ? (
-      <p class="signatories__empty">
+      <p class="signatories__empty" data-signatories-flow>
         <I18nText
           en="Be the first to sign →"
           zh="成为第一位签名者 →"
@@ -63,12 +68,18 @@ if (url && key) {
         />
       </p>
     ) : (
-      initial.map((s) => (
-        <span class="sig-pill" title={`${s.school}, ${s.neighbourhood}`}>
-          <span class="sig-pill__name sans">{s.first_name} {s.last_initial}.</span>
-          <span class="sig-pill__where">{s.school} · {s.neighbourhood}</span>
-        </span>
-      ))
+      <div class="signatories__track" data-signatories-flow aria-label="Recent confirmed signatures">
+        {[...initial, ...initial].map((s, i) => (
+          <span
+            class="sig-pill"
+            title={`${s.school}, ${s.neighbourhood}`}
+            aria-hidden={i >= initial.length ? 'true' : undefined}
+          >
+            <span class="sig-pill__name sans">{s.first_name} {s.last_initial}.</span>
+            <span class="sig-pill__where">{s.school}</span>
+          </span>
+        ))}
+      </div>
     )}
   </div>
 </div>
@@ -81,8 +92,8 @@ if (url && key) {
     const limit = parseInt(el.dataset.limit || '60', 10);
     if (!url || !key) return;
 
-    const flow = el.querySelector<HTMLElement>('[data-signatories-flow]');
-    if (!flow) return;
+    const flowOuter = el.querySelector<HTMLElement>('.signatories__flow');
+    if (!flowOuter) return;
 
     function escapeHtml(s: string) {
       return s.replace(/[&<>"']/g, (c) => ({
@@ -97,6 +108,16 @@ if (url && key) {
 
     const emptyText = el.dataset.emptyText || 'Be the first to sign →';
 
+    function pillHtml(s: Sig, ariaHide: boolean): string {
+      return (
+        `<span class="sig-pill" title="${escapeHtml(s.school + ', ' + s.neighbourhood)}"` +
+          (ariaHide ? ' aria-hidden="true"' : '') + `>` +
+          `<span class="sig-pill__name sans">${escapeHtml(s.first_name)} ${escapeHtml(s.last_initial)}.</span>` +
+          `<span class="sig-pill__where">${escapeHtml(s.school)}</span>` +
+        `</span>`
+      );
+    }
+
     async function poll() {
       try {
         const res = await fetch(
@@ -110,15 +131,19 @@ if (url && key) {
         // render the empty-state pill so stale SSR-baked entries don't
         // ghost-linger on the page after the underlying rows go away.
         if (sigs.length === 0) {
-          flow!.innerHTML = `<p class="signatories__empty">${escapeHtml(emptyText)}</p>`;
+          flowOuter!.innerHTML =
+            `<p class="signatories__empty" data-signatories-flow>${escapeHtml(emptyText)}</p>`;
           return;
         }
-        flow!.innerHTML = sigs.map((s) =>
-          `<span class="sig-pill" title="${escapeHtml(s.school + ', ' + s.neighbourhood)}">` +
-            `<span class="sig-pill__name sans">${escapeHtml(s.first_name)} ${escapeHtml(s.last_initial)}.</span>` +
-            `<span class="sig-pill__where">${escapeHtml(s.school)} · ${escapeHtml(s.neighbourhood)}</span>` +
-          `</span>`
-        ).join('');
+        // Render pills twice in the track so the CSS marquee
+        // translateX(-50%) loops seamlessly. Second copy is
+        // aria-hidden so screen readers only hear each signer once.
+        const firstPass = sigs.map((s) => pillHtml(s, false)).join('');
+        const secondPass = sigs.map((s) => pillHtml(s, true)).join('');
+        flowOuter!.innerHTML =
+          `<div class="signatories__track" data-signatories-flow aria-label="Recent confirmed signatures">` +
+            firstPass + secondPass +
+          `</div>`;
       } catch {
         /* keep last good */
       }
@@ -137,13 +162,51 @@ if (url && key) {
     color: var(--ink-soft);
     margin-bottom: 12px;
   }
+  /* Outer mask — clips the marquee track to the row width and provides
+     a soft fade on the left/right edges so pills don't appear to pop in. */
   .signatories__flow {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    max-height: 240px;
-    overflow-y: auto;
+    position: relative;
+    overflow: hidden;
     padding: 4px 0;
+    /* Soft fade-out at edges via mask (fall back gracefully on browsers
+       that don't support mask-image — pills just clip to box edge). */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 24px,
+      black calc(100% - 24px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 24px,
+      black calc(100% - 24px),
+      transparent 100%
+    );
+  }
+  .signatories__track {
+    display: inline-flex;
+    gap: 6px;
+    width: max-content;
+    /* Animation duration is heuristic — 60s for ~30 pills × 2 copies
+       reads as a calm continuous flow. Tune by content density if the
+       campaign list grows past a few hundred. */
+    animation: signatories-scroll 60s linear infinite;
+  }
+  .signatories__flow:hover .signatories__track {
+    animation-play-state: paused;
+  }
+  /* Respect users who opt out of motion — fall back to static row,
+     truncated to viewport (the mask fade still covers the cut). */
+  @media (prefers-reduced-motion: reduce) {
+    .signatories__track {
+      animation: none;
+    }
+  }
+  @keyframes signatories-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
   }
   .signatories__empty {
     color: var(--muted);
@@ -159,6 +222,7 @@ if (url && key) {
     border-radius: 4px;
     font-size: 12px;
     line-height: 1.3;
+    flex: 0 0 auto;
   }
   .sig-pill__name {
     font-weight: 600;
