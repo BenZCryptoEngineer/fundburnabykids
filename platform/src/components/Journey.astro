@@ -526,6 +526,23 @@ const clientData = {
       });
     });
 
+    // "See full grade-by-grade table" expander on mobile. The desktop
+    // table-wrap and scroll-hint are hidden on mobile via media query.
+    // When the user opens the details, toggle a class on the
+    // .journey root so the matching CSS rule re-shows them.
+    const fullTableDetails = document.querySelector<HTMLDetailsElement>('.journey-mobile__full-table');
+    const journeyRoot = document.querySelector<HTMLElement>('.journey');
+    fullTableDetails?.addEventListener('toggle', () => {
+      if (!journeyRoot) return;
+      journeyRoot.classList.toggle('journey--show-full', fullTableDetails.open);
+      // When opening, scroll the now-visible table into view so the
+      // user understands what just appeared.
+      if (fullTableDetails.open) {
+        const wrap = document.querySelector<HTMLElement>('.journey__table-wrap');
+        wrap?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+
     // Share handler — navigator.share when available, clipboard fallback.
     mobileShareBtn?.addEventListener('click', async () => {
       if (!currentMobileGrade) return;
@@ -988,11 +1005,20 @@ const clientData = {
     padding: 8px 0;
   }
   .journey-mobile__full-hint { margin: 8px 0 0; font-size: 12px; }
-  /* When the user opens the full-table details on mobile, re-show the
-     desktop horizontal-scroll table inside it. */
-  .journey-mobile__full-table[open] ~ .journey__table-wrap,
-  .journey-mobile__full-table[open] + .journey__scroll-hint {
-    display: block;
+  /* When the user opens the full-table details on mobile, the JS
+     toggle adds .journey--show-full to the root. Sibling selectors
+     can't reach across the nested DOM hierarchy here, so the toggle
+     class is the reliable way to re-show the desktop table on mobile.
+     Show the legend too — without it the colour codes are unexplained. */
+  @media (max-width: 768px) {
+    .journey--show-full .journey__table-wrap,
+    .journey--show-full .journey__scroll-hint,
+    .journey--show-full .journey__legend {
+      display: block;
+    }
+    .journey--show-full .journey__legend {
+      display: flex;
+    }
   }
 
   /* Sources block — every claim traceable to a primary source. */
