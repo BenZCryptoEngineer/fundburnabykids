@@ -80,11 +80,55 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     data-zoom-close
     aria-label={closeLabel}
   >×</button>
-  <div class="svg-lightbox__media" set:html={svgContent} />
+  <p class="svg-lightbox__hint sans" aria-hidden="true">
+    <I18nText
+      en="Pinch or scroll to zoom · drag to pan"
+      zh="双指缩放或滚轮缩放 · 拖动平移"
+      lang={lang}
+    />
+  </p>
+  <div class="svg-lightbox__viewport">
+    <div class="svg-lightbox__media" set:html={svgContent} />
+  </div>
+  <div
+    class="svg-lightbox__controls"
+    role="toolbar"
+    aria-label={lang === 'zh' ? '缩放控制' : 'Zoom controls'}
+  >
+    <button
+      type="button"
+      class="svg-lightbox__btn"
+      data-zoom-out
+      aria-label={lang === 'zh' ? '缩小' : 'Zoom out'}
+    >−</button>
+    <button
+      type="button"
+      class="svg-lightbox__btn"
+      data-zoom-reset
+      aria-label={lang === 'zh' ? '重置缩放' : 'Reset zoom'}
+    >⟲</button>
+    <button
+      type="button"
+      class="svg-lightbox__btn"
+      data-zoom-in
+      aria-label={lang === 'zh' ? '放大' : 'Zoom in'}
+    >+</button>
+  </div>
 </dialog>
 
 <script>
   // Single delegated handler — Astro hoists & dedupes this across instances.
+  // The lightbox uses @panzoom/panzoom (~3KB gzip) for pinch-to-zoom on
+  // touch devices, mouse-wheel zoom on desktop, and drag-to-pan on both.
+  // The +/-/reset toolbar exists for keyboard a11y and as a discoverable
+  // affordance for users who don't recognize the gesture vocabulary.
+  import Panzoom from '@panzoom/panzoom';
+
+  type DialogWithPz = HTMLDialogElement & {
+    __pz?: ReturnType<typeof Panzoom>;
+    __pzWheelBound?: boolean;
+  };
+
   if (!(window as any).__svgLightboxBound) {
     (window as any).__svgLightboxBound = true;
 
@@ -92,15 +136,65 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
+      // Open lightbox + lazy-init panzoom on first open of each dialog.
       const opener = target.closest<HTMLElement>('[data-zoom-target]');
       if (opener) {
         const id = opener.dataset.zoomTarget;
         if (!id) return;
-        const dlg = document.getElementById(id) as HTMLDialogElement | null;
-        if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
+        const dlg = document.getElementById(id) as DialogWithPz | null;
+        if (!dlg || typeof dlg.showModal !== 'function') return;
+
+        dlg.showModal();
+
+        const svg = dlg.querySelector<SVGElement>('.svg-lightbox__media svg');
+        if (svg && !dlg.__pz) {
+          dlg.__pz = Panzoom(svg as unknown as HTMLElement, {
+            maxScale: 5,
+            minScale: 1,
+            startScale: 1,
+            step: 0.3,
+            // No `contain` option — neither 'inside' nor 'outside' fits:
+            //   - 'outside' scales the SVG up to fill parent height,
+            //     making narrow horizontal timelines display as
+            //     already-zoomed-in on initial open.
+            //   - 'inside' refuses to let zoom-in exceed parent bounds,
+            //     so the +/pinch buttons appear broken.
+            // Without containment, panzoom lets the user freely zoom
+            // up to maxScale and drag-pan anywhere. The trade-off is
+            // the SVG can be panned off-screen — the reset (⟲) button
+            // and lightbox close-and-reopen both bring it back.
+          });
+          // Desktop: scroll wheel zooms (instead of scrolling the page).
+          const container = dlg.querySelector<HTMLElement>('.svg-lightbox__viewport');
+          if (container && !dlg.__pzWheelBound) {
+            container.addEventListener(
+              'wheel',
+              (ev) => {
+                ev.preventDefault();
+                dlg.__pz?.zoomWithWheel(ev as WheelEvent);
+              },
+              { passive: false }
+            );
+            dlg.__pzWheelBound = true;
+          }
+        } else if (dlg.__pz) {
+          // Re-open: reset zoom + pan to 1x center.
+          dlg.__pz.reset({ animate: false });
+        }
         return;
       }
 
+      // Zoom toolbar buttons.
+      const dlgFrom = (el: HTMLElement | null) =>
+        el?.closest('dialog') as DialogWithPz | null;
+      const zoomIn = target.closest<HTMLElement>('[data-zoom-in]');
+      if (zoomIn) { dlgFrom(zoomIn)?.__pz?.zoomIn(); return; }
+      const zoomOut = target.closest<HTMLElement>('[data-zoom-out]');
+      if (zoomOut) { dlgFrom(zoomOut)?.__pz?.zoomOut(); return; }
+      const zoomReset = target.closest<HTMLElement>('[data-zoom-reset]');
+      if (zoomReset) { dlgFrom(zoomReset)?.__pz?.reset(); return; }
+
+      // Close.
       const closer = target.closest<HTMLElement>('[data-zoom-close]');
       if (closer) {
         const dlg = closer.closest('dialog') as HTMLDialogElement | null;
@@ -108,7 +202,9 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
         return;
       }
 
-      // Backdrop click (event target is the dialog itself when clicking outside the SVG).
+      // Backdrop click — only when the click landed on the dialog element
+      // itself (i.e. outside the panzoom viewport). Clicks inside the
+      // viewport are consumed by panzoom's drag handler.
       if (target.tagName === 'DIALOG' && target.classList.contains('svg-lightbox')) {
         (target as HTMLDialogElement).close();
       }
@@ -227,10 +323,11 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
   }
   .muted { color: var(--muted); }
 
-  /* Lightbox dialog — fullscreen-ish modal at native SVG resolution. */
+  /* Lightbox dialog — fullscreen-ish modal with panzoom-driven SVG. */
   .svg-lightbox {
     width: 90vw;
     max-width: 1200px;
+    height: 85vh;
     max-height: 90vh;
     padding: 0;
     border: none;
@@ -238,6 +335,7 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     background: var(--paper);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
+    position: relative;
   }
   .svg-lightbox::backdrop {
     background: rgba(0, 0, 0, 0.9);
@@ -246,8 +344,8 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     position: absolute;
     top: 12px;
     right: 12px;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     border: 1px solid var(--line);
     background: var(--paper);
@@ -258,31 +356,140 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 2;
+  }
+  .svg-lightbox__close:hover { background: var(--cream); color: var(--accent); }
+  .svg-lightbox__close:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Hint pill at the top — tells the user how to zoom/pan. */
+  .svg-lightbox__hint {
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    color: var(--muted);
+    background: var(--paper);
+    padding: 4px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    margin: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    max-width: calc(100% - 120px); /* leave room for close button */
+    overflow: hidden;
+    text-overflow: ellipsis;
     z-index: 1;
   }
-  .svg-lightbox__close:hover {
-    background: var(--cream);
-    color: var(--accent);
-  }
-  .svg-lightbox__media {
+
+  /* Viewport contains the panzoomed SVG. overflow:hidden is what
+     keeps zoomed-out SVG from spilling into the controls / hint. */
+  .svg-lightbox__viewport {
     width: 100%;
     height: 100%;
-    padding: 32px;
+    padding: 56px 24px 80px; /* top: hint, bottom: controls */
     display: flex;
     align-items: center;
     justify-content: center;
     box-sizing: border-box;
+    overflow: hidden;
+    /* touch-action: none lets panzoom fully handle gestures without
+       the browser hijacking pinch as page-zoom or drag as scroll. */
+    touch-action: none;
+    cursor: grab;
+  }
+  .svg-lightbox__viewport:active { cursor: grabbing; }
+
+  .svg-lightbox__media {
+    /* Must take the viewport's full size so the inner SVG has a parent
+       to size against. Without explicit width/height, the flex container
+       collapses and the SVG (sized via max-width:100% of media) goes to
+       zero. */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .svg-lightbox__media :global(svg) {
     width: 100%;
     height: auto;
-    max-height: calc(90vh - 64px);
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
   }
+
+  /* Zoom toolbar at the bottom. 44×44 buttons meet WCAG 2.1 AA touch
+     target size; visible in mid- and high-contrast color schemes. */
+  .svg-lightbox__controls {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 4px;
+    box-shadow: var(--shadow-sm);
+    z-index: 2;
+  }
+  .svg-lightbox__btn {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--ink);
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+  .svg-lightbox__btn:hover {
+    background: var(--cream);
+    border-color: var(--line);
+    color: var(--accent);
+  }
+  .svg-lightbox__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .svg-lightbox__btn:active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+
+  /* Mobile fullscreen — phones get the entire viewport since narrow
+     screens make a centered modal feel cramped. */
   @media (max-width: 560px) {
     .svg-lightbox {
-      width: 96vw;
-      max-height: 94vh;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      border-radius: 0;
+      margin: 0;
     }
-    .svg-lightbox__media { padding: 16px; }
+    .svg-lightbox__viewport {
+      padding: 60px 12px 80px;
+    }
+    .svg-lightbox__hint {
+      top: 14px;
+      font-size: 10px;
+      padding: 3px 10px;
+    }
+    .svg-lightbox__controls {
+      bottom: 20px;
+    }
   }
 </style>
