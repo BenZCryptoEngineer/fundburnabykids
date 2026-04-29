@@ -81,10 +81,10 @@ const clientData = {
     </header>
 
     <div class="journey__legend sans">
-      <span class="legend-item"><span class="legend-cell legend-cell--have"></span><I18nText en="Available" zh="目前可用" lang={lang} /></span>
-      <span class="legend-item"><span class="legend-cell legend-cell--lost"></span><I18nText en="Already cut (2025-26)" zh="已削减 (25-26)" lang={lang} /></span>
+      <span class="legend-item"><span class="legend-cell legend-cell--have"></span><I18nText en="Currently available (after last year's cuts)" zh="目前还在（去年砍剩的）" lang={lang} /></span>
+      <span class="legend-item"><span class="legend-cell legend-cell--lost"></span><I18nText en="Already cut last year" zh="去年已被削减" lang={lang} /></span>
       <span class="legend-item"><span class="legend-cell legend-cell--risk"></span><I18nText en="At risk if not funded" zh="若未拨款则有风险" lang={lang} /></span>
-      <span class="legend-item"><span class="legend-cell legend-cell--gone"></span><I18nText en="Likely eliminated" zh="可能被取消" lang={lang} /></span>
+      <span class="legend-item"><span class="legend-cell legend-cell--gone"></span><I18nText en="Eliminated or near-zero" zh="已取消或趋近于零" lang={lang} /></span>
     </div>
 
     <div class="journey__scroll-hint sans" aria-hidden="true">
@@ -387,16 +387,45 @@ const clientData = {
     border-radius: 3px;
     border: 1px solid transparent;
   }
-  .legend-cell--have { background: #15803D; }
-  .legend-cell--lost { background: #E5E7EB; border: 1px dashed #9CA3AF; }
-  .legend-cell--risk { background: repeating-linear-gradient(45deg, #FED7AA 0 6px, #FDBA74 6px 12px); }
-  .legend-cell--gone { background: #DC2626; }
+  /* Color palette per UX research (Prompt 04):
+     - have:  pale cream — "still here, but barely" (don't anchor green
+       safety; loss aversion engages when survivors feel fragile).
+     - lost:  grey + strikethrough X — "this is gone".
+     - risk:  saturated orange diagonals — first thing the eye should hit.
+     - gone:  saturated red + double-line pattern — color-blind safe. */
+  .legend-cell--have { background: #F5F1E8; border: 1px solid #E5E0D5; }
+  .legend-cell--lost {
+    background: #E5E7EB;
+    border: 1px dashed #9CA3AF;
+    background-image: linear-gradient(45deg, transparent 45%, #9CA3AF 45%, #9CA3AF 55%, transparent 55%);
+  }
+  .legend-cell--risk {
+    background: repeating-linear-gradient(45deg, #FB923C 0 4px, #F97316 4px 8px);
+  }
+  .legend-cell--gone {
+    background: #DC2626;
+    background-image:
+      linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%, transparent 90%, rgba(255,255,255,0.7) 90%),
+      linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%);
+    background-color: #DC2626;
+  }
 
   /* Table cells — keep default td display, only paint background. */
-  .journey__cell.cell--have { background: #15803D; }
-  .journey__cell.cell--lost { background: #E5E7EB; border: 1px dashed #9CA3AF; }
-  .journey__cell.cell--risk { background: repeating-linear-gradient(45deg, #FED7AA 0 6px, #FDBA74 6px 12px); }
-  .journey__cell.cell--gone { background: #DC2626; }
+  .journey__cell.cell--have { background: #F5F1E8; }
+  .journey__cell.cell--lost {
+    background: #E5E7EB;
+    border: 1px dashed #9CA3AF;
+    background-image: linear-gradient(45deg, transparent 45%, #9CA3AF 45%, #9CA3AF 55%, transparent 55%);
+  }
+  .journey__cell.cell--risk {
+    background: repeating-linear-gradient(45deg, #FB923C 0 4px, #F97316 4px 8px);
+  }
+  .journey__cell.cell--gone {
+    background-color: #DC2626;
+    background-image:
+      linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%, transparent 90%, rgba(255,255,255,0.7) 90%),
+      linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%);
+  }
 
   .journey__summary {
     margin-top: 24px;
