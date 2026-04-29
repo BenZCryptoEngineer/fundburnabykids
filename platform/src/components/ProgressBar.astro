@@ -55,7 +55,9 @@ const nextRemaining = next ? next.count - initialCount : 0;
      data-supabase-url={url}
      data-supabase-key={key}
      data-poll-ms="30000"
-     data-max={maxMilestone}>
+     data-max={maxMilestone}
+     data-lang={lang}
+     data-milestones={JSON.stringify(milestones.map((m) => ({ count: m.count, en: t(m.consequence, 'en'), zh: t(m.consequence, 'zh') })))}>
   <div class="progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax={maxMilestone} aria-valuenow={initialCount}>
     <div class="progress__fill" style={`width: ${initialPct}%`} data-progress-fill></div>
     {milestones.map((m) => {
@@ -94,6 +96,7 @@ const nextRemaining = next ? next.count - initialCount : 0;
 </div>
 
 <script>
+  type MilestoneClient = { count: number; en: string; zh: string };
   document.querySelectorAll<HTMLElement>('.progress').forEach((el) => {
     const url = el.dataset.supabaseUrl;
     const key = el.dataset.supabaseKey;
@@ -101,8 +104,38 @@ const nextRemaining = next ? next.count - initialCount : 0;
     const max = parseInt(el.dataset.max || '0', 10);
     if (!url || !key || !max) return;
 
+    const lang = (el.dataset.lang === 'zh' ? 'zh' : 'en') as 'en' | 'zh';
+    let milestones: MilestoneClient[] = [];
+    try {
+      milestones = JSON.parse(el.dataset.milestones || '[]');
+    } catch { milestones = []; }
+
     const fill = el.querySelector<HTMLElement>('[data-progress-fill]');
     const milestoneEls = el.querySelectorAll<HTMLElement>('.progress__milestone');
+    const hintEl = el.querySelector<HTMLElement>('[data-progress-hint]');
+
+    function findNext(count: number): MilestoneClient | null {
+      for (const m of milestones) {
+        if (count < m.count) return m;
+      }
+      return null;
+    }
+
+    function renderHint(total: number) {
+      if (!hintEl) return;
+      const next = findNext(total);
+      if (!next) {
+        hintEl.textContent = lang === 'zh'
+          ? '顶级里程碑已达成。继续。'
+          : 'Top milestone reached. Keep going.';
+        return;
+      }
+      const remaining = next.count - total;
+      const consequence = lang === 'zh' ? next.zh : next.en;
+      hintEl.textContent = lang === 'zh'
+        ? `再 ${remaining.toLocaleString()} 个签名 → ${consequence}`
+        : `${remaining.toLocaleString()} more until ${consequence}`;
+    }
 
     async function poll() {
       try {
@@ -121,6 +154,10 @@ const nextRemaining = next ? next.count - initialCount : 0;
           const c = parseInt(m.dataset.milestone || '0', 10);
           m.classList.toggle('progress__milestone--reached', total >= c);
         });
+        // Update the hint to point at the next-not-yet-reached milestone.
+        // Without this, the hint stays frozen on the SSR-time milestone
+        // (e.g. still says "X more until 500" after 500 is reached).
+        renderHint(total);
       } catch {
         /* keep last good */
       }
