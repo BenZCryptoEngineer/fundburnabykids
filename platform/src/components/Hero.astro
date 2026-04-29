@@ -69,30 +69,28 @@ const totalPacs = pacEndorsements.length;
 <section class="hero">
   <div class="wrap-wide hero__inner">
 
-    {/* PAC endorsement banner (Prompt 12) — only renders when at least
-        one PAC has been verified. Above the countdown so the trust
-        signal lands first. */}
-    {firstPac && (
-      <a class="hero__pac-banner sans" href="#coalition">
-        <span class="hero__pac-banner__badge" aria-hidden="true">✓</span>
-        <span class="hero__pac-banner__text">
-          <I18nText en="Endorsed by" zh="已获 endorse：" lang={lang} />
-          {' '}
-          <strong>{firstPac.school}</strong>
-          {totalPacs > 1 && (
-            <span class="hero__pac-banner__more muted">
-              {' · '}
-              <I18nText
-                en={`+${totalPacs - 1} more PAC${totalPacs - 1 > 1 ? 's' : ''}`}
-                zh={`+${totalPacs - 1} 个 PAC`}
-                lang={lang}
-              />
-            </span>
-          )}
-        </span>
-        <span class="hero__pac-banner__chevron" aria-hidden="true">→</span>
-      </a>
-    )}
+    {/* PAC endorsement banner (Prompt 12 + client polling). Always
+        emitted in the DOM but `hidden` when no PAC has been verified
+        yet — that way the inline poll script (below) can flip it
+        visible later without needing the page to be rebuilt. SSR
+        seeds the initial state; polling refreshes every 60s. */}
+    <a
+      class="hero__pac-banner sans"
+      href="#coalition"
+      data-pac-banner
+      data-supabase-url={supabaseUrl}
+      data-supabase-key={supabaseKey}
+      data-lang={lang}
+      hidden={pacEndorsements.length === 0}
+    >
+      <span class="hero__pac-banner__badge" aria-hidden="true">✓</span>
+      <span class="hero__pac-banner__text">
+        <I18nText en="Endorsed by" zh="已获 endorse：" lang={lang} />
+        {' '}
+        <strong data-pac-schools>{pacEndorsements.map((p) => p.school).join(', ')}</strong>
+      </span>
+      <span class="hero__pac-banner__chevron" aria-hidden="true">→</span>
+    </a>
 
     {/* Countdown pill + consequence (Prompt 11). The pill alone reads
         as abstract time scarcity ("28 days" — feels far away). Pairing
@@ -177,6 +175,53 @@ const totalPacs = pacEndorsements.length;
 
   </div>
 </section>
+
+<script>
+  // PAC banner client-side polling. SSR seeds the initial state from
+  // Supabase at build time; without polling, every new PAC verification
+  // would only show up after a Netlify rebuild. 60s interval matches
+  // SignatoriesFeed. Updates textContent + hidden flag on existing
+  // elements — does NOT innerHTML rebuild, so Astro's scoped CSS
+  // (data-astro-cid attrs) keeps matching.
+  document.querySelectorAll<HTMLElement>('[data-pac-banner]').forEach((banner) => {
+    const url = banner.dataset.supabaseUrl;
+    const key = banner.dataset.supabaseKey;
+    const lang = (banner.dataset.lang === 'zh' ? 'zh' : 'en') as 'en' | 'zh';
+    if (!url || !key) return;
+
+    const schoolsEl = banner.querySelector<HTMLElement>('[data-pac-schools]');
+
+    type Pac = { school: string; students: number };
+
+    async function poll() {
+      try {
+        const res = await fetch(
+          `${url}/rest/v1/public_pac_endorsements?select=school,students&order=approval_date.desc.nullslast`,
+          { headers: { apikey: key!, Authorization: `Bearer ${key!}` } }
+        );
+        if (!res.ok) return;
+        const pacs = (await res.json()) as Pac[];
+        if (!Array.isArray(pacs)) return;
+
+        if (pacs.length === 0) {
+          banner.hidden = true;
+          return;
+        }
+        banner.hidden = false;
+        // List every PAC in the banner. CSS text-overflow:ellipsis on
+        // .hero__pac-banner__text trims gracefully if the list grows
+        // long. On the day there are 6+ PACs we can revisit the
+        // "+N more" abbreviation.
+        if (schoolsEl) schoolsEl.textContent = pacs.map((p) => p.school).join(', ');
+      } catch {
+        /* keep last good state */
+      }
+    }
+
+    poll();
+    setInterval(poll, 60_000);
+  });
+</script>
 
 <style>
   .hero {

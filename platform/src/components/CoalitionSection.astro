@@ -45,7 +45,14 @@ if (url && key) {
 const totalStudents = pacs.reduce((sum, p) => sum + (p.students ?? 0), 0);
 ---
 
-<section class="coalition" id="coalition">
+<section
+  class="coalition"
+  id="coalition"
+  data-coalition
+  data-supabase-url={url}
+  data-supabase-key={key}
+  data-lang={lang}
+>
   <div class="wrap-wide">
     <header class="coalition__header">
       <p class="kicker sans">
@@ -62,51 +69,47 @@ const totalStudents = pacs.reduce((sum, p) => sum + (p.students ?? 0), 0);
           lang={lang}
         />
       </h2>
-      {pacs.length > 0 && (
-        <p class="coalition__lede">
-          <strong>{pacs.length}</strong>
-          {' '}
-          <I18nText en="PACs · representing" zh="个 PAC · 代表" lang={lang} />
-          {' '}
-          <strong>{totalStudents.toLocaleString()}</strong>
-          {' '}
-          <I18nText en="students" zh="名学生" lang={lang} />
-        </p>
-      )}
+      <p class="coalition__lede" data-coalition-lede hidden={pacs.length === 0}>
+        <strong data-coalition-pac-count>{pacs.length}</strong>
+        {' '}
+        <I18nText en="PACs · representing" zh="个 PAC · 代表" lang={lang} />
+        {' '}
+        <strong data-coalition-student-count>{totalStudents.toLocaleString()}</strong>
+        {' '}
+        <I18nText en="students" zh="名学生" lang={lang} />
+      </p>
     </header>
 
-    {pacs.length === 0 ? (
-      <div class="coalition__empty">
-        <p>
-          <I18nText
-            en="No PACs have endorsed yet — your school's PAC could be the first."
-            zh="还没有 PAC 正式 endorse — 你孩子学校的 PAC 可以是第一个。"
-            lang={lang}
-          />
-        </p>
-      </div>
-    ) : (
-      <div class="coalition__grid">
-        {pacs.map((p) => (
-          <article class="pac-card">
-            <h3 class="pac-card__school sans">{p.school}</h3>
-            <p class="pac-card__students sans">
-              <span class="tabular">{p.students.toLocaleString()}</span>
-              {' '}
-              <I18nText en="students" zh="名学生" lang={lang} />
+    <div class="coalition__empty" data-coalition-empty hidden={pacs.length > 0}>
+      <p>
+        <I18nText
+          en="No PACs have endorsed yet — your school's PAC could be the first."
+          zh="还没有 PAC 正式 endorse — 你孩子学校的 PAC 可以是第一个。"
+          lang={lang}
+        />
+      </p>
+    </div>
+
+    <div class="coalition__grid" data-coalition-grid hidden={pacs.length === 0}>
+      {pacs.map((p) => (
+        <article class="pac-card">
+          <h3 class="pac-card__school sans">{p.school}</h3>
+          <p class="pac-card__students sans">
+            <span class="tabular">{p.students.toLocaleString()}</span>
+            {' '}
+            <I18nText en="students" zh="名学生" lang={lang} />
+          </p>
+          {p.approval_date && (
+            <p class="pac-card__date sans muted">
+              <I18nText en="Endorsed " zh="endorse 时间：" lang={lang} />
+              {new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-CA', {
+                year: 'numeric', month: 'short', day: 'numeric',
+              }).format(new Date(p.approval_date))}
             </p>
-            {p.approval_date && (
-              <p class="pac-card__date sans muted">
-                <I18nText en="Endorsed " zh="endorse 时间：" lang={lang} />
-                {new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-CA', {
-                  year: 'numeric', month: 'short', day: 'numeric',
-                }).format(new Date(p.approval_date))}
-              </p>
-            )}
-          </article>
-        ))}
-      </div>
-    )}
+          )}
+        </article>
+      ))}
+    </div>
 
     <div class="coalition__cta">
       <h3 class="coalition__cta-title sans">
@@ -133,6 +136,105 @@ const totalStudents = pacs.reduce((sum, p) => sum + (p.students ?? 0), 0);
     </div>
   </div>
 </section>
+
+<script>
+  // Coalition section client-side polling. SSR seeds the initial state
+  // from public_pac_endorsements at build time; without polling, every
+  // new PAC verification only shows up after a Netlify rebuild. 60s
+  // interval matches SignatoriesFeed.
+  //
+  // Strategy: rebuild the .coalition__grid via innerHTML when count
+  // changes — pac-card styles are in the <style is:global> block below
+  // (NOT scoped) so the freshly-injected DOM still matches CSS rules
+  // (Astro's data-astro-cid attribute can't be added to JS-templated
+  // strings; same trick SignatoriesFeed uses).
+  type Pac = { school: string; students: number; approval_date: string | null };
+
+  document.querySelectorAll<HTMLElement>('[data-coalition]').forEach((root) => {
+    const url = root.dataset.supabaseUrl;
+    const key = root.dataset.supabaseKey;
+    const lang = (root.dataset.lang === 'zh' ? 'zh' : 'en') as 'en' | 'zh';
+    if (!url || !key) return;
+
+    const ledeEl = root.querySelector<HTMLElement>('[data-coalition-lede]');
+    const emptyEl = root.querySelector<HTMLElement>('[data-coalition-empty]');
+    const gridEl = root.querySelector<HTMLElement>('[data-coalition-grid]');
+    const pacCountEl = root.querySelector<HTMLElement>('[data-coalition-pac-count]');
+    const studentCountEl = root.querySelector<HTMLElement>('[data-coalition-student-count]');
+
+    function escapeHtml(s: string) {
+      return s.replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+      }[c]!));
+    }
+
+    function formatDate(iso: string): string {
+      const d = new Date(iso);
+      if (!Number.isFinite(d.getTime())) return '';
+      return new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-CA', {
+        year: 'numeric', month: 'short', day: 'numeric',
+      }).format(d);
+    }
+
+    function cardHtml(p: Pac): string {
+      const studentsLabel = lang === 'zh' ? '名学生' : 'students';
+      const endorsedLabel = lang === 'zh' ? 'endorse 时间：' : 'Endorsed ';
+      return (
+        `<article class="pac-card">` +
+          `<h3 class="pac-card__school sans">${escapeHtml(p.school)}</h3>` +
+          `<p class="pac-card__students sans">` +
+            `<span class="tabular">${p.students.toLocaleString()}</span> ` +
+            escapeHtml(studentsLabel) +
+          `</p>` +
+          (p.approval_date
+            ? `<p class="pac-card__date sans muted">` +
+                escapeHtml(endorsedLabel) +
+                escapeHtml(formatDate(p.approval_date)) +
+              `</p>`
+            : '') +
+        `</article>`
+      );
+    }
+
+    async function poll() {
+      try {
+        const res = await fetch(
+          `${url}/rest/v1/public_pac_endorsements?select=school,students,approval_date&order=approval_date.desc.nullslast`,
+          { headers: { apikey: key!, Authorization: `Bearer ${key!}` } }
+        );
+        if (!res.ok) return;
+        const pacs = (await res.json()) as Pac[];
+        if (!Array.isArray(pacs)) return;
+
+        const totalStudents = pacs.reduce((sum, p) => sum + (p.students ?? 0), 0);
+
+        if (pacs.length === 0) {
+          if (ledeEl) ledeEl.hidden = true;
+          if (emptyEl) emptyEl.hidden = false;
+          if (gridEl) {
+            gridEl.hidden = true;
+            gridEl.innerHTML = '';
+          }
+          return;
+        }
+
+        if (ledeEl) ledeEl.hidden = false;
+        if (emptyEl) emptyEl.hidden = true;
+        if (pacCountEl) pacCountEl.textContent = String(pacs.length);
+        if (studentCountEl) studentCountEl.textContent = totalStudents.toLocaleString();
+        if (gridEl) {
+          gridEl.innerHTML = pacs.map(cardHtml).join('');
+          gridEl.hidden = false;
+        }
+      } catch {
+        /* keep last good state */
+      }
+    }
+
+    poll();
+    setInterval(poll, 60_000);
+  });
+</script>
 
 <style>
   .coalition {
@@ -182,28 +284,6 @@ const totalStudents = pacs.reduce((sum, p) => sum + (p.students ?? 0), 0);
     gap: 16px;
     margin-bottom: 32px;
   }
-  .pac-card {
-    background: var(--paper);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    padding: 20px;
-  }
-  .pac-card__school {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--ink);
-    margin: 0 0 4px;
-    line-height: 1.3;
-  }
-  .pac-card__students {
-    font-size: 13px;
-    color: var(--ink-soft);
-    margin: 0 0 8px;
-  }
-  .pac-card__date {
-    font-size: 12px;
-    margin: 0;
-  }
 
   .coalition__cta {
     background: var(--paper);
@@ -250,4 +330,35 @@ const totalStudents = pacs.reduce((sum, p) => sum + (p.students ?? 0), 0);
   }
 
   .muted { color: var(--muted); }
+</style>
+
+<style is:global>
+  /* PAC card styles — global because the polling script rebuilds the
+     grid via innerHTML, and Astro's per-build data-astro-cid scope
+     attributes can't be added to JS-templated string DOM. Same pattern
+     as SignatoriesFeed — class names already prefixed `pac-card-` so
+     no risk of clashing with other components. */
+  .pac-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px;
+  }
+  .pac-card__school {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 4px;
+    line-height: 1.3;
+  }
+  .pac-card__students {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin: 0 0 8px;
+  }
+  .pac-card__date {
+    font-size: 12px;
+    margin: 0;
+    color: var(--muted);
+  }
 </style>
