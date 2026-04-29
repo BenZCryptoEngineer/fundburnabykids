@@ -47,10 +47,25 @@ const goal = thresholds?.goal ?? 2000;
 <section class="hero">
   <div class="wrap-wide hero__inner">
 
-    {/* Countdown pill */}
+    {/* Countdown pill + consequence (Prompt 11). The pill alone reads
+        as abstract time scarcity ("28 days" — feels far away). Pairing
+        it with the locked-in consequence line activates loss aversion:
+        "after this date, the cuts persist for the 2026-27 school
+        year." Tooltip on the countdown gives the procedural detail. */}
     <div class="hero__countdown-row">
       <Countdown deadline={deadline} lang={lang} />
     </div>
+    <p class="hero__countdown-consequence sans">
+      {lang === 'zh' ? (
+        <>
+          5 月 27 日之后，削减将<strong>锁定到 2026-27 学年</strong>。9 月之前没有&ldquo;下一次机会&rdquo;。
+        </>
+      ) : (
+        <>
+          After May 27, the cuts are <strong>locked in for the 2026-27 school year</strong>. There is no &ldquo;next chance&rdquo; before September.
+        </>
+      )}
+    </p>
 
     {/* Kicker */}
     <p class="hero__kicker sans">
@@ -125,7 +140,18 @@ const goal = thresholds?.goal ?? 2000;
     max-width: 820px;
   }
   .hero__countdown-row {
-    margin-bottom: 24px;
+    margin-bottom: 8px;
+  }
+  .hero__countdown-consequence {
+    margin: 0 0 24px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 600px;
+  }
+  .hero__countdown-consequence strong {
+    color: var(--warm);
+    font-weight: 700;
   }
   .hero__kicker {
     font-size: 13px;
