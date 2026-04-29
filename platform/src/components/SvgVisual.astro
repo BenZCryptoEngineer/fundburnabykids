@@ -127,6 +127,7 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
   type DialogWithPz = HTMLDialogElement & {
     __pz?: ReturnType<typeof Panzoom>;
     __pzWheelBound?: boolean;
+    __savedScrollY?: number;
   };
 
   if (!(window as any).__svgLightboxBound) {
@@ -144,15 +145,16 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
         const dlg = document.getElementById(id) as DialogWithPz | null;
         if (!dlg || typeof dlg.showModal !== 'function') return;
 
+        // Save the page's scroll position BEFORE showing the dialog.
+        // iOS Safari (and some Chromium versions) lose the scroll
+        // position when body's overflow toggles from auto → hidden via
+        // the body:has(dialog[open]) rule. Without saving + restoring,
+        // closing the lightbox dumps the user back at the top of the
+        // page instead of the section they were reading. The restore
+        // happens on the dialog's `close` event so it covers every
+        // close path (× button, ESC, backdrop, programmatic).
+        dlg.__savedScrollY = window.scrollY;
         dlg.showModal();
-        // Anchor the user's view on the dialog. iOS Safari + showModal()
-        // does not always center the dialog in the visible viewport — the
-        // user can end up looking at the page-content area behind/below
-        // the dialog instead of the SVG. Force the dialog into view and
-        // reset any internal scroll on each open.
-        try {
-          dlg.scrollIntoView({ block: 'center', inline: 'center' });
-        } catch { /* older browsers */ }
         const viewport = dlg.querySelector<HTMLElement>('.svg-lightbox__viewport');
         if (viewport) viewport.scrollTo(0, 0);
 
@@ -201,6 +203,14 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
             );
             dlg.__pzWheelBound = true;
           }
+          // Restore page scroll on every close (× / ESC / backdrop /
+          // programmatic). Bind once per dialog on first init.
+          dlg.addEventListener('close', () => {
+            const y = dlg.__savedScrollY;
+            if (typeof y === 'number') {
+              window.scrollTo({ top: y, left: 0, behavior: 'instant' as ScrollBehavior });
+            }
+          });
         } else if (dlg.__pz) {
           // Re-open: reset to the same initial scale as a fresh open.
           // panzoom.reset() goes back to startScale, but if the viewport
