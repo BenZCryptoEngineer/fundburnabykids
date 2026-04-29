@@ -75,6 +75,7 @@ jobs:
             "zh/withdraw-failed/index.html"
             "find-my-signature/index.html"
             "zh/find-my-signature/index.html"
+            "press/index.html"
           )
           for page in "${PAGES[@]}"; do
             if [ ! -f "platform/dist/$page" ]; then

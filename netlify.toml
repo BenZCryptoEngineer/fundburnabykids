@@ -185,6 +185,10 @@
   from = "/zh/pac-verified"
   to   = "/zh/pac-verified/"
   status = 301
+[[redirects]]
+  from = "/press"
+  to   = "/press/"
+  status = 301
 
 # Note: a `submission_created` webhook used to fire on-signature.ts when
 # Netlify Forms intercepted the form POST. We've moved off Netlify Forms

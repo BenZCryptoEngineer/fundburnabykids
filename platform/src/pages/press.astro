@@ -1,0 +1,460 @@
+---
+// Press kit page — for journalists. The brief any reporter needs in 30
+// seconds: a one-sentence hook, five quotable numbers each linked to a
+// primary source, the timeline, the three structural arguments, contact
+// info, and the FAQ.
+//
+// Per Prompt 15: this page is journalist-facing, not parent-facing. No
+// CTA pressure, no animation, no progress bar. The voice is the
+// civic-credibility voice (UK Parliament e-petition / Toronto Council
+// Scorecard register), not the activist voice. Every claim links to a
+// primary source so a fact-checker can verify in ~5 minutes.
+//
+// English only for now — BC press is overwhelmingly English-language;
+// ZH version can be added later if Sing Tao / World Journal pick this
+// up and want bilingual quotes.
+
+import { getEntry } from 'astro:content';
+import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import { pickLang, localizedUrl } from '~/lib/i18n';
+
+const lang = pickLang(Astro.url.pathname);
+
+// Pull the canonical facts from the campaign content collection so the
+// quotable numbers stay in sync with the homepage and don't drift.
+const factsEntry = await getEntry('campaign', 'facts');
+const facts = (factsEntry?.data as any)?.facts ?? [];
+---
+
+<CampaignLayout
+  lang={lang}
+  title="Press Kit — Fund Burnaby Kids"
+  description="Press kit, primary sources, contact info, and recommended existing coverage for journalists covering the SD41 $9.4M arbitration story."
+>
+  <section class="press">
+    <div class="wrap">
+      <header class="press__header">
+        <p class="kicker sans">Press kit · for journalists</p>
+        <h1>Fund Burnaby Kids — press kit</h1>
+        <p class="press__updated sans">
+          Last updated: 2026-04-29 · All numbers verified against primary sources.
+        </p>
+        <p class="press__contact-banner sans">
+          Press contact: <strong>Ben Zhou</strong> ·
+          <a href="mailto:ben@fundburnabykids.ca?subject=Media%20inquiry%20%E2%80%94%20Fund%20Burnaby%20Kids">
+            ben@fundburnabykids.ca
+          </a>
+          · responds within 2 hours weekdays Pacific Time
+        </p>
+      </header>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">The story in one sentence</h2>
+        <p class="press__hook">
+          <strong>$9.4M = 0.19% of BC's $5B Contingencies Vote. Burnaby is being told there's no money.</strong>
+        </p>
+        <p>
+          The Province's own bargaining agent (BCPSEA) admitted misinterpreting Burnaby's salary grid in 2022. The arbitrator's $9.4M bill landed on Burnaby alone. The Province's own Budget 2026 has a $5 billion Contingencies Vote explicitly described as covering "collective bargaining mandate costs." The Province has not committed to applying it. The SD41 budget adoption deadline is May 27, 2026. After that date the cuts that backfill the $9.4M gap are locked in for the 2026-27 school year.
+        </p>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">Five quotable numbers</h2>
+        <ol class="press__numbers">
+          <li>
+            <strong>$9.4M</strong> — Total arbitration liability facing SD41 for retroactive teacher pay.
+            <span class="press__source">Source:
+              <a href="https://burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/" target="_blank" rel="noopener noreferrer">SD41 official statement</a>
+            </span>
+          </li>
+          <li>
+            <strong>0.19%</strong> — $9.4M as a fraction of BC's $5 billion annual Contingencies Vote in Budget 2026.
+            <span class="press__source">Source:
+              <a href="https://www.bcbudget.gov.bc.ca/2026/" target="_blank" rel="noopener noreferrer">BC Budget 2026 — Estimates Vote 50</a>
+            </span>
+          </li>
+          <li>
+            <strong>$4.2M</strong> — Cuts already made by SD41 in 2025-26 (high school counsellors, custodial, Grade 7 band, Mandarin, Advanced Learning).
+            <span class="press__source">Source:
+              <a href="https://www.ctvnews.ca/vancouver/article/burnaby-teachers-urging-province-to-provide-more-funding-district-facing-42m-budget-shortfall/" target="_blank" rel="noopener noreferrer">CTV News</a>
+              ·
+              <a href="https://burnabyschools.ca/budget-for-next-school-year-passes/" target="_blank" rel="noopener noreferrer">SD41 budget passes</a>
+            </span>
+          </li>
+          <li>
+            <strong>1,200 students</strong> — Affected by the elimination of the Grade 7 band program in all 41 elementary schools (2025-26).
+            <span class="press__source">Source:
+              <a href="https://www.cbc.ca/news/canada/british-columbia/b-c-school-band-cuts-1.7515565" target="_blank" rel="noopener noreferrer">CBC News</a>
+              ·
+              <a href="https://burnabyschools.ca/wp-content/uploads/2025/05/2025-26-Operating-Budget-Presentation-27may2025.pdf" target="_blank" rel="noopener noreferrer">SD41 Budget Presentation</a>
+            </span>
+          </li>
+          <li>
+            <strong>May 27, 2026</strong> — SD41 board adopts its 2026-27 budget. After this date the cuts are locked in for the school year.
+            <span class="press__source">Source:
+              <a href="https://burnabyschools.ca/" target="_blank" rel="noopener noreferrer">SD41 board meeting calendar</a>
+            </span>
+          </li>
+        </ol>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">Timeline</h2>
+        <ol class="press__timeline">
+          <li>
+            <span class="press__timeline-date sans">July 2022</span>
+            BCTF–BCPSEA collective agreement; Burnaby's salary grid interpretation later disputed in arbitration.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">2023</span>
+            Burnaby Teachers' Association files grievance.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">August 2025</span>
+            Arbitrator hears the case.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">September 2025</span>
+            Arbitrator rules in the union's favour; BCPSEA appeals.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">February 2026</span>
+            BC Labour Relations Board upholds the ruling; SD41 confirms the $9.4M liability.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">April 14, 2026</span>
+            SD41 publishes 2026-27 draft budget showing the $9.4M gap.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">April 22, 2026</span>
+            Burnaby DPAC publicly calls for full provincial funding.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">April 29, 2026</span>
+            Fund Burnaby Kids campaign launches.
+          </li>
+          <li>
+            <span class="press__timeline-date sans">May 27, 2026</span>
+            SD41 budget adoption deadline.
+          </li>
+        </ol>
+        <p class="press__note muted">
+          Pre-2022 history (the original 1993/1994 grid context) is available on request — the dispute centres on the 2022 reinterpretation.
+        </p>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">The three structural arguments</h2>
+        <p>The campaign rests on three claims, each linked to a primary source on the homepage:</p>
+        <ol class="press__args">
+          {facts.map((f: any) => (
+            <li>
+              <strong>{f.headline?.en ?? ''}</strong>{' '}
+              {f.body?.en ?? ''}
+              {f.citation?.source_url && (
+                <span class="press__source">
+                  Source:
+                  {' '}
+                  <a href={f.citation.source_url} target="_blank" rel="noopener noreferrer">
+                    {f.citation.text ?? f.citation.source_url}
+                  </a>
+                </span>
+              )}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">What makes this story different</h2>
+        <p>
+          This is not "another BC school district funding crisis." Three structural markers distinguish it:
+        </p>
+        <ol class="press__markers">
+          <li><strong>The Province's own agent (BCPSEA) admitted the error.</strong> Not contested.</li>
+          <li><strong>The exact funding mechanism exists in Budget 2026.</strong> Not theoretical — it's the Contingencies Vote.</li>
+          <li><strong>The cost ratio is 0.19%.</strong> Not a budget priorities argument — it's a rounding-error magnitude.</li>
+        </ol>
+        <p>
+          The closest comparable story is Surrey's funding shortfall, but Surrey's is a general gap. Burnaby's is structurally distinct: a specific, acknowledged, fully-fundable arbitration liability.
+        </p>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">Press contact</h2>
+        <div class="press__contact-card">
+          <p class="press__contact-name sans"><strong>Ben Zhou</strong></p>
+          <p class="press__contact-role sans muted">Founder, Fund Burnaby Kids · Burnaby parent</p>
+          <ul class="press__contact-list">
+            <li>📧 <a href="mailto:ben@fundburnabykids.ca?subject=Media%20inquiry%20%E2%80%94%20Fund%20Burnaby%20Kids">ben@fundburnabykids.ca</a></li>
+            <li>🕐 <strong>Response time:</strong> within 2 hours weekdays, within 24 hours weekends (Pacific Time)</li>
+            <li>🎙️ <strong>Available for:</strong> phone interviews, on-camera, document briefings, source verification</li>
+            <li>🗣️ <strong>Languages:</strong> English, 中文 (Mandarin)</li>
+            <li>🏢 <strong>Day job:</strong> Founder, <a href="https://expeta.ca" target="_blank" rel="noopener noreferrer">Expeta Technologies</a> — research methodology context</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">Recommended existing coverage</h2>
+        <p class="muted">
+          Other journalists' work on this story — context, not poaching.
+        </p>
+        <ul class="press__coverage">
+          <li>
+            <strong>CBC News — Akshay Kulkarni</strong> ·
+            <a href="https://www.cbc.ca/news/canada/british-columbia/burnaby-school-district-millions-shortfall-9.7169146" target="_blank" rel="noopener noreferrer">"Burnaby school district faces $9.4M shortfall after labour arbitration decision"</a>
+          </li>
+          <li>
+            <strong>CTV News — Vancouver Bureau</strong> ·
+            <a href="https://www.ctvnews.ca/vancouver/article/burnaby-teachers-urging-province-to-provide-more-funding-district-facing-42m-budget-shortfall/" target="_blank" rel="noopener noreferrer">"Burnaby teachers urging province to provide more funding"</a>
+          </li>
+          <li>
+            <strong>CBC News</strong> ·
+            <a href="https://www.cbc.ca/news/canada/british-columbia/b-c-school-band-cuts-1.7515565" target="_blank" rel="noopener noreferrer">"Music education advocates sound alarm on cuts to B.C. school band programs"</a>
+          </li>
+          <li>
+            <strong>Burnaby Now</strong> ·
+            <a href="https://www.burnabynow.com/local-news/incredibly-difficult-decisions-needed-to-balance-burnaby-schools-budget-board-8661674" target="_blank" rel="noopener noreferrer">"'Incredibly difficult decisions' needed to balance Burnaby schools budget"</a>
+          </li>
+          <li>
+            <strong>Indo-Canadian Voice</strong> ·
+            <a href="https://voiceonline.com/burnaby-schools-could-face-further-cuts-after-province-leaves-9-4m-bill-says-parent-advisory-council/" target="_blank" rel="noopener noreferrer">"Burnaby schools could face further cuts after Province leaves $9.4M bill, says PAC"</a>
+          </li>
+        </ul>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">FAQ for journalists</h2>
+        <details class="press__faq">
+          <summary class="sans">Is this a partisan campaign?</summary>
+          <p>No. The campaign names no party and no candidate. The ask is technical (apply the Contingencies Vote), which any government could make.</p>
+        </details>
+        <details class="press__faq">
+          <summary class="sans">Is Ben affiliated with BCTF or any union?</summary>
+          <p>No. Ben is a Burnaby parent. He has no formal affiliation with BCTF, BCPSEA, SD41, or any political party.</p>
+        </details>
+        <details class="press__faq">
+          <summary class="sans">How is this different from BCTF advocacy?</summary>
+          <p>BCTF advocates for teachers' interests. This campaign advocates for funding the bill so it doesn't come from classroom services. Different actor, different ask, aligned outcome.</p>
+        </details>
+        <details class="press__faq">
+          <summary class="sans">What if the Province does fund the $9.4M?</summary>
+          <p>Campaign archives. The Burnaby Kids First coalition persists for next year's issues.</p>
+        </details>
+        <details class="press__faq">
+          <summary class="sans">What if they don't?</summary>
+          <p>Campaign continues into the next budget cycle, with documented coalition.</p>
+        </details>
+        <details class="press__faq">
+          <summary class="sans">Can I quote signers?</summary>
+          <p>Each signer's first name + last initial + school + neighbourhood is public on fundburnabykids.ca with their consent. Email + postal code are not stored after confirmation. For interviews with specific parents, contact Ben — he can intro consenting signers.</p>
+        </details>
+        <details class="press__faq">
+          <summary class="sans">How are signatures verified?</summary>
+          <p>Each signer confirms via emailed link within 48 hours; unconfirmed signatures stay private and uncounted. See our <a href={localizedUrl('/methodology', lang)}>verification methodology</a> for the technical detail.</p>
+        </details>
+      </section>
+
+      <section class="press__section">
+        <h2 class="press__h2 sans">Re-use</h2>
+        <p>
+          Quote any number, paragraph, or argument on this page freely with attribution to "Fund Burnaby Kids" and a link to <a href="https://fundburnabykids.ca/">fundburnabykids.ca</a>. The campaign brand and all written content here are released under <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>.
+        </p>
+      </section>
+
+      <p class="press__back">
+        <a href={localizedUrl('/', lang)}>← Back to campaign</a>
+      </p>
+    </div>
+  </section>
+</CampaignLayout>
+
+<style>
+  .press {
+    padding: 56px 0 80px;
+    background: var(--paper);
+  }
+  .press__header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+  }
+  .kicker {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+  .press h1 {
+    font-family: var(--font-sans);
+    font-size: clamp(28px, 4vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .press__updated {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0 0 14px;
+  }
+  .press__contact-banner {
+    background: var(--cream);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .press__contact-banner a { color: var(--accent); }
+
+  .press__section {
+    margin-bottom: 40px;
+  }
+  .press__h2 {
+    font-family: var(--font-sans);
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    color: var(--ink);
+  }
+  .press__hook {
+    font-size: 18px;
+    background: var(--cream);
+    padding: 16px 20px;
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--warm);
+    margin: 0 0 16px;
+    line-height: 1.5;
+  }
+  .press p { line-height: 1.7; color: var(--ink-soft); }
+
+  .press__numbers, .press__args, .press__markers, .press__timeline {
+    list-style: decimal;
+    padding-left: 24px;
+    margin: 0;
+  }
+  .press__numbers li, .press__args li, .press__markers li {
+    margin-bottom: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .press__numbers strong, .press__args strong, .press__markers strong {
+    color: var(--ink);
+  }
+  .press__source {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+  .press__source a { color: var(--accent); }
+
+  .press__timeline {
+    list-style: none;
+    padding-left: 0;
+  }
+  .press__timeline li {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line-soft, #f0eee8);
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .press__timeline-date {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .press__note {
+    font-size: 13px;
+    margin: 12px 0 0;
+  }
+
+  .press__contact-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+  }
+  .press__contact-name { font-size: 17px; margin: 0; }
+  .press__contact-role { font-size: 13px; margin: 0 0 12px; }
+  .press__contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .press__contact-list a { color: var(--accent); }
+  .press__contact-list strong { color: var(--ink); font-weight: 600; }
+
+  .press__coverage {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .press__coverage strong { color: var(--ink); font-weight: 600; }
+  .press__coverage a { color: var(--accent); }
+
+  .press__faq {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+    padding: 0;
+  }
+  .press__faq summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    list-style: none;
+  }
+  .press__faq summary::-webkit-details-marker { display: none; }
+  .press__faq[open] summary { border-bottom: 1px solid var(--line); }
+  .press__faq p {
+    padding: 12px 16px;
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .press__faq a { color: var(--accent); }
+
+  .press__back {
+    margin-top: 40px;
+  }
+  .press__back a {
+    text-decoration: none;
+    color: var(--accent);
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .press__back a:hover { text-decoration: underline; }
+
+  .muted { color: var(--muted); }
+
+  @media (max-width: 560px) {
+    .press__timeline li { grid-template-columns: 100px 1fr; }
+  }
+</style>
