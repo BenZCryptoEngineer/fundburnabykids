@@ -51,14 +51,6 @@ if (url && key) {
       zh="最近确认的签名"
       lang={lang}
     />
-    {' · '}
-    <span class="signatories__privacy muted">
-      <I18nText
-        en="First name + last initial + school + neighbourhood only"
-        zh="只显示名 + 姓首字母 + 学校 + 街区"
-        lang={lang}
-      />
-    </span>
   </p>
 
   <div class="signatories__flow" data-signatories-flow>
@@ -144,9 +136,6 @@ if (url && key) {
     font-size: 13px;
     color: var(--ink-soft);
     margin-bottom: 12px;
-  }
-  .signatories__privacy {
-    font-size: 12px;
   }
   .signatories__flow {
     display: flex;
