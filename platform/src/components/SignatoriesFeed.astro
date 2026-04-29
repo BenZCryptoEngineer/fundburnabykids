@@ -1,7 +1,22 @@
 ---
-// Recent verified signatories — Avaaz-style scrolling pill flow.
+// Recent verified signatories — calm card row with seamless horizontal
+// marquee on desktop; vertical stack on mobile.
+//
 // Per UX research + privacy policy: first name + last initial + school
-// + neighbourhood only. Polled every 60s for new entries.
+// only (neighbourhood + signed_at are public-record context but the
+// neighbourhood was visually redundant when school name == neighbourhood
+// name, e.g. "Capitol Hill · Capitol Hill"). Card shows: bold accent
+// name + muted meta line ("School · 2h ago").
+//
+// CSS-scoping note. Astro auto-scopes <style> blocks via the
+// `data-astro-cid-…` attribute on every emitted element. Our JS
+// poller re-renders the track via innerHTML with raw string
+// templates — those strings cannot inject the CID (it changes per
+// build), which means scoped rules silently stop matching after the
+// first poll. We use `<style is:global>` here and prefix every class
+// with `signatories-` / `sig-card-` so name collisions can't happen.
+// Tradeoff accepted: this single component now contributes a few
+// global rules instead of paying the bug-of-the-week tax forever.
 
 import I18nText from '~/components/I18nText.astro';
 import type { Lang } from '~/lib/i18n';
@@ -37,6 +52,12 @@ if (url && key) {
     /* keep empty */
   }
 }
+
+// Sparse-state floor: per UX research, <6 unique items shouldn't
+// marquee — a 3-pill loop visibly resets every few seconds and reads
+// as broken. Below this count we render a static centred row.
+const MARQUEE_FLOOR = 6;
+const animate = initial.length >= MARQUEE_FLOOR;
 ---
 
 <div class="signatories"
@@ -44,8 +65,10 @@ if (url && key) {
      data-supabase-key={key}
      data-poll-ms="60000"
      data-limit={limit}
+     data-lang={lang}
+     data-animate={animate ? 'true' : 'false'}
      data-empty-text={lang === 'zh' ? '成为第一位签名者 →' : 'Be the first to sign →'}>
-  <p class="signatories__caption sans">
+  <p class="signatories-caption sans">
     <I18nText
       en="Recent confirmed signatures"
       zh="最近确认的签名"
@@ -53,14 +76,9 @@ if (url && key) {
     />
   </p>
 
-  <div class="signatories__flow">
-    {/* Two render modes: empty-state (single message) or marquee track.
-        The track wraps the pills and gets a CSS animation that scrolls
-        them left infinitely. To make the loop seamless, the same pill
-        list is rendered twice in the track — at -50% translateX the
-        second copy lands exactly where the first started. */}
+  <div class="signatories-flow">
     {initial.length === 0 ? (
-      <p class="signatories__empty" data-signatories-flow>
+      <p class="signatories-empty" data-signatories-flow>
         <I18nText
           en="Be the first to sign →"
           zh="成为第一位签名者 →"
@@ -68,16 +86,23 @@ if (url && key) {
         />
       </p>
     ) : (
-      <div class="signatories__track" data-signatories-flow aria-label="Recent confirmed signatures">
-        {[...initial, ...initial].map((s, i) => (
-          <span
-            class="sig-pill"
-            title={`${s.school}, ${s.neighbourhood}`}
-            aria-hidden={i >= initial.length ? 'true' : undefined}
+      <div
+        class={`signatories-track${animate ? ' signatories-track--animated' : ''}`}
+        data-signatories-flow
+        aria-label={lang === 'zh' ? '最近确认的签名' : 'Recent confirmed signatures'}
+      >
+        {(animate ? [...initial, ...initial] : initial).map((s, i) => (
+          <article
+            class="sig-card"
+            aria-hidden={animate && i >= initial.length ? 'true' : undefined}
           >
-            <span class="sig-pill__name sans">{s.first_name} {s.last_initial}.</span>
-            <span class="sig-pill__where">{s.school}</span>
-          </span>
+            <p class="sig-card__name sans">{s.first_name} {s.last_initial}.</p>
+            <p class="sig-card__meta sans">
+              <span class="sig-card__school">{s.school}</span>
+              <span class="sig-card__sep" aria-hidden="true"> · </span>
+              <time class="sig-card__time" datetime={s.signed_at}>—</time>
+            </p>
+          </article>
         ))}
       </div>
     )}
@@ -85,14 +110,51 @@ if (url && key) {
 </div>
 
 <script>
+  // Format an ISO timestamp as a short relative time ("just now",
+  // "5m ago", "2h ago", "3d ago"), or a date stamp past 7 days.
+  // Bilingual via Intl.RelativeTimeFormat.
+  function formatRelative(isoLike: string, lang: 'en' | 'zh'): string {
+    const then = new Date(isoLike).getTime();
+    if (!Number.isFinite(then)) return '';
+    const now = Date.now();
+    const diffSec = Math.round((then - now) / 1000); // negative = past
+    const absSec = Math.abs(diffSec);
+    const locale = lang === 'zh' ? 'zh-CN' : 'en-CA';
+    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style: 'narrow' });
+    if (absSec < 60) return lang === 'zh' ? '刚刚' : 'just now';
+    if (absSec < 3600) return rtf.format(Math.round(diffSec / 60), 'minute');
+    if (absSec < 86400) return rtf.format(Math.round(diffSec / 3600), 'hour');
+    if (absSec < 86400 * 7) return rtf.format(Math.round(diffSec / 86400), 'day');
+    // Past a week, show absolute short date.
+    return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric' })
+      .format(new Date(isoLike));
+  }
+
+  function paintTimes(scope: ParentNode, lang: 'en' | 'zh') {
+    scope.querySelectorAll<HTMLTimeElement>('time.sig-card__time').forEach((el) => {
+      const iso = el.getAttribute('datetime');
+      if (!iso) return;
+      el.textContent = formatRelative(iso, lang);
+    });
+  }
+
   document.querySelectorAll<HTMLElement>('.signatories').forEach((el) => {
     const url = el.dataset.supabaseUrl;
     const key = el.dataset.supabaseKey;
     const pollMs = parseInt(el.dataset.pollMs || '60000', 10);
     const limit = parseInt(el.dataset.limit || '60', 10);
-    if (!url || !key) return;
+    const lang = (el.dataset.lang === 'zh' ? 'zh' : 'en') as 'en' | 'zh';
+    if (!url || !key) {
+      // Still paint times for the SSR-rendered cards (they'll
+      // otherwise show "—" forever).
+      paintTimes(el, lang);
+      return;
+    }
 
-    const flowOuter = el.querySelector<HTMLElement>('.signatories__flow');
+    // Paint the SSR-rendered timestamps once on hydration.
+    paintTimes(el, lang);
+
+    const flowOuter = el.querySelector<HTMLElement>('.signatories-flow');
     if (!flowOuter) return;
 
     function escapeHtml(s: string) {
@@ -107,14 +169,19 @@ if (url && key) {
     };
 
     const emptyText = el.dataset.emptyText || 'Be the first to sign →';
+    const MARQUEE_FLOOR = 6;
+    const ariaLabel = lang === 'zh' ? '最近确认的签名' : 'Recent confirmed signatures';
 
-    function pillHtml(s: Sig, ariaHide: boolean): string {
+    function cardHtml(s: Sig, ariaHide: boolean): string {
       return (
-        `<span class="sig-pill" title="${escapeHtml(s.school + ', ' + s.neighbourhood)}"` +
-          (ariaHide ? ' aria-hidden="true"' : '') + `>` +
-          `<span class="sig-pill__name sans">${escapeHtml(s.first_name)} ${escapeHtml(s.last_initial)}.</span>` +
-          `<span class="sig-pill__where">${escapeHtml(s.school)}</span>` +
-        `</span>`
+        `<article class="sig-card"${ariaHide ? ' aria-hidden="true"' : ''}>` +
+          `<p class="sig-card__name sans">${escapeHtml(s.first_name)} ${escapeHtml(s.last_initial)}.</p>` +
+          `<p class="sig-card__meta sans">` +
+            `<span class="sig-card__school">${escapeHtml(s.school)}</span>` +
+            `<span class="sig-card__sep" aria-hidden="true"> · </span>` +
+            `<time class="sig-card__time" datetime="${escapeHtml(s.signed_at)}">—</time>` +
+          `</p>` +
+        `</article>`
       );
     }
 
@@ -124,83 +191,89 @@ if (url && key) {
           `${url}/rest/v1/public_signatures?select=first_name,last_initial,school,neighbourhood,signed_at&order=signed_at.desc&limit=${limit}`,
           { headers: { apikey: key!, Authorization: `Bearer ${key!}` } }
         );
-        if (!res.ok) return;            // network/server glitch — keep last good
+        if (!res.ok) return;
         const sigs: Sig[] = await res.json();
-        if (!Array.isArray(sigs)) return; // shape unexpected — keep last good
-        // Empty array IS legitimate (e.g. fresh campaign / admin wipe);
-        // render the empty-state pill so stale SSR-baked entries don't
-        // ghost-linger on the page after the underlying rows go away.
+        if (!Array.isArray(sigs)) return;
         if (sigs.length === 0) {
           flowOuter!.innerHTML =
-            `<p class="signatories__empty" data-signatories-flow>${escapeHtml(emptyText)}</p>`;
+            `<p class="signatories-empty" data-signatories-flow>${escapeHtml(emptyText)}</p>`;
           return;
         }
-        // Render pills twice in the track so the CSS marquee
-        // translateX(-50%) loops seamlessly. Second copy is
-        // aria-hidden so screen readers only hear each signer once.
-        const firstPass = sigs.map((s) => pillHtml(s, false)).join('');
-        const secondPass = sigs.map((s) => pillHtml(s, true)).join('');
+        const animate = sigs.length >= MARQUEE_FLOOR;
+        const trackClass = `signatories-track${animate ? ' signatories-track--animated' : ''}`;
+        const list = animate ? sigs.concat(sigs) : sigs;
+        const cards = list
+          .map((s, i) => cardHtml(s, animate && i >= sigs.length))
+          .join('');
         flowOuter!.innerHTML =
-          `<div class="signatories__track" data-signatories-flow aria-label="Recent confirmed signatures">` +
-            firstPass + secondPass +
+          `<div class="${trackClass}" data-signatories-flow aria-label="${escapeHtml(ariaLabel)}">` +
+            cards +
           `</div>`;
+        paintTimes(flowOuter!, lang);
       } catch {
         /* keep last good */
       }
     }
+
     poll();
     setInterval(poll, pollMs);
   });
 </script>
 
-<style>
+<style is:global>
+  /* Hoisted to global so the JS poller's freshly-templated cards
+     match these rules — Astro auto-scoping appends a per-build CID
+     attribute to every selector, but innerHTML strings can't carry
+     it without per-build coupling. Class names are uniquely prefixed
+     (`signatories-` / `sig-card-`) to avoid collisions. */
+
   .signatories {
     margin: 24px 0;
   }
-  .signatories__caption {
+  .signatories-caption {
     font-size: 13px;
     color: var(--ink-soft);
     margin-bottom: 12px;
   }
-  /* Outer mask — clips the marquee track to the row width and provides
-     a soft fade on the left/right edges so pills don't appear to pop in. */
-  .signatories__flow {
+
+  /* Outer mask — clips the marquee track and softens the edges so
+     cards don't pop in/out abruptly. */
+  .signatories-flow {
     position: relative;
     overflow: hidden;
     padding: 4px 0;
-    /* Soft fade-out at edges via mask (fall back gracefully on browsers
-       that don't support mask-image — pills just clip to box edge). */
     -webkit-mask-image: linear-gradient(
       to right,
       transparent 0,
-      black 24px,
-      black calc(100% - 24px),
+      black 32px,
+      black calc(100% - 32px),
       transparent 100%
     );
     mask-image: linear-gradient(
       to right,
       transparent 0,
-      black 24px,
-      black calc(100% - 24px),
+      black 32px,
+      black calc(100% - 32px),
       transparent 100%
     );
   }
-  .signatories__track {
-    display: inline-flex;
-    gap: 6px;
+
+  .signatories-track {
+    display: flex;
+    gap: 12px;
     width: max-content;
-    /* Animation duration is heuristic — 60s for ~30 pills × 2 copies
-       reads as a calm continuous flow. Tune by content density if the
-       campaign list grows past a few hundred. */
-    animation: signatories-scroll 60s linear infinite;
   }
-  .signatories__flow:hover .signatories__track {
+  .signatories-track--animated {
+    /* ~40 px/s, calmer than a news ticker. 50s loop fits ~30 pills × 2.
+       If the campaign grows past 100, this can be made content-aware. */
+    animation: signatories-scroll 50s linear infinite;
+  }
+  .signatories-flow:hover .signatories-track--animated,
+  .signatories-flow:focus-within .signatories-track--animated {
     animation-play-state: paused;
   }
-  /* Respect users who opt out of motion — fall back to static row,
-     truncated to viewport (the mask fade still covers the cut). */
   @media (prefers-reduced-motion: reduce) {
-    .signatories__track {
+    .signatories-track--animated {
       animation: none;
     }
   }
@@ -208,28 +281,70 @@ if (url && key) {
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
   }
-  .signatories__empty {
+
+  .signatories-empty {
     color: var(--muted);
     font-style: italic;
     padding: 8px 0;
   }
-  .sig-pill {
-    display: inline-flex;
-    flex-direction: column;
-    background: var(--accent);
-    color: #fff;
-    padding: 6px 10px;
-    border-radius: 4px;
-    font-size: 12px;
-    line-height: 1.3;
+
+  .sig-card {
     flex: 0 0 auto;
+    min-width: 180px;
+    background: var(--paper, #fff);
+    border: 1px solid var(--line, #e5e7eb);
+    border-radius: 8px;
+    padding: 10px 14px;
+    box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.04));
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
-  .sig-pill__name {
-    font-weight: 600;
+  .sig-card__name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent, #1C3F8F);
+    line-height: 1.3;
+    margin: 0;
   }
-  .sig-pill__where {
+  .sig-card__meta {
     font-size: 11px;
-    opacity: 0.85;
-    margin-top: 1px;
+    color: var(--muted, #6B7280);
+    line-height: 1.4;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .sig-card__sep {
+    margin: 0 4px;
+  }
+
+  /* Mobile: stop the marquee, stack the first few cards vertically.
+     A horizontal ticker on a 360 px viewport reads as cramped + janky,
+     and most mobile users skim a vertical stack faster anyway. */
+  @media (max-width: 640px) {
+    .signatories-flow {
+      -webkit-mask-image: none;
+      mask-image: none;
+      overflow: visible;
+    }
+    .signatories-track,
+    .signatories-track--animated {
+      display: flex;
+      flex-direction: column;
+      width: auto;
+      gap: 8px;
+      animation: none;
+    }
+    .signatories-track--animated > .sig-card[aria-hidden="true"] {
+      display: none;
+    }
+    .signatories-track > .sig-card:nth-child(n+6) {
+      display: none;
+    }
+    .sig-card {
+      min-width: 0;
+    }
   }
 </style>
