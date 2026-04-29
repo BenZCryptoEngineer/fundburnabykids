@@ -145,6 +145,16 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
         if (!dlg || typeof dlg.showModal !== 'function') return;
 
         dlg.showModal();
+        // Anchor the user's view on the dialog. iOS Safari + showModal()
+        // does not always center the dialog in the visible viewport — the
+        // user can end up looking at the page-content area behind/below
+        // the dialog instead of the SVG. Force the dialog into view and
+        // reset any internal scroll on each open.
+        try {
+          dlg.scrollIntoView({ block: 'center', inline: 'center' });
+        } catch { /* older browsers */ }
+        const viewport = dlg.querySelector<HTMLElement>('.svg-lightbox__viewport');
+        if (viewport) viewport.scrollTo(0, 0);
 
         // Bind panzoom to the .svg-lightbox__media wrapper rather than
         // the inner SVG. The wrapper is 100% × 100% of the viewport so
@@ -156,11 +166,16 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
         // through to the dialog and were ignored. CSS transform on the
         // wrapper still moves the inline SVG inside.
         const media = dlg.querySelector<HTMLElement>('.svg-lightbox__media');
+        // Phones get a 2x initial scale so the SVG text is readable on
+        // first open without the user having to immediately pinch in.
+        // Desktop stays at 1x because the wider viewport makes intrinsic
+        // size already legible.
+        const isNarrow = window.matchMedia('(max-width: 560px)').matches;
         if (media && !dlg.__pz) {
           dlg.__pz = Panzoom(media, {
             maxScale: 5,
             minScale: 1,
-            startScale: 1,
+            startScale: isNarrow ? 2 : 1,
             step: 0.3,
             // No `contain` option — neither 'inside' nor 'outside' fits:
             //   - 'outside' scales the wrapper up to fill parent height,
@@ -187,8 +202,12 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
             dlg.__pzWheelBound = true;
           }
         } else if (dlg.__pz) {
-          // Re-open: reset zoom + pan to 1x center.
-          dlg.__pz.reset({ animate: false });
+          // Re-open: reset to the same initial scale as a fresh open.
+          // panzoom.reset() goes back to startScale, but if the viewport
+          // changed since first init (mobile→desktop on rotation, etc.)
+          // we want the new appropriate scale.
+          dlg.__pz.zoom(isNarrow ? 2 : 1, { animate: false });
+          dlg.__pz.pan(0, 0, { animate: false });
         }
         return;
       }
@@ -479,13 +498,22 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
   }
 
   /* Mobile fullscreen — phones get the entire viewport since narrow
-     screens make a centered modal feel cramped. */
+     screens make a centered modal feel cramped. `100dvh` is the
+     dynamic viewport height (excludes the URL bar's transient region);
+     `100vh` is kept as a fallback for browsers without dvh support
+     (Safari < 15.4). Without dvh, the dialog reaches BELOW the visible
+     viewport on iOS Safari and the user has to scroll up to see the
+     centered SVG. */
   @media (max-width: 560px) {
     .svg-lightbox {
+      position: fixed;
+      inset: 0;
       width: 100vw;
       max-width: 100vw;
       height: 100vh;
       max-height: 100vh;
+      height: 100dvh;
+      max-height: 100dvh;
       border-radius: 0;
       margin: 0;
     }
@@ -500,5 +528,14 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     .svg-lightbox__controls {
       bottom: 20px;
     }
+  }
+
+  /* Lock background page scroll while the lightbox is open. dialog.showModal()
+     does NOT guarantee this on its own — Safari and some Chromium versions
+     still let the user pan the page behind the dialog, which on mobile
+     causes the dialog content to feel un-anchored ("scroll up to see the
+     image"). :has() supported on Safari 15.4+, Chrome 105+, Firefox 121+. */
+  :global(body:has(dialog.svg-lightbox[open])) {
+    overflow: hidden;
   }
 </style>
