@@ -75,7 +75,7 @@ services:
       en: "Grade 7 band served 1,200 students before being eliminated in 2025-26. Feeder programs into high school music are now disrupted."
       zh: "7年级乐队原本服务1,200名学生，在2025-26年被取消。高中音乐项目的生源通道被破坏。"
     grades:
-      "7": { state: lost, tip: { en: "Cut 25-26 (1,200 students)", zh: "2025-26已砍 (1,200学生)" } }
+      "7": { state: gone, tip: { en: "Eliminated 25-26 in all 41 elementary schools (1,200 students). Source: SD41 budget + CBC", zh: "2025-26 已在全部41所小学取消 (1,200学生)。来源: SD41预算 + CBC" } }
 
   - id: mandarin
     name:
@@ -100,13 +100,13 @@ services:
       en: "Advanced / enrichment learning"
       zh: "Advanced Learning 拓展课程"
     note:
-      en: "Advanced Learning streams were cut for 2025-26. These programs are how strong students build a competitive post-secondary profile."
-      zh: "Advanced Learning 课程在2025-26年被取消。这些课程是学生打造有竞争力升学背景的关键。"
+      en: "Advanced Learning streams (MACC, serving Grades 4-7) were cut for 2025-26. These programs are how strong students build a competitive post-secondary profile."
+      zh: "Advanced Learning（MACC，服务4-7年级）课程在2025-26年被取消。这些课程是学生打造有竞争力升学背景的关键。"
     grades:
-      "4":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
-      "5":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
-      "6":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
-      "7":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
+      "4":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
+      "5":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
+      "6":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
+      "7":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
       "8":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
       "9":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
       "10": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }

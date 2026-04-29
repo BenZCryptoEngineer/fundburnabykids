@@ -138,6 +138,58 @@ const clientData = {
       <h3 class="journey__summary-title sans" data-summary-title></h3>
       <ul class="journey__summary-list" data-summary-list></ul>
     </div>
+
+    <details class="journey__sources sans">
+      <summary>
+        <I18nText
+          en="Sources for every cell — verify any claim →"
+          zh="每个单元格的来源——核实任何一项 →"
+          lang={lang}
+        />
+      </summary>
+      <ul class="journey__sources-list">
+        <li>
+          <I18nText en="Grade 7 band program eliminated in all 41 elementary schools (1,200 students, $515k savings)" zh="7年级乐队课在全部41所小学取消（1,200学生，节省 $515k）" lang={lang} />
+          {' — '}
+          <a href="https://www.cbc.ca/news/canada/british-columbia/b-c-school-band-cuts-1.7515565" target="_blank" rel="noopener noreferrer">CBC News</a>
+          {' · '}
+          <a href="https://burnabyschools.ca/wp-content/uploads/2025/05/2025-26-Operating-Budget-Presentation-27may2025.pdf" target="_blank" rel="noopener noreferrer">SD41 Budget Presentation (PDF, May 27 2025)</a>
+        </li>
+        <li>
+          <I18nText en="Advanced Learning (MACC) streams eliminated for Grades 4-7" zh="Advanced Learning（MACC，4-7年级）课程取消" lang={lang} />
+          {' — '}
+          <a href="https://blogs.sd41.bc.ca/advancedlearning/programs/" target="_blank" rel="noopener noreferrer">SD41 Advanced Learning</a>
+          {' · '}
+          <a href="https://burnabyschools.ca/budget-for-next-school-year-passes/" target="_blank" rel="noopener noreferrer">SD41 Budget Passes (May 27 2025)</a>
+        </li>
+        <li>
+          <I18nText en="High school counsellor positions reduced 2025-26" zh="高中辅导员岗位 2025-26 削减" lang={lang} />
+          {' — '}
+          <a href="https://www.ctvnews.ca/vancouver/article/burnaby-teachers-urging-province-to-provide-more-funding-district-facing-42m-budget-shortfall/" target="_blank" rel="noopener noreferrer">CTV News</a>
+          {' · '}
+          <a href="https://www.burnabynow.com/local-news/incredibly-difficult-decisions-needed-to-balance-burnaby-schools-budget-board-8661674" target="_blank" rel="noopener noreferrer">Burnaby Now</a>
+        </li>
+        <li>
+          <I18nText en="Mandarin language program reduced 2025-26" zh="中文课程 2025-26 削减" lang={lang} />
+          {' — '}
+          <a href="https://burnabyschools.ca/wp-content/uploads/2025/05/25-26_annual_budget_for-webpage.pdf" target="_blank" rel="noopener noreferrer">SD41 Annual Budget 2025-26 (PDF)</a>
+        </li>
+        <li>
+          <I18nText en="$9.4M arbitration liability + $4.2M shortfall context" zh="940万仲裁负债 + 420万短缺背景" lang={lang} />
+          {' — '}
+          <a href="https://www.cbc.ca/news/canada/british-columbia/burnaby-school-district-millions-shortfall-9.7169146" target="_blank" rel="noopener noreferrer">CBC News</a>
+          {' · '}
+          <a href="https://burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/" target="_blank" rel="noopener noreferrer">SD41 Official Statement</a>
+        </li>
+      </ul>
+      <p class="journey__sources-note muted">
+        <I18nText
+          en="Cell colours reflect documented current state from the sources above — not predictions about future budget cycles."
+          zh="单元格颜色反映以上来源中的当前状态——不是对未来预算周期的预测。"
+          lang={lang}
+        />
+      </p>
+    </details>
   </div>
 </section>
 
@@ -408,6 +460,47 @@ const clientData = {
       linear-gradient(45deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%, transparent 90%, rgba(255,255,255,0.7) 90%),
       linear-gradient(135deg, transparent 40%, rgba(255,255,255,0.7) 40%, rgba(255,255,255,0.7) 50%, transparent 50%);
     background-color: #DC2626;
+  }
+
+  /* Sources block — every claim traceable to a primary source. */
+  .journey__sources {
+    margin-top: 24px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 0;
+    font-size: 13px;
+  }
+  .journey__sources > summary {
+    cursor: pointer;
+    padding: 12px 16px;
+    color: var(--accent);
+    font-weight: 600;
+    list-style: none;
+  }
+  .journey__sources > summary::-webkit-details-marker { display: none; }
+  .journey__sources > summary:hover { background: var(--cream); }
+  .journey__sources[open] > summary { border-bottom: 1px solid var(--line); }
+  .journey__sources-list {
+    margin: 0;
+    padding: 12px 16px 4px 32px;
+    color: var(--ink-soft);
+  }
+  .journey__sources-list li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+  .journey__sources-list a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .journey__sources-note {
+    margin: 0;
+    padding: 4px 16px 14px;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--muted);
   }
 
   /* Table cells — keep default td display, only paint background. */
