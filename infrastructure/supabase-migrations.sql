@@ -342,6 +342,12 @@ CREATE TABLE IF NOT EXISTS pac_endorsements (
   CONSTRAINT pac_chair_email_basic  CHECK (chair_email ~ '^[^@[:space:]]+@[^@[:space:]]+\.[^@[:space:]]+$')
 );
 
+-- v0.4: optional backup phone for the chair, in case email bounces. Same
+-- ordering rule as the signatures ALTERs above — column add must come
+-- before any partial index that filters on it (none currently, but the
+-- pattern stays consistent for future fields).
+ALTER TABLE pac_endorsements ADD COLUMN IF NOT EXISTS chair_phone TEXT;
+
 CREATE INDEX IF NOT EXISTS idx_pac_status ON pac_endorsements (status);
 CREATE INDEX IF NOT EXISTS idx_pac_petition_slug ON pac_endorsements (petition_slug);
 

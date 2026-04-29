@@ -172,6 +172,20 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
             </div>
           </div>
 
+          <div class="field">
+            <label for="pac-chair-phone">
+              <I18nText en="PAC chair phone (optional)" zh="PAC 主席电话（可选）" lang={lang} />
+            </label>
+            <input type="tel" name="pac-chair-phone" id="pac-chair-phone" maxlength="40" autocomplete="tel" />
+            <p class="field-hint sans">
+              <I18nText
+                en="Backup contact in case email bounces."
+                zh="备用联络方式，邮箱退信时使用。"
+                lang={lang}
+              />
+            </p>
+          </div>
+
           <fieldset class="consents">
             <legend class="sr-only">
               <I18nText en="Consents" zh="同意项" lang={lang} />
@@ -454,6 +468,12 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     outline: none;
     border-color: var(--accent);
     box-shadow: 0 0 0 3px rgba(28, 63, 143, 0.15);
+  }
+  .field-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin: 4px 0 0;
+    line-height: 1.4;
   }
   .consents {
     border: none;

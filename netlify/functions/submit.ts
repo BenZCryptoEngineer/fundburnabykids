@@ -237,6 +237,7 @@ async function processPacEndorsement(
   const studentsRaw = (data['pac-students'] || '').trim();
   const chairName = (data['pac-chair-name'] || '').trim();
   const chairEmail = (data['pac-chair-email'] || '').trim().toLowerCase();
+  const chairPhone = (data['pac-chair-phone'] || '').trim() || null;
   const approvalDate = (data['pac-approval-date'] || '').trim() || null;
   const consent = data['pac-consent'] === 'on';
   const futureInterest = data['pac-future-interest'] === 'on';
@@ -253,6 +254,7 @@ async function processPacEndorsement(
     students,
     chair_name: chairName.substring(0, 60),
     chair_email: chairEmail.substring(0, 254),
+    chair_phone: chairPhone ? chairPhone.substring(0, 40) : null,
     approval_date: approvalDate,
     future_interest: futureInterest,
     status: 'pending',
@@ -301,6 +303,7 @@ async function processPacEndorsement(
     text:
       `School: ${school}\n` +
       `Chair: ${chairName} <${chairEmail}>\n` +
+      `Phone: ${chairPhone || '—'}\n` +
       `Students: ${students}\n` +
       `Approval date: ${approvalDate || 'pending'}\n` +
       `Future interest: ${futureInterest}\n\n` +
@@ -312,6 +315,7 @@ async function processPacEndorsement(
       `<table style="border-collapse:collapse;width:100%;font-size:14px;margin-bottom:20px;">` +
       `<tr><td style="padding:6px 12px 6px 0;color:#666;width:140px;">School</td><td style="padding:6px 0;"><strong>${escapeHtml(school)}</strong></td></tr>` +
       `<tr><td style="padding:6px 12px 6px 0;color:#666;">Chair</td><td style="padding:6px 0;">${escapeHtml(chairName)} &lt;${escapeHtml(chairEmail)}&gt;</td></tr>` +
+      `<tr><td style="padding:6px 12px 6px 0;color:#666;">Phone</td><td style="padding:6px 0;">${chairPhone ? escapeHtml(chairPhone) : '<span style="color:#999;">—</span>'}</td></tr>` +
       `<tr><td style="padding:6px 12px 6px 0;color:#666;">Students</td><td style="padding:6px 0;">${students}</td></tr>` +
       `<tr><td style="padding:6px 12px 6px 0;color:#666;">Approval date</td><td style="padding:6px 0;">${escapeHtml(approvalDate || 'pending')}</td></tr>` +
       `<tr><td style="padding:6px 12px 6px 0;color:#666;">Future interest</td><td style="padding:6px 0;">${futureInterest ? 'yes' : 'no'}</td></tr>` +
