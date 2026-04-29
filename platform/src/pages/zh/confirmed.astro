@@ -81,25 +81,101 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
           </div>
         )}
 
-        <div class="confirm-next">
+        <div class="confirm-timeline">
           <h2 class="sans">
-            <I18nText en="What you can do next" zh="接下来你可以做的事" lang={lang} />
+            <I18nText en="What happens next" zh="接下来会发生什么" lang={lang} />
           </h2>
           <ul>
             <li>
-              <strong>
-                <I18nText
-                  en="Forward this campaign to one other Burnaby parent."
-                  zh="把这个 campaign 转给一位本拿比家长。"
-                  lang={lang}
-                />
-              </strong>{' '}
+              <span class="confirm-timeline__icon" aria-hidden="true">📨</span>
               <I18nText
-                en="The fastest path from 100 signatures to 1,000 is one parent telling another."
-                zh="从 100 个签名到 1,000 个签名最快的方法，就是一位家长告诉另一位家长。"
+                en="Your email is in 7 MLA inboxes today — staff sort by postal code, yours is in your riding's pile."
+                zh="你的邮件今天就进了 7 位 MLA 的收件箱 — 工作人员按邮编分流，你的会进对应选区的那一摞。"
                 lang={lang}
               />
             </li>
+            <li>
+              <span class="confirm-timeline__icon" aria-hidden="true">🏛️</span>
+              <I18nText
+                en="At 500 confirmed signers, we print every letter and hand-deliver to all 5 Burnaby MLA constituency offices alongside local press outreach."
+                zh="累积到 500 名确认签名后，我们把所有信件打印出来，亲手送到 5 位 Burnaby MLA 选区办公室，同步联系本地媒体。"
+                lang={lang}
+              />
+            </li>
+            <li>
+              <span class="confirm-timeline__icon" aria-hidden="true">🎯</span>
+              <I18nText
+                en="Goal: 2,000 parents by May 27 budget vote (≈400 per riding) — at that scale the petition becomes a political object the Education Minister must respond to in writing."
+                zh="目标：5 月 27 日预算通过日前到 2000 名家长（每区约 400）— 达到这个规模，请愿就成为 Education Minister 必须书面回应的政治文件。"
+                lang={lang}
+              />
+            </li>
+            <li>
+              <span class="confirm-timeline__icon" aria-hidden="true">📅</span>
+              <I18nText
+                en="After May 27, the cuts are locked in for the 2026-27 school year. There's no &ldquo;next chance&rdquo; before September."
+                zh="5 月 27 日之后，削减将锁定到 2026-27 学年。9 月之前没有&ldquo;下一次机会&rdquo;。"
+                lang={lang}
+              />
+            </li>
+          </ul>
+        </div>
+
+        <div class="confirm-share">
+          <h2 class="sans">
+            <I18nText
+              en="📲 Tell 2 other Burnaby parents"
+              zh="📲 告诉 2 位本拿比家长"
+              lang={lang}
+            />
+          </h2>
+          <p class="confirm-share__lede">
+            <I18nText
+              en="One parent telling another is the fastest path from 100 signatures to 1,000."
+              zh="一位家长告诉另一位家长 — 这是从 100 个签名到 1,000 个签名最快的方法。"
+              lang={lang}
+            />
+          </p>
+          <div
+            class="confirm-share__buttons"
+            data-share-text={lang === 'zh'
+              ? '我刚签了 Fund Burnaby Kids — 一个要求 BC 省政府在 SD41 学区 5 月 27 日通过 2026-27 预算之前全额拨付 940 万加元仲裁裁决款的活动。60 秒就能加入：https://fundburnabykids.ca/'
+              : "I just signed Fund Burnaby Kids — a campaign asking BC to fully fund the $9.4M arbitration shortfall before SD41 adopts its 2026-27 budget on May 27. 60 seconds to add your name: https://fundburnabykids.ca/"}
+            data-share-title={lang === 'zh' ? 'Fund Burnaby Kids' : 'Fund Burnaby Kids'}
+            data-share-url="https://fundburnabykids.ca/"
+          >
+            <button type="button" class="btn btn--primary btn--small" data-native-share>
+              <I18nText en="📲 Share" zh="📲 分享" lang={lang} />
+            </button>
+            <a
+              class="btn btn--ghost btn--small"
+              data-share-whatsapp
+              target="_blank"
+              rel="noopener noreferrer"
+            >WhatsApp</a>
+            <a
+              class="btn btn--ghost btn--small"
+              data-share-twitter
+              target="_blank"
+              rel="noopener noreferrer"
+            >Twitter / X</a>
+            <button
+              type="button"
+              class="confirm-letter__copy"
+              data-share-copy
+              data-copied={lang === 'zh' ? '已复制 ✓' : 'Copied ✓'}
+              data-default={lang === 'zh' ? '复制链接' : 'Copy link'}
+            >
+              <I18nText en="Copy link" zh="复制链接" lang={lang} />
+            </button>
+          </div>
+        </div>
+
+        <div class="confirm-next">
+          <h2 class="sans">
+            <I18nText en="What else you can do" zh="其他可以做的事" lang={lang} />
+          </h2>
+          <ul>
             <li>
               <I18nText
                 en="If you haven't sent the pre-filled email to your MLA yet,"
@@ -118,6 +194,16 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
               />{' '}
               <a href={localizedUrl('/#coalition', lang)}>
                 <I18nText en="here's the kit they need" zh="这里是他们需要的资料包" lang={lang} />
+              </a>.
+            </li>
+            <li>
+              <I18nText
+                en="If you have questions or a journalist contact,"
+                zh="如果有疑问，或有记者联络渠道，"
+                lang={lang}
+              />{' '}
+              <a href="mailto:ben@fundburnabykids.ca">
+                <I18nText en="email Ben directly" zh="直接发邮件给 Ben" lang={lang} />
               </a>.
             </li>
           </ul>
@@ -215,6 +301,66 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
     position: absolute;
     left: 0;
     color: var(--accent);
+  }
+
+  /* What happens next — timeline. */
+  .confirm-timeline {
+    border-top: 1px solid var(--line);
+    padding-top: 24px;
+    margin-bottom: 24px;
+  }
+  .confirm-timeline h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 16px;
+    font-weight: 600;
+  }
+  .confirm-timeline ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .confirm-timeline li {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .confirm-timeline li:last-child { margin-bottom: 0; }
+  .confirm-timeline__icon {
+    font-size: 16px;
+    line-height: 1.4;
+  }
+
+  /* Tell 2 other parents — share block. */
+  .confirm-share {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    margin-bottom: 24px;
+  }
+  .confirm-share h2 {
+    font-size: 16px;
+    margin: 0 0 8px;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .confirm-share__lede {
+    margin: 0 0 16px;
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .confirm-share__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
   .confirm-back a {
     text-decoration: none;
@@ -333,7 +479,10 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
 <script>
   document.querySelectorAll<HTMLButtonElement>('.confirm-letter__copy').forEach((btn) => {
     btn.addEventListener('click', async () => {
-      const url = btn.dataset.copyUrl ?? '';
+      let url = btn.dataset.copyUrl ?? '';
+      if (!url && btn.dataset.shareCopy !== undefined) {
+        url = btn.closest<HTMLElement>('.confirm-share__buttons')?.dataset.shareText ?? '';
+      }
       const copied = btn.dataset.copied ?? 'Copied!';
       const original = btn.dataset.default ?? btn.textContent ?? 'Copy link';
       try {
@@ -351,5 +500,34 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
       btn.textContent = copied;
       setTimeout(() => { btn.textContent = original; }, 2000);
     });
+  });
+
+  document.querySelectorAll<HTMLElement>('.confirm-share__buttons').forEach((wrap) => {
+    const text = wrap.dataset.shareText ?? '';
+    const title = wrap.dataset.shareTitle ?? 'Fund Burnaby Kids';
+    const url = wrap.dataset.shareUrl ?? 'https://fundburnabykids.ca/';
+    const encoded = encodeURIComponent(text);
+
+    const whatsappEl = wrap.querySelector<HTMLAnchorElement>('[data-share-whatsapp]');
+    if (whatsappEl) whatsappEl.href = `https://wa.me/?text=${encoded}`;
+
+    const twitterEl = wrap.querySelector<HTMLAnchorElement>('[data-share-twitter]');
+    if (twitterEl) twitterEl.href = `https://twitter.com/intent/tweet?text=${encoded}`;
+
+    const nativeBtn = wrap.querySelector<HTMLButtonElement>('[data-native-share]');
+    if (nativeBtn) {
+      nativeBtn.addEventListener('click', async () => {
+        if (typeof navigator.share === 'function') {
+          try {
+            await navigator.share({ title, text, url });
+          } catch { /* cancelled */ }
+        } else {
+          try { await navigator.clipboard.writeText(text); } catch {}
+          const original = nativeBtn.textContent;
+          nativeBtn.textContent = 'Copied ✓';
+          setTimeout(() => { nativeBtn.textContent = original; }, 2000);
+        }
+      });
+    }
   });
 </script>
