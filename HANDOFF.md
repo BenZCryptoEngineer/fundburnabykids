@@ -4,7 +4,9 @@ For an incoming session that wants to be productive in five minutes. Updated **2
 
 ## What's working in production right now
 
-`https://fundburnabykids.ca` is live. `https://burnabykidsfirst-platform.netlify.app` 301s to the canonical domain. Counter is 0 (DB was wiped at the end of testing — see "Test-data hygiene" below). Campaign launch date is 2026-05-01; budget adoption deadline is 2026-05-27.
+`https://fundburnabykids.ca` is live. `https://burnabykidsfirst-platform.netlify.app` 301s to the canonical domain. Campaign launch date is 2026-05-01; budget adoption deadline is 2026-05-27.
+
+For live state (current signature count, recent signers, MLA scorecard) read the homepage directly — don't try to infer it from this doc.
 
 The full signer journey is end-to-end functional:
 
