@@ -36,6 +36,13 @@ const lang = pickLang(Astro.url.pathname);
               lang={lang}
             />
           </h1>
+          <p class="thanks-welcome sans" data-pac-hide>
+            <I18nText
+              en="Welcome — you're now part of a coalition of Burnaby parents who refuse to absorb the Province's mistake."
+              zh="欢迎加入 — 你现在是这群本拿比家长的一员：拒绝替省政府的错误买单。"
+              lang={lang}
+            />
+          </p>
           <p class="thanks-progress sans" data-progress-indicator>
             <span class="progress-dot">●</span>
             <span class="progress-bar"></span>
@@ -243,6 +250,8 @@ const lang = pickLang(Astro.url.pathname);
             if (sigOnly) sigOnly.hidden = true;
             if (pacOnly) pacOnly.hidden = false;
             if (progress) progress.hidden = true;
+            // Hide signature-only welcome line on PAC variant.
+            document.querySelectorAll<HTMLElement>('[data-pac-hide]').forEach((el) => { el.hidden = true; });
           })();
 
           // Wire Step 2 mailto button. ActionForm stashes the URL on
@@ -314,6 +323,15 @@ const lang = pickLang(Astro.url.pathname);
     margin: 0 0 14px;
     line-height: 1.3;
     color: var(--ink);
+  }
+  .thanks-welcome {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+    margin: 0 0 14px;
+    max-width: 480px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .thanks-progress {

@@ -62,18 +62,25 @@ const dataMailto = JSON.stringify({
     <header class="action-form-header">
       <p class="kicker sans">
         <I18nText
-          en="Take action — 60 seconds"
-          zh="行动 — 60 秒"
+          en="Add your name"
+          zh="加入名单"
           lang={lang}
         />
       </p>
       <h2>
         <I18nText
-          en="Sign the petition. Send the pre-filled email. Both go to MLAs together."
-          zh="签署请愿。发送预填邮件。两个一起送到 MLA。"
+          en="Add your name to the list of Burnaby parents who refuse to absorb the Province's mistake."
+          zh="加入这份名单：拒绝替省政府的错误买单的本拿比家长。"
           lang={lang}
         />
       </h2>
+      <p class="action-form-header__sub sans">
+        <I18nText
+          en="Sign + send the pre-filled email. 60 seconds. Both go to your MLAs together."
+          zh="签名 + 发送预填邮件。60 秒。两个一起送到你的 MLA。"
+          lang={lang}
+        />
+      </p>
     </header>
 
     {/* Letter preview — what gets sent on your behalf. Closed by default
@@ -289,10 +296,26 @@ const dataMailto = JSON.stringify({
         </div>
       )}
 
+      <p class="form-coalition-note sans" data-coalition-note>
+        <I18nText
+          en="Your name joins"
+          zh="你的名字加入"
+          lang={lang}
+        />
+        {' '}
+        <strong data-signature-count-inline>—</strong>
+        {' '}
+        <I18nText
+          en="verified Burnaby parents who've already said this."
+          zh="位已经表态的本拿比家长。"
+          lang={lang}
+        />
+      </p>
+
       <button type="submit" class="btn btn--primary btn--lg btn--block">
         <I18nText
-          en="Sign — and send your email →"
-          zh="签名 — 并发送邮件 →"
+          en="I'm in — sign me up →"
+          zh="我加入 — 帮我签上 →"
           lang={lang}
         />
       </button>
@@ -428,6 +451,43 @@ const dataMailto = JSON.stringify({
     form.addEventListener('change', updatePreview);
     updatePreview();
 
+    // Inline coalition-count line: read total verified-signature count
+    // from public_signatures (Prefer: count=exact returns the total in
+    // Content-Range). Hides the whole sentence when count is 0 so the
+    // copy never reads "joins 0 parents who've already said this".
+    (function paintCoalitionCount() {
+      const el = document.querySelector<HTMLElement>('[data-signature-count-inline]');
+      const wrap = document.querySelector<HTMLElement>('[data-coalition-note]');
+      if (!el || !wrap) return;
+      // PUBLIC_* env vars are baked into the SSR HTML; we read them via
+      // the SignatureCounter component's data-attrs if available, else
+      // skip silently — first-paint without count is acceptable.
+      const counterEl = document.querySelector<HTMLElement>('[data-supabase-url][data-supabase-key]');
+      const url = counterEl?.dataset.supabaseUrl;
+      const key = counterEl?.dataset.supabaseKey;
+      if (!url || !key) {
+        wrap.style.display = 'none';
+        return;
+      }
+      fetch(`${url}/rest/v1/public_signatures?select=first_name&limit=1`, {
+        headers: { apikey: key, Authorization: `Bearer ${key}`, Prefer: 'count=exact' },
+      })
+        .then((res) => {
+          if (!res.ok) return null;
+          const range = res.headers.get('content-range');
+          const after = range?.split('/')[1];
+          return after ? parseInt(after, 10) : null;
+        })
+        .then((total) => {
+          if (total === null || !Number.isFinite(total) || total <= 0) {
+            wrap.style.display = 'none';
+            return;
+          }
+          el.textContent = String(total);
+        })
+        .catch(() => { wrap.style.display = 'none'; });
+    })();
+
     // Postal code normalization: on every keystroke, trim whitespace and
     // uppercase. Mobile keyboards autocapitalize the first letter only,
     // so users typically end up with "V5b 3x6" — we accept either case
@@ -527,8 +587,25 @@ const dataMailto = JSON.stringify({
     font-size: clamp(22px, 3vw, 28px);
     font-weight: 700;
     line-height: 1.3;
-    margin: 0;
+    margin: 0 0 12px;
     color: var(--ink);
+  }
+  .action-form-header__sub {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .form-coalition-note {
+    font-size: 13px;
+    color: var(--ink-soft);
+    text-align: center;
+    margin: 0 0 8px;
+    line-height: 1.4;
+  }
+  .form-coalition-note strong {
+    color: var(--accent);
+    font-weight: 700;
   }
 
   /* Letter preview (what gets sent on the signer's behalf) */
