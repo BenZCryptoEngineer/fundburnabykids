@@ -7,504 +7,93 @@
 // their interpretive error" without knowing what BCPSEA is in plain
 // language.
 //
-// This component is a 4-tier hierarchy:
-//   1. Province  — "Victoria's head office"
-//   2. District  — Burnaby's school-district level (SD41, DPAC, MLAs)
-//   3. School    — 49 schools and the PAC at each
-//   4. You       — the individual parent
+// Two render modes:
+//   inline=false (default) — only the fullscreen dialog renders. Other
+//     components (e.g. PersonaSelector's helper bar) provide trigger
+//     buttons that open the dialog by ID. Keeps the homepage compact;
+//     parents who DO want the civics lesson click in.
+//   inline=true            — also renders a full inline section above
+//     the dialog (the original behavior). Useful if you want the
+//     diagram visible by default on a specific page.
 //
-// Every box carries: icon + name + plain-language metaphor + role +
-// optional ⚠/★ badge for actors involved in the $9.4M flow.
+// The diagram body (4 tiers + numbered story + takeaway) is extracted
+// into _StakeholderMapBody.astro so it can be rendered both inline AND
+// inside the dialog without duplicating the markup.
 //
-// The flow is signalled by ①②③④ badges anchored to the boxes that
-// participate in each step, with a caption block under the diagram
-// translating the numbers into a 4-line story.
+// Mobile: dialog has @panzoom/panzoom-driven pinch-to-zoom (same
+// gesture vocabulary as SvgVisual.astro elsewhere on the site).
 //
-// Mobile: stacks vertically, full-width boxes, large readable text.
-// A "Tap to enlarge" button opens a fullscreen dialog with panzoom
-// (matching the SvgVisual.astro pattern) for users who want to zoom
-// further. Browser native pinch-zoom is also preserved.
-//
-// EN/ZH split: every string is rendered through <I18nText> so adding
-// or fixing translations stays in one place.
+// EN/ZH split: every string in the body partial is rendered through
+// <I18nText> so adding or fixing translations stays in one place.
 
 import I18nText from '~/components/I18nText.astro';
+import StakeholderMapBody from '~/components/_StakeholderMapBody.astro';
 import type { Lang } from '~/lib/i18n';
 
 interface Props {
   lang: Lang;
+  /** When true, also render the diagram inline as a visible section.
+      Default false: only the fullscreen dialog renders; trigger from
+      other components by referencing the dialog ID. */
+  inline?: boolean;
 }
 
-const { lang } = Astro.props;
+const { lang, inline = false } = Astro.props;
 
-const dialogId = `stakeholder-zoom-${Math.random().toString(36).slice(2, 8)}`;
-const zoomLabel = lang === 'zh' ? '放大查看完整圖' : 'Tap to enlarge full diagram';
+// Stable dialog ID so trigger buttons in OTHER components (e.g.
+// PersonaSelector helper bar) can reference it. Only one StakeholderMap
+// instance per page is supported.
+const dialogId = 'stakeholder-zoom';
+const zoomLabel = lang === 'zh' ? '放大查看完整图' : 'Tap to enlarge full diagram';
 const closeLabel = lang === 'zh' ? '关闭' : 'Close';
 ---
 
-<section class="smap" id="how-it-works">
-  <div class="wrap-wide">
-    <header class="smap__header">
-      <p class="kicker sans">
-        <I18nText
-          en="Civics, in plain language"
-          zh="政治课，用大白话讲"
-          lang={lang}
-        />
-      </p>
-      <h2>
-        <I18nText
-          en="How public education in BC actually works — and where you fit in"
-          zh="BC 公立教育到底怎么运作 — 你在这张图里是哪个位置"
-          lang={lang}
-        />
-      </h2>
-      <p class="smap__lede">
-        <I18nText
-          en="If you've heard names like BCPSEA, DPAC, Treasury Board, MLA and felt lost — this is for you. One diagram, four tiers, every name in plain English."
-          zh="如果你听到 BCPSEA、DPAC、Treasury Board、MLA 这些名词觉得一头雾水 — 这张图是给你的。四层结构，每个名词用大白话解释。"
-          lang={lang}
-        />
-      </p>
-    </header>
-
-    <div class="smap__diagram" data-smap-content>
-      <!-- TIER 1: PROVINCE ============================================ -->
-      <div class="smap__tier smap__tier--province">
-        <div class="smap__tier-label sans">
-          <span class="smap__tier-num">1</span>
+{inline && (
+  <section class="smap" id="how-it-works">
+    <div class="wrap-wide">
+      <header class="smap__header">
+        <p class="kicker sans">
           <I18nText
-            en="VICTORIA — the Province"
-            zh="第一层：省级（Victoria）"
-            lang={lang}
-          />
-          <span class="smap__tier-meta muted">
-            <I18nText
-              en="like BC's head office for everything-not-municipal"
-              zh="像「BC 全省的总公司」 — 非市政事务都在这一层"
-              lang={lang}
-            />
-          </span>
-        </div>
-        <div class="smap__row smap__row--3col">
-          <!-- BCPSEA -->
-          <article class="smap__box smap__box--warning">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">🏛️</span>
-              <h3 class="smap__box-title sans">BCPSEA</h3>
-              <span class="smap__num smap__num--1" aria-label="step 1">①</span>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en={'Like the Province\'s "HR department" for teacher contracts at all 60 BC school districts.'}
-                zh="像「省政府的人资部」— 替全 BC 60 个学区跟教师工会签合约。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en="Districts can't negotiate solo — BCPSEA writes the rules they all follow."
-                zh="学区不能自己谈合约 — BCPSEA 写好规则，所有学区一起照做。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__badge smap__badge--warn">
-              <I18nText
-                en="⚠ Misread the 2022 deal — that's why Burnaby owes $9.4M"
-                zh="⚠ 2022 年解读错了 — 这就是 $9.4M 帐单的源头"
-                lang={lang}
-              />
-            </p>
-          </article>
-
-          <!-- TREASURY BOARD -->
-          <article class="smap__box smap__box--lever">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">💰</span>
-              <h3 class="smap__box-title sans">Treasury Board</h3>
-              <span class="smap__num smap__num--3" aria-label="step 3">③</span>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en={'Like a company\'s "spending approvals committee" — 14 people who decide when the $5B Contingencies Vote in Budget 2026 gets used.'}
-                zh="像公司的「财务审批委员会」 — 14 个人决定 BC Budget 2026 里那 $5B 应急基金怎么花。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en="Chair: Bailey (Finance). The room where the $9.4M can be released."
-                zh="主席是 Bailey（财政）。$9.4M 放不放，就在这个会议桌上决定。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__badge smap__badge--lever">
-              <I18nText
-                en={'★ 2 of YOUR Burnaby MLAs sit here:  • Routledge (BNO)  • Choi (BNS)'}
-                zh="★ 你的 2 个 Burnaby MLA 就坐这桌：Routledge (BNO)、Choi (BNS)"
-                lang={lang}
-              />
-            </p>
-          </article>
-
-          <!-- CABINET / MIN. OF EDUCATION -->
-          <article class="smap__box">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">👔</span>
-              <h3 class="smap__box-title sans">
-                <I18nText
-                  en="Cabinet (Beare + Bailey)"
-                  zh="内阁（Beare + Bailey）"
-                  lang={lang}
-                />
-              </h3>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en="Like the C-suite. Ministers run their portfolios like senior VPs of the Province."
-                zh="像 C-suite 高管。每个厅长（Minister）像负责一摊业务的 VP。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en={'• Beare = "VP of Schools" (Education Minister, owns relationship with all 60 BC districts).'}
-                zh="• Beare ＝「学校 VP」（教育厅长，对接全 BC 60 个学区）。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en={'• Bailey = "VP of Money" (Finance Minister, also chairs Treasury Board).'}
-                zh="• Bailey ＝「钱 VP」（财政厅长，同时兼 Treasury Board 主席）。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role muted">
-              <I18nText
-                en={'Beare replied to DPAC on Apr 22: "coming weeks" — but no actual commitment yet.'}
-                zh="Beare 4 月 22 日回信给 DPAC：「coming weeks」 — 但还没真的承诺。"
-                lang={lang}
-              />
-            </p>
-          </article>
-        </div>
-      </div>
-
-      <!-- TIER 2: DISTRICT ============================================ -->
-      <div class="smap__tier smap__tier--district">
-        <div class="smap__tier-label sans">
-          <span class="smap__tier-num">2</span>
-          <I18nText
-            en="DISTRICT — Burnaby-wide level"
-            zh="第二层：学区级（Burnaby 整个地区）"
-            lang={lang}
-          />
-          <span class="smap__tier-meta muted">
-            <I18nText
-              en="where Burnaby-wide decisions and Burnaby-wide voices live"
-              zh="Burnaby 整个区的决策与声音都在这一层"
-              lang={lang}
-            />
-          </span>
-        </div>
-        <div class="smap__row smap__row--3col">
-          <!-- SD41 -->
-          <article class="smap__box smap__box--victim">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">🏫</span>
-              <h3 class="smap__box-title sans">SD41</h3>
-              <span class="smap__num smap__num--2" aria-label="step 2">②</span>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en={'Like "Burnaby\'s school franchise HQ" — runs all 49 Burnaby public schools (41 elementary + 8 secondary).'}
-                zh="像「Burnaby 的学校总公司」— 经营全 49 所 Burnaby 公立学校（41 小学 + 8 中学）。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en="• 7 elected Trustees (its board)  • Schnider is current chair"
-                zh="• 7 个民选 Trustee（它的董事会） • Schnider 是现任主席"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__badge smap__badge--warn">
-              <I18nText
-                en={'★ Got the $9.4M bill, must balance budget BY LAW → cuts'}
-                zh="★ 收到 $9.4M 帐单，按法律必须平衡预算 → 砍预算"
-                lang={lang}
-              />
-            </p>
-          </article>
-
-          <!-- DPAC -->
-          <article class="smap__box">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">👥</span>
-              <h3 class="smap__box-title sans">DPAC</h3>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en={'Like "the council OF councils" — every school\'s PAC sends one elected rep up; together they speak for parents of the whole district.'}
-                zh="像「家委会的家委会」 — 每个学校 PAC 派 1 个代表，一起组成全 Burnaby 41 校家长的统一声音。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en="• Paul Kwon is chair  • Wrote Beare on Apr 22 (the letter Beare replied to)"
-                zh="• Paul Kwon 主席 • 4 月 22 日寫信給 Beare（Beare 回信的就是這封）"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role muted">
-              <I18nText
-                en="Burnaby DPAC has been organizing on this issue since April 2026."
-                zh="Burnaby DPAC 从 2026 年 4 月开始就在为这件事组织行动。"
-                lang={lang}
-              />
-            </p>
-          </article>
-
-          <!-- 5 BURNABY MLAs -->
-          <article class="smap__box smap__box--lever">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">🗳️</span>
-              <h3 class="smap__box-title sans">
-                <I18nText
-                  en="5 Burnaby MLAs"
-                  zh="5 个 Burnaby MLAs"
-                  lang={lang}
-                />
-              </h3>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en="Your reps in BC Legislature. Each elected by one of Burnaby's 5 ridings."
-                zh="你 5 个 Burnaby 选区在 BC 议会的代表。每人代表一个选区。"
-                lang={lang}
-              />
-            </p>
-            <ul class="smap__mla-list">
-              <li>Anne Kang <span class="muted">(BNC)</span></li>
-              <li>Rohini Arora <span class="muted">(BNE)</span></li>
-              <li>Raj Chouhan <span class="muted">(BNN)</span></li>
-              <li>Janet Routledge <span class="muted">(BNO)</span> <span class="smap__star">★</span></li>
-              <li>Paul Choi <span class="muted">(BNS)</span> <span class="smap__star">★</span></li>
-            </ul>
-            <p class="smap__badge smap__badge--lever">
-              <I18nText
-                en="★ Routledge + Choi also sit on Treasury Board"
-                zh="★ Routledge + Choi 同時坐 Treasury Board"
-                lang={lang}
-              />
-            </p>
-          </article>
-        </div>
-      </div>
-
-      <!-- TIER 3: SCHOOL ============================================== -->
-      <div class="smap__tier smap__tier--school">
-        <div class="smap__tier-label sans">
-          <span class="smap__tier-num">3</span>
-          <I18nText
-            en="SCHOOL — your kid's daily life"
-            zh="第三层：学校级（你孩子每天接触的层）"
-            lang={lang}
-          />
-          <span class="smap__tier-meta muted">
-            <I18nText
-              en="where the cuts physically hit a child's classroom"
-              zh="预算砍下来，是这一层身体感受到"
-              lang={lang}
-            />
-          </span>
-        </div>
-        <div class="smap__row smap__row--2col">
-          <!-- 49 SCHOOLS -->
-          <article class="smap__box smap__box--victim">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">🏠</span>
-              <h3 class="smap__box-title sans">
-                <I18nText
-                  en="49 Burnaby schools"
-                  zh="49 所 Burnaby 学校"
-                  lang={lang}
-                />
-              </h3>
-              <span class="smap__num smap__num--2-cont" aria-label="step 2 continues">②</span>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en="Like 49 branches. Each has a principal (branch manager), reporting up to SD41 (HQ)."
-                zh="像 49 家分店。每家有一个校长（店长），向 SD41（总公司）汇报。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en="Where teachers, EAs, counsellors, band, MACC, Mandarin programs ACTUALLY live. When SD41 cuts, it lands here first."
-                zh="老师、EA、辅导员、乐队、MACC、中文课程，都是在这一层运作。SD41 一砍预算，最先感受到的就是这里。"
-                lang={lang}
-              />
-            </p>
-          </article>
-
-          <!-- PAC -->
-          <article class="smap__box">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">👨‍👩‍👧</span>
-              <h3 class="smap__box-title sans">PAC</h3>
-            </div>
-            <p class="smap__metaphor">
-              <I18nText
-                en={'Like "your school\'s parent council" — every BC public school has one. Volunteer board, like the U.S. PTA but with formal status under the BC School Act.'}
-                zh="像「你孩子那个学校的家长董事会」 — 每间 BC 公立学校都有一个。义工性质，像美国的 PTA，但有 BC School Act 法定地位。"
-                lang={lang}
-              />
-            </p>
-            <p class="smap__role">
-              <I18nText
-                en="• Elects a chair  • Organizes events  • Advises principal  • Can vote a public motion to endorse this campaign"
-                zh="• 选一个主席 • 办活动 • 给校长提意见 • 可以投票通过 motion 公开 endorse 这个 campaign"
-                lang={lang}
-              />
-            </p>
-          </article>
-        </div>
-      </div>
-
-      <!-- TIER 4: YOU ================================================= -->
-      <div class="smap__tier smap__tier--you">
-        <div class="smap__tier-label sans">
-          <span class="smap__tier-num">4</span>
-          <I18nText en="YOU — three roles in one person" zh="第四层：你 — 一个人三种身份" lang={lang} />
-        </div>
-        <div class="smap__row smap__row--1col">
-          <article class="smap__box smap__box--you">
-            <div class="smap__box-head">
-              <span class="smap__icon" aria-hidden="true">👤</span>
-              <h3 class="smap__box-title sans">
-                <I18nText en="YOU — Burnaby parent" zh="你 — Burnaby 家长" lang={lang} />
-              </h3>
-              <span class="smap__num smap__num--4" aria-label="step 4">④</span>
-            </div>
-            <p class="smap__role smap__role--strong">
-              <I18nText
-                en="In this system you are not 1 person — you are 3 roles at once:"
-                zh="在这个体系里你不是 1 个身份 — 你同时是 3 种身份："
-                lang={lang}
-              />
-            </p>
-            <ul class="smap__roles">
-              <li>
-                <span class="smap__role-icon" aria-hidden="true">🗳️</span>
-                <strong><I18nText en="VOTER" zh="投票人" lang={lang} /></strong> —
-                <I18nText
-                  en="you elected your MLA"
-                  zh="选 MLA 那张票就是你投的"
-                  lang={lang}
-                />
-              </li>
-              <li>
-                <span class="smap__role-icon" aria-hidden="true">👪</span>
-                <strong><I18nText en="PARENT" zh="家长" lang={lang} /></strong> —
-                <I18nText
-                  en="you're a member of your kid's school's PAC by default"
-                  zh="你是你孩子学校 PAC 的当然成员"
-                  lang={lang}
-                />
-              </li>
-              <li>
-                <span class="smap__role-icon" aria-hidden="true">📬</span>
-                <strong><I18nText en="CONSTITUENT" zh="选民" lang={lang} /></strong> —
-                <I18nText
-                  en="any of your 5 Burnaby MLAs MUST take your email"
-                  zh="任何一个 Burnaby MLA 都必须收你的 email"
-                  lang={lang}
-                />
-              </li>
-            </ul>
-          </article>
-        </div>
-      </div>
-
-      <!-- THE STORY (4 numbered captions) ============================= -->
-      <div class="smap__story">
-        <h3 class="smap__story-title sans">
-          <I18nText
-            en="How $9.4M moves through this structure"
-            zh="$9.4M 在这张图里怎么走"
-            lang={lang}
-          />
-        </h3>
-        <ol class="smap__story-list">
-          <li>
-            <span class="smap__story-num">①</span>
-            <strong>BCPSEA</strong>
-            <I18nText
-              en={' negotiates teacher pay for ALL 60 BC districts → in 2022 it misread the salary grid → it directed SD41 to apply the wrong rate → bill: $9.4M.'}
-              zh=" 替全 BC 60 个学区谈老师薪资 → 2022 年解读错了 → 命令 SD41 用错的薪资 → 帐单 $9.4M。"
-              lang={lang}
-            />
-          </li>
-          <li>
-            <span class="smap__story-num">②</span>
-            <strong>SD41</strong>
-            <I18nText
-              en={' must balance the budget BY LAW → cuts pass through SD41 → 49 schools → your kid\'s teacher, EA, counsellor, band, MACC, Mandarin. This is what the campaign is fighting.'}
-              zh=" 法律规定要平衡预算 → 砍预算 → 49 个学校 → 你孩子的老师、EA、辅导员、乐队、MACC、中文。这就是这场 campaign 要保护的东西。"
-              lang={lang}
-            />
-          </li>
-          <li>
-            <span class="smap__story-num">③</span>
-            <strong>Treasury Board</strong>
-            <I18nText
-              en={' has the same Province\'s $5B Contingencies Vote that exists for "current collective bargaining mandate costs" — exactly this. ★ 2 of your Burnaby MLAs (Routledge + Choi) literally sit on this committee.'}
-              zh=" 手上有同一个 Province 的 $5B 应急基金，明文用途就是「current collective bargaining mandate costs」 — 正是这件事。★ 你的 2 个 Burnaby MLA（Routledge + Choi）就坐在这个委员会里。"
-              lang={lang}
-            />
-          </li>
-          <li>
-            <span class="smap__story-num">④</span>
-            <strong><I18nText en="You" zh="你" lang={lang} /></strong>
-            <I18nText
-              en={' send the pre-filled email when you sign the petition → it goes to all 5 Burnaby MLAs + Beare. Two of those MLAs are on Treasury Board. From your kitchen table to that $5B vote — 0 middlemen.'}
-              zh=" 在签名时发出预填 email → 到 5 个 Burnaby MLA + Beare。其中 2 个 MLA 就在 Treasury Board。从你的客厅到那个 $5B 的投票桌 — 中间 0 个守门人。"
-              lang={lang}
-            />
-          </li>
-        </ol>
-      </div>
-
-      <!-- TAKEAWAY ==================================================== -->
-      <div class="smap__takeaway">
-        <p class="smap__takeaway-text">
-          <I18nText
-            en={'The same Province that BROKE this with BCPSEA holds the $5B that can FIX it. Two of your Burnaby MLAs sit on the committee that approves that $5B. Your email is the shortest line from this room to that vote.'}
-            zh="同一个 Province，左手 BCPSEA 搞砸了，右手 $5B 应急基金可以收拾。你的 2 个 Burnaby MLA 就坐在批 $5B 的桌子上。你的 email 是从这间客厅到那个投票桌的最短一条线。"
+            en="Civics, in plain language"
+            zh="政治课，用大白话讲"
             lang={lang}
           />
         </p>
-      </div>
+        <h2>
+          <I18nText
+            en="How public education in BC actually works — and where you fit in"
+            zh="BC 公立教育到底怎么运作 — 你在这张图里是哪个位置"
+            lang={lang}
+          />
+        </h2>
+        <p class="smap__lede">
+          <I18nText
+            en="If you've heard names like BCPSEA, DPAC, Treasury Board, MLA and felt lost — this is for you. One diagram, four tiers, every name in plain English."
+            zh="如果你听到 BCPSEA、DPAC、Treasury Board、MLA 这些名词觉得一头雾水 — 这张图是给你的。四层结构，每个名词用大白话解释。"
+            lang={lang}
+          />
+        </p>
+      </header>
+
+      <StakeholderMapBody lang={lang} />
+
+      <button
+        type="button"
+        class="smap__zoom-btn sans"
+        data-smap-zoom-open={dialogId}
+        aria-label={zoomLabel}
+      >
+        <span aria-hidden="true">🔍</span>
+        <span>{zoomLabel}</span>
+      </button>
     </div>
+  </section>
+)}
 
-    <button
-      type="button"
-      class="smap__zoom-btn sans"
-      data-smap-zoom-open={dialogId}
-      aria-label={zoomLabel}
-    >
-      <span aria-hidden="true">🔍</span>
-      <span>{zoomLabel}</span>
-    </button>
-  </div>
-</section>
-
-<!-- Fullscreen zoom dialog — same diagram, panzoom-able for mobile readability -->
+<!-- Fullscreen zoom dialog — same diagram, panzoom-able for mobile
+     readability. Always rendered, with the body partial embedded
+     directly so it's available immediately on first open (no clone
+     dance like the previous revision). -->
 <dialog class="smap-zoom" id={dialogId} aria-label={zoomLabel}>
   <button
     type="button"
@@ -521,7 +110,7 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
   </p>
   <div class="smap-zoom__viewport" data-smap-zoom-viewport>
     <div class="smap-zoom__media" data-smap-zoom-media>
-      <!-- Filled at runtime by cloning [data-smap-content] into here on first open. -->
+      <StakeholderMapBody lang={lang} />
     </div>
   </div>
   <div class="smap-zoom__controls" role="toolbar" aria-label={lang === 'zh' ? '缩放控制' : 'Zoom controls'}>
@@ -532,21 +121,14 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
 </dialog>
 
 <script>
-  // Mobile zoom for the StakeholderMap. The inline diagram already
-  // stacks responsively on phones, but family members of all ages will
-  // want to pinch in for the small text in the box descriptions and
-  // metaphors. We reuse the @panzoom/panzoom approach proven by
-  // SvgVisual.astro — same gesture vocabulary across the site.
-  //
-  // The dialog clones the inline diagram on first open (rather than
-  // moving it) so the inline copy stays available for users who prefer
-  // browser native pinch-zoom. Subsequent opens reuse the clone.
+  // Mobile zoom for the StakeholderMap. Same gesture vocabulary as
+  // SvgVisual.astro elsewhere on the site (panzoom for pinch / wheel
+  // / drag, +/-/reset buttons for keyboard a11y).
   import Panzoom from '@panzoom/panzoom';
 
   type DialogWithPz = HTMLDialogElement & {
     __pz?: ReturnType<typeof Panzoom>;
     __pzWheelBound?: boolean;
-    __pzCloned?: boolean;
     __savedScrollY?: number;
   };
 
@@ -565,24 +147,6 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
         const dlg = document.getElementById(id) as DialogWithPz | null;
         if (!dlg || typeof dlg.showModal !== 'function') return;
 
-        // Clone the inline diagram on first open. We deep-clone so the
-        // stylesheet (scoped via Astro's data-astro-cid attributes)
-        // still styles the cloned content. Cloning instead of moving
-        // means the inline copy keeps working for users who never use
-        // the lightbox.
-        if (!dlg.__pzCloned) {
-          const inlineMedia = document.querySelector<HTMLElement>('[data-smap-content]');
-          const dialogMedia = dlg.querySelector<HTMLElement>('[data-smap-zoom-media]');
-          if (inlineMedia && dialogMedia) {
-            const clone = inlineMedia.cloneNode(true) as HTMLElement;
-            // Strip the inline-version display constraint so the cloned
-            // content renders at "natural" size inside the lightbox.
-            clone.removeAttribute('data-smap-content');
-            dialogMedia.appendChild(clone);
-            dlg.__pzCloned = true;
-          }
-        }
-
         dlg.__savedScrollY = window.scrollY;
         dlg.showModal();
         const viewport = dlg.querySelector<HTMLElement>('.smap-zoom__viewport');
@@ -597,7 +161,6 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
             startScale: isNarrow ? 1 : 0.85,
             step: 0.3,
           });
-          // Desktop: scroll wheel zooms.
           const container = dlg.querySelector<HTMLElement>('.smap-zoom__viewport');
           if (container && !dlg.__pzWheelBound) {
             container.addEventListener(
@@ -649,7 +212,15 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
   }
 </script>
 
-<style>
+<style is:global>
+  /* All .smap*/ /* and .smap-zoom* styles are global because the
+     StakeholderMap diagram body lives in a separate partial component
+     (_StakeholderMapBody.astro) — Astro's scoped CSS would attach a
+     different data-astro-cid attribute to elements in the partial vs.
+     elements rendered here, so scoped selectors wouldn't match. All
+     class names are well-namespaced (.smap__, .smap-zoom__) so the
+     global rules can't leak into other components. */
+
   .smap {
     padding: 64px 0;
     background: var(--paper);
@@ -659,7 +230,7 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     max-width: 760px;
     margin-bottom: 28px;
   }
-  .kicker {
+  .smap .kicker {
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.06em;
@@ -858,7 +429,7 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     font-size: 18px;
   }
 
-  .muted { color: var(--muted); }
+  .smap .muted, .smap-zoom .muted { color: var(--muted); }
 
   /* ── Story + Takeaway ──────────────────────────────────────────── */
   .smap__story {
@@ -948,7 +519,6 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
-  /* On mobile, promote the zoom button to a more prominent affordance. */
   @media (max-width: 560px) {
     .smap__zoom-btn {
       width: 100%;
@@ -1076,7 +646,7 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
   }
 
   /* Lock background page scroll while the zoom dialog is open. */
-  :global(body:has(dialog.smap-zoom[open])) {
+  body:has(dialog.smap-zoom[open]) {
     overflow: hidden;
   }
 </style>

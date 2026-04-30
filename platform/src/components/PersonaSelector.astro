@@ -67,6 +67,37 @@ function ctaHref(target: string): string {
       </h2>
     </header>
 
+    {/* Helper bar — escape hatch for parents who feel lost about the
+        institutional vocabulary (BCPSEA, DPAC, Treasury Board, MLA).
+        Clicking opens the StakeholderMap dialog (rendered separately
+        via <StakeholderMap />). The dialog ID 'stakeholder-zoom' is
+        the stable identifier — see StakeholderMap.astro for matching
+        side. */}
+    <button
+      type="button"
+      class="personas__helper sans"
+      data-smap-zoom-open="stakeholder-zoom"
+    >
+      <span class="personas__helper-icon" aria-hidden="true">🤔</span>
+      <span class="personas__helper-text">
+        <strong>
+          <I18nText
+            en="Confused by the names?"
+            zh="对这些机构名词感到陌生？"
+            lang={lang}
+          />
+        </strong>
+        <span>
+          <I18nText
+            en="BCPSEA, DPAC, PAC, SD41, Treasury Board, MLA — what each one actually does, in plain language. ~1 minute read."
+            zh="BCPSEA、DPAC、PAC、SD41、Treasury Board、MLA — 每个机构到底在做什么，用大白话讲清楚。约 1 分钟。"
+            lang={lang}
+          />
+        </span>
+      </span>
+      <span class="personas__helper-chevron" aria-hidden="true">→</span>
+    </button>
+
     <div class="personas__cards" role="tablist">
       {personas.map((p, idx) => (
         <button
@@ -194,6 +225,65 @@ function ctaHref(target: string): string {
     margin: 0;
     color: var(--ink);
   }
+  /* Helper bar — full-width clickable that opens the StakeholderMap
+     civics dialog. Sits between the header and the persona cards so
+     it's seen by people who'd otherwise bounce off the persona names
+     too. Visually distinct from the cards (dashed border, accent
+     color) so it reads as a help link, not a 4th persona. */
+  .personas__helper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    background: var(--paper);
+    border: 1px dashed var(--accent);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    color: var(--ink);
+    transition: background 0.15s, border-style 0.15s;
+  }
+  .personas__helper:hover,
+  .personas__helper:focus-visible {
+    background: var(--cream);
+    border-style: solid;
+  }
+  .personas__helper:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .personas__helper-icon {
+    font-size: 24px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .personas__helper-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+  }
+  .personas__helper-text strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .personas__helper-chevron {
+    font-size: 18px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  @media (max-width: 560px) {
+    .personas__helper { padding: 12px 14px; gap: 10px; }
+    .personas__helper-text { font-size: 12.5px; }
+  }
+
   .personas__cards {
     display: grid;
     grid-template-columns: repeat(3, 1fr);

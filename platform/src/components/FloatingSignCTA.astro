@@ -1,0 +1,214 @@
+---
+// FloatingSignCTA — sticky "sign now" call-to-action that follows the
+// reader after they've scrolled past the Hero. Hides itself once the
+// reader reaches the ActionForm (so it doesn't overlap the actual
+// form fields). Click → smooth-scroll to ActionForm + focus the first
+// input.
+//
+// Why: the homepage now has many sections (StakeholderMap dialog
+// trigger, RidingMap, ThreeFacts, Journey, PersonaSelector, ActionForm,
+// MlaScorecard, Coalition, About, FAQ). Without a persistent CTA, a
+// reader who decides to sign mid-scroll has to scroll all the way back
+// up to find the form. The floating CTA gives them a single tap from
+// any depth.
+//
+// Uses IntersectionObserver on Hero (when out → show) and ActionForm
+// (when in → hide) so behavior is purely scroll-state-driven, no
+// scroll-event listener (cheap on mobile).
+//
+// Mobile: bottom-fixed full-width bar (touch-target friendly).
+// Desktop: bottom-right pill (doesn't dominate the page).
+
+import I18nText from '~/components/I18nText.astro';
+import type { Lang } from '~/lib/i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<a
+  href="#act"
+  class="float-sign sans"
+  data-float-sign
+  aria-label={lang === 'zh' ? '签名 + 寄信，60 秒' : 'Sign + send email, 60 seconds'}
+  hidden
+>
+  <span class="float-sign__icon" aria-hidden="true">✍</span>
+  <span class="float-sign__text">
+    <I18nText
+      en="Sign + send email"
+      zh="签名 + 寄信"
+      lang={lang}
+    />
+  </span>
+  <span class="float-sign__meta">
+    <I18nText
+      en="60 sec"
+      zh="60 秒"
+      lang={lang}
+    />
+  </span>
+</a>
+
+<script>
+  // Show floating CTA when Hero scrolls out of viewport.
+  // Hide it when ActionForm is in viewport (avoid overlapping form fields).
+  const cta = document.querySelector<HTMLElement>('[data-float-sign]');
+  if (cta) {
+    // Hero is the first <section class="hero"> — query loosely so the
+    // selector survives Hero.astro renaming its root element.
+    const hero =
+      document.querySelector('section.hero') ||
+      document.querySelector('[class*="hero"]') ||
+      document.querySelector('header');
+    // ActionForm renders an id="act" anchor (used by the CTA's href).
+    const actionForm =
+      document.getElementById('act') ||
+      document.querySelector('section[id="act"]') ||
+      document.querySelector('form[name="signature"]')?.closest('section');
+
+    let heroOut = false;
+    let actionVisible = false;
+
+    function update() {
+      const shouldShow = heroOut && !actionVisible;
+      cta!.hidden = !shouldShow;
+      if (shouldShow) {
+        // CSS transition uses `data-float-sign-visible` so we can
+        // animate-in without a flash of unstyled content. The hidden
+        // attr alone gives an abrupt show/hide.
+        cta!.setAttribute('data-float-sign-visible', 'true');
+      } else {
+        cta!.removeAttribute('data-float-sign-visible');
+      }
+    }
+
+    if (hero) {
+      const heroObs = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            // heroOut = true when Hero is fully out of viewport
+            heroOut = !entry.isIntersecting;
+          }
+          update();
+        },
+        // threshold 0: fires when ANY part of hero leaves/enters
+        { threshold: 0 }
+      );
+      heroObs.observe(hero);
+    } else {
+      // No hero found → assume we're past it (defensive)
+      heroOut = true;
+    }
+
+    if (actionForm) {
+      const actObs = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            actionVisible = entry.isIntersecting;
+          }
+          update();
+        },
+        // threshold 0.1: even a tiny sliver of action form visible
+        // counts as "user has reached it" — hide the CTA
+        { threshold: 0.1 }
+      );
+      actObs.observe(actionForm);
+    }
+
+    // Smooth scroll + focus on click. The href="#act" handles the
+    // navigation; this just augments with focus so the first input
+    // grabs keyboard focus immediately (good for keyboard users).
+    cta.addEventListener('click', () => {
+      // Defer focus so it lands AFTER the smooth-scroll begins.
+      setTimeout(() => {
+        const firstInput = document.querySelector<HTMLElement>(
+          '#act input:not([type="hidden"]), #act select, #act textarea'
+        );
+        firstInput?.focus({ preventScroll: true });
+      }, 600);
+    });
+  }
+</script>
+
+<style>
+  .float-sign {
+    /* Default state — hidden via the [hidden] attr. CSS transition
+       only applies once the JS sets data-float-sign-visible. */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px 12px 14px;
+    background: var(--accent);
+    color: #fff;
+    border-radius: 999px;
+    text-decoration: none;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, opacity 0.2s ease, background 0.15s;
+    /* Slight scale + fade for entrance animation when JS toggles
+       the visibility attr. */
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  .float-sign[data-float-sign-visible='true'] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .float-sign:hover {
+    background: var(--accent-deep, #15296b);
+    transform: translateY(-2px);
+  }
+  .float-sign:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+  }
+  .float-sign__icon {
+    font-size: 18px;
+    line-height: 1;
+  }
+  .float-sign__text {
+    line-height: 1.2;
+  }
+  .float-sign__meta {
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.85;
+    padding: 2px 8px;
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    line-height: 1;
+  }
+
+  /* Mobile: full-width bottom bar instead of pill — easier to tap on
+     small screens, doesn't compete with the floating area UI of
+     mobile keyboards / browsers. */
+  @media (max-width: 560px) {
+    .float-sign {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      padding: 14px 18px;
+      justify-content: center;
+      border-radius: var(--radius-lg);
+      font-size: 15px;
+    }
+  }
+
+  /* Respect reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .float-sign {
+      transition: opacity 0.15s;
+      transform: none !important;
+    }
+  }
+</style>
