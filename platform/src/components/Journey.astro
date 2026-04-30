@@ -251,13 +251,20 @@ const clientData = {
                 if (!cell) {
                   return <td class="journey__cell journey__cell--na" data-grade={g.id} aria-label="not applicable"></td>;
                 }
+                // The `?` glyph signals to the user "this cell carries a
+                // conditional / hypothetical claim — hover for the source
+                // and reasoning." Risk cells are the only ones that name
+                // a future-conditional outcome (e.g. "if $9.4M not funded
+                // → 259 EAs cut"). Lost / gone / have cells carry hard
+                // facts (or hard absence of cuts) and need no caveat.
+                const showHelp = cell.state === 'risk';
                 return (
                   <td
-                    class={`journey__cell cell cell--${cell.state}`}
+                    class={`journey__cell cell cell--${cell.state}${showHelp ? ' cell--has-help' : ''}`}
                     data-grade={g.id}
                     data-state={cell.state}
                     title={cell.tip ? t(cell.tip, lang) : undefined}
-                  ></td>
+                  >{showHelp && <span class="cell-help" aria-hidden="true">?</span>}</td>
                 );
               })}
             </tr>
@@ -281,43 +288,39 @@ const clientData = {
       </summary>
       <ul class="journey__sources-list">
         <li>
-          <I18nText en="Grade 7 band program eliminated in all 41 elementary schools (1,200 students, $515k savings)" zh="7年级乐队课在全部41所小学取消（1,200学生，节省 $515k）" lang={lang} />
+          <I18nText en="$9.4M arbitration liability + BCPSEA misinterpretation + Q3 reserve impact ($4.3M would-have-been → $4.8M arbitration draw → $2,712 remaining) + 3-year fund balance projection (-$6.3M by 2028/29)" zh="940万仲裁负债 + BCPSEA误解读 + 第三季度储备影响（本应$4.3M → 仲裁抽走$4.8M → 剩 $2,712）+ 三年基金余额预测（2028/29 达 -$6.3M）" lang={lang} />
           {' — '}
-          <a href="https://www.cbc.ca/news/canada/british-columbia/b-c-school-band-cuts-1.7515565" target="_blank" rel="noopener noreferrer">CBC News</a>
+          <a href="https://burnabyschools.ca/wp-content/uploads/2026/04/2026-2027-Preliminary-Budget-Report_FINAL.pdf" target="_blank" rel="noopener noreferrer">SD41 2026-27 Preliminary Budget Report (FINAL, PDF), pages 18–21</a>
           {' · '}
-          <a href="https://burnabyschools.ca/wp-content/uploads/2025/05/2025-26-Operating-Budget-Presentation-27may2025.pdf" target="_blank" rel="noopener noreferrer">SD41 Budget Presentation (PDF, May 27 2025)</a>
+          <a href="https://burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/" target="_blank" rel="noopener noreferrer">SD41 Official Statement (Apr 15 2026)</a>
         </li>
         <li>
-          <I18nText en="Advanced Learning (MACC) streams eliminated for Grades 4-7" zh="Advanced Learning（MACC，4-7年级）课程取消" lang={lang} />
+          <I18nText en="$4.2M cuts in 2025-26 (36.86 FTE) — Elementary Band, Elementary Custodial, Counselling, Mandarin Program, MACC, BETA Mini, Library Assistants" zh="2025-26 削减 $4.2M（36.86 FTE）— 小学乐队、小学清洁、辅导员、中文课、MACC、BETA Mini、图书助理" lang={lang} />
           {' — '}
-          <a href="https://blogs.sd41.bc.ca/advancedlearning/programs/" target="_blank" rel="noopener noreferrer">SD41 Advanced Learning</a>
-          {' · '}
-          <a href="https://burnabyschools.ca/budget-for-next-school-year-passes/" target="_blank" rel="noopener noreferrer">SD41 Budget Passes (May 27 2025)</a>
+          <a href="https://burnabyschools.ca/wp-content/uploads/2025/05/2025-26-Operating-Budget-Presentation-27may2025.pdf" target="_blank" rel="noopener noreferrer">SD41 2025/26 Operating Budget Presentation (PDF), page 13</a>
         </li>
         <li>
-          <I18nText en="High school counsellor positions reduced 2025-26" zh="高中辅导员岗位 2025-26 削减" lang={lang} />
+          <I18nText en="Grade 7 band eliminated in all 41 elementary schools — ~1,200 students" zh="7年级乐队课在全部41所小学取消——约1,200学生" lang={lang} />
           {' — '}
-          <a href="https://www.ctvnews.ca/vancouver/article/burnaby-teachers-urging-province-to-provide-more-funding-district-facing-42m-budget-shortfall/" target="_blank" rel="noopener noreferrer">CTV News</a>
+          <a href="https://www.cbc.ca/news/canada/british-columbia/b-c-school-band-cuts-1.7515565" target="_blank" rel="noopener noreferrer">CBC News (Music education advocates...)</a>
           {' · '}
-          <a href="https://www.burnabynow.com/local-news/incredibly-difficult-decisions-needed-to-balance-burnaby-schools-budget-board-8661674" target="_blank" rel="noopener noreferrer">Burnaby Now</a>
+          <a href="https://burnabyschools.ca/wp-content/uploads/2025/05/2025-26-Operating-Budget-Presentation-27may2025.pdf" target="_blank" rel="noopener noreferrer">SD41 2025/26 Operating Budget Presentation (PDF), p.13 (line 'Elementary Band 4.30 / $515,528')</a>
         </li>
         <li>
-          <I18nText en="Mandarin language program reduced 2025-26" zh="中文课程 2025-26 削减" lang={lang} />
+          <I18nText en="EAs uniquely vulnerable (no legal minimum) — up to 259 positions could be cut if $9.4M not funded; class size +2 students/class scenario; 45 secondary counsellors / 27,000 students" zh="EA 无法定最低配置——如 $9.4M 不到位最多 259 岗位可被砍；班级 +2 人情境；45 中学辅导员对 27,000 学生" lang={lang} />
           {' — '}
-          <a href="https://burnabyschools.ca/wp-content/uploads/2025/05/25-26_annual_budget_for-webpage.pdf" target="_blank" rel="noopener noreferrer">SD41 Annual Budget 2025-26 (PDF)</a>
+          <a href="http://dpac.burnabypac.ca/wp-content/uploads/sites/2/2026/04/DPAC-Fact-Sheet.pdf" target="_blank" rel="noopener noreferrer">Burnaby DPAC Fact Sheet (PDF), pages 2–3</a>
         </li>
         <li>
-          <I18nText en="$9.4M arbitration liability + $4.2M shortfall context" zh="940万仲裁负债 + 420万短缺背景" lang={lang} />
+          <I18nText en="$5B Contingencies Vote covering 'caseload pressures, current collective bargaining mandate costs and other costs uncertain at the time of building the budget'" zh="$5B 应急基金涵盖『案件压力、当前集体谈判授权成本及其他在编制预算时不确定的成本』" lang={lang} />
           {' — '}
-          <a href="https://www.cbc.ca/news/canada/british-columbia/burnaby-school-district-millions-shortfall-9.7169146" target="_blank" rel="noopener noreferrer">CBC News</a>
-          {' · '}
-          <a href="https://burnabyschools.ca/unfunded-ruling-could-devastate-districts-budget/" target="_blank" rel="noopener noreferrer">SD41 Official Statement</a>
+          <a href="https://www.bcbudget.gov.bc.ca/2026/fiscal/" target="_blank" rel="noopener noreferrer">BC Budget 2026 — Fiscal Plan (Expense outlook section)</a>
         </li>
       </ul>
       <p class="journey__sources-note muted">
         <I18nText
-          en="Cell colours reflect documented current state from the sources above — not predictions about future budget cycles."
-          zh="单元格颜色反映以上来源中的当前状态——不是对未来预算周期的预测。"
+          en="Cell colours reflect documented current state. Cells marked with ? indicate a conditional claim (e.g. 'at risk if $9.4M not funded'); hover the cell to see the source and assumption."
+          zh="单元格颜色反映记录的当前状态。带 ? 标记的单元格代表条件性判断（例如『如 $9.4M 不到位则有风险』）；将鼠标悬停在单元格上可查看来源和假设。"
           lang={lang}
         />
       </p>
@@ -775,6 +778,7 @@ const clientData = {
     height: 36px;
     border: 1px solid var(--line);
     transition: filter 0.15s;
+    position: relative;
   }
   .journey__cell:hover {
     filter: brightness(0.95);
@@ -783,6 +787,25 @@ const clientData = {
   .journey__cell--na {
     background: transparent;
     border-color: transparent;
+  }
+  /* `?` glyph on risk cells — visible affordance that the cell carries a
+     conditional claim. Browser title= still does the heavy lifting on
+     hover; the glyph just signals "more info available here." */
+  .cell-help {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(124, 45, 18, 0.85); /* dark on the orange diagonals */
+    pointer-events: none;
+    user-select: none;
+  }
+  .journey__cell.cell--has-help:hover .cell-help {
+    color: rgba(124, 45, 18, 1);
   }
 
   /* Legend-only cell preview (NOT applied to table cells — separate class

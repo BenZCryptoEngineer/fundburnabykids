@@ -13,6 +13,16 @@ grades:
   - { id: "11", label: "11" }
   - { id: "12", label: "12" }
 
+# Cell-state taxonomy (matches Journey.astro legend):
+#   have: currently funded; no documented cut for this grade
+#   lost: cut already implemented in 2025-26 budget
+#   risk: at risk IF $9.4M not funded — conditional, sourced to SD41 or DPAC analysis
+#   gone: structurally eliminated for the grade band
+#
+# Every cell's `tip` carries a verbatim source citation (document + page).
+# Risk cells are explicitly conditional — the tip names what triggers the
+# risk and where the analysis comes from.
+
 services:
   - id: ea
     name:
@@ -22,19 +32,19 @@ services:
       en: "Without EA hours: your child's teacher splits attention 28 ways instead of having a second adult in the room. Students with IEPs feel it first. Then everyone feels it."
       zh: "没有EA：老师要把注意力分给28个孩子，而不是再有一个成年人在教室里。IEP学生先感受到。然后所有人感受到。"
     grades:
-      K:  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "1":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "2":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "3":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "4":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "5":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "6":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "7":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "8":  { state: have, tip: { en: "Full EA support",   zh: "全员EA支持" } }
-      "9":  { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
-      "10": { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
-      "11": { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
-      "12": { state: risk, tip: { en: "Major reduction",   zh: "大幅减少" } }
+      K:    { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "1":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "2":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "3":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "4":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "5":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "6":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "7":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "8":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "9":  { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "10": { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "11": { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "12": { state: risk, tip: { en: "EAs are uniquely vulnerable — no legal minimum staffing ratio. SD41 currently +25.33 EA FTE for 2026-27. If $9.4M not funded: per DPAC analysis, up to 259 positions could be cut, leaving 1 EA per 3 high-needs students. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "EA无法定最低配置，最易被砍。SD41 2026-27 当前增加 25.33 EA FTE。如 $9.4M 不到位：DPAC 分析最多 259 个岗位可被砍，剩 1 个 EA 对 3 个高需求学生。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
 
   - id: counsellor-elem
     name:
@@ -44,14 +54,14 @@ services:
       en: "When your Grade 3 starts having anxiety attacks at drop-off: you can talk to the teacher, but there's no one trained to actually help. The crisis becomes a referral. The referral has a 6-month wait."
       zh: "当你三年级的孩子早上送学时焦虑发作：你可以找老师谈，但没有受过专业训练的人能真正帮上忙。危机变成转介。转介排队 6 个月。"
     grades:
-      K:  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
-      "1":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
-      "2":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
-      "3":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
-      "4":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
-      "5":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
-      "6":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
-      "7":  { state: have, tip: { en: "Weekly access", zh: "每周可见" } }
+      K:    { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
+      "1":  { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
+      "2":  { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
+      "3":  { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
+      "4":  { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
+      "5":  { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
+      "6":  { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
+      "7":  { state: have, tip: { en: "Currently weekly access. SD41 Preliminary Budget 2026-27 p.20: 2.76 FTE further counsellor reduction planned for 2026-27 (to bring district to collective-agreement floor). Recovery in 2027-28 from new bargaining additions. Source: SD41 Preliminary Budget Report 2026-27 p.20.", zh: "目前每周可见。SD41 Preliminary Budget 2026-27 第20页：2026-27 拟再减 2.76 FTE 辅导员（按工会协议最低）。2027-28 新协议下恢复。来源：SD41 Preliminary Budget Report 2026-27 第20页。" } }
 
   - id: counsellor-hs
     name:
@@ -61,11 +71,11 @@ services:
       en: "When your Grade 11 needs help with university applications: 1 counsellor, 400 students, 6-week wait. Your child's UBC application is thinner than it should be — not because they're less capable, but because no one had time."
       zh: "当你十一年级的孩子需要申请大学：1 个辅导员对 400 个学生，等 6 周。你孩子的 UBC 申请比应该的更单薄——不是因为他不够优秀，是因为没人有时间。"
     grades:
-      "8":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "9":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "10": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "11": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "12": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      "8":  { state: lost, tip: { en: "3.00 FTE secondary counsellor positions cut 25-26 ($385,113). Ratio now: 45 secondary counsellors for 27,000 students. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Counselling 3.00 FTE / $385,113'); DPAC Fact Sheet p.2.", zh: "2025-26 削减 3.00 FTE 中学辅导员岗位 ($385,113)。当前比例：45 个中学辅导员对 27,000 学生。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Counselling 3.00 FTE / $385,113'）；DPAC Fact Sheet 第2页。" } }
+      "9":  { state: lost, tip: { en: "3.00 FTE secondary counsellor positions cut 25-26 ($385,113). Ratio now: 45 secondary counsellors for 27,000 students. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Counselling 3.00 FTE / $385,113'); DPAC Fact Sheet p.2.", zh: "2025-26 削减 3.00 FTE 中学辅导员岗位 ($385,113)。当前比例：45 个中学辅导员对 27,000 学生。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Counselling 3.00 FTE / $385,113'）；DPAC Fact Sheet 第2页。" } }
+      "10": { state: lost, tip: { en: "3.00 FTE secondary counsellor positions cut 25-26 ($385,113). Ratio now: 45 secondary counsellors for 27,000 students. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Counselling 3.00 FTE / $385,113'); DPAC Fact Sheet p.2.", zh: "2025-26 削减 3.00 FTE 中学辅导员岗位 ($385,113)。当前比例：45 个中学辅导员对 27,000 学生。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Counselling 3.00 FTE / $385,113'）；DPAC Fact Sheet 第2页。" } }
+      "11": { state: lost, tip: { en: "3.00 FTE secondary counsellor positions cut 25-26 ($385,113). Ratio now: 45 secondary counsellors for 27,000 students. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Counselling 3.00 FTE / $385,113'); DPAC Fact Sheet p.2.", zh: "2025-26 削减 3.00 FTE 中学辅导员岗位 ($385,113)。当前比例：45 个中学辅导员对 27,000 学生。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Counselling 3.00 FTE / $385,113'）；DPAC Fact Sheet 第2页。" } }
+      "12": { state: lost, tip: { en: "3.00 FTE secondary counsellor positions cut 25-26 ($385,113). Ratio now: 45 secondary counsellors for 27,000 students. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Counselling 3.00 FTE / $385,113'); DPAC Fact Sheet p.2.", zh: "2025-26 削减 3.00 FTE 中学辅导员岗位 ($385,113)。当前比例：45 个中学辅导员对 27,000 学生。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Counselling 3.00 FTE / $385,113'）；DPAC Fact Sheet 第2页。" } }
 
   - id: band
     name:
@@ -75,43 +85,43 @@ services:
       en: "1,200 students lost this in 2025-26. Feeder programs into high school music are now broken. If your child plays an instrument, the path forward got harder."
       zh: "2025-26 年 1,200 个学生失去了这个项目。高中音乐项目的生源通道被打断。如果你的孩子在学乐器，往后的路变难了。"
     grades:
-      "7": { state: gone, tip: { en: "Eliminated 25-26 in all 41 elementary schools (1,200 students). Source: SD41 budget + CBC", zh: "2025-26 已在全部41所小学取消 (1,200学生)。来源: SD41预算 + CBC" } }
+      "7": { state: gone, tip: { en: "Eliminated 25-26 in all 41 elementary schools. ~1,200 students affected. 4.30 FTE / $515,528 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Band 4.30 / $515,528'); CBC News 'Music education advocates sound alarm on cuts to B.C. school band programs'.", zh: "2025-26 在全部 41 所小学取消。约 1,200 学生受影响。砍 4.30 FTE / $515,528。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Band 4.30 / $515,528'）；CBC News 'Music education advocates sound alarm on cuts to B.C. school band programs'。" } }
 
   - id: mandarin
     name:
       en: "Mandarin language program"
       zh: "中文课程"
     note:
-      en: "Burnaby's Mandarin program was a competitive advantage for university applications and dual-language fluency. Already reduced in 2025-26. Further cuts mean your child won't have this option even if they want it."
-      zh: "本拿比的中文课程曾是申请大学和双语流利度的竞争优势。2025-26 已削减。再砍下去，你的孩子即使想学也没得选。"
+      en: "Burnaby's Mandarin program was a competitive advantage for university applications and dual-language fluency. Already reduced in 2025-26 at the elementary level. Further cuts mean your child won't have this option even if they want it."
+      zh: "本拿比的中文课程曾是申请大学和双语流利度的竞争优势。2025-26 已在小学层级削减。再砍下去，你的孩子即使想学也没得选。"
     grades:
-      "4":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
-      "5":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
-      "6":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
-      "7":  { state: lost, tip: { en: "Cut 25-26", zh: "2025-26已砍" } }
-      "8":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "9":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "10": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "11": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "12": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "4":  { state: lost, tip: { en: "Mandarin Language Arts (elementary) being wound down 25-26: $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Mandarin Program 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "中文语言艺术（小学）2025-26 起淘汰：2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Mandarin Program 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "5":  { state: lost, tip: { en: "Mandarin Language Arts (elementary) being wound down 25-26: $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Mandarin Program 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "中文语言艺术（小学）2025-26 起淘汰：2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Mandarin Program 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "6":  { state: lost, tip: { en: "Mandarin Language Arts (elementary) being wound down 25-26: $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Mandarin Program 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "中文语言艺术（小学）2025-26 起淘汰：2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Mandarin Program 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "7":  { state: lost, tip: { en: "Mandarin Language Arts (elementary) being wound down 25-26: $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Mandarin Program 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "中文语言艺术（小学）2025-26 起淘汰：2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Mandarin Program 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "8":  { state: have, tip: { en: "Currently available at secondary. The 25-26 'Mandarin Program' wind-down is documented as elementary-focused (Mandarin Language Arts); no documented secondary-level cut. Source: SD41 2025/26 Operating Budget Presentation p.13; DPAC Fact Sheet p.2.", zh: "中学层级目前仍开设。2025-26 'Mandarin Program' 淘汰仅涉及小学（Mandarin Language Arts）；中学未见明确削减记录。来源：SD41 2025/26 Operating Budget Presentation 第13页；DPAC Fact Sheet 第2页。" } }
+      "9":  { state: have, tip: { en: "Currently available at secondary. The 25-26 'Mandarin Program' wind-down is documented as elementary-focused (Mandarin Language Arts); no documented secondary-level cut. Source: SD41 2025/26 Operating Budget Presentation p.13; DPAC Fact Sheet p.2.", zh: "中学层级目前仍开设。2025-26 'Mandarin Program' 淘汰仅涉及小学（Mandarin Language Arts）；中学未见明确削减记录。来源：SD41 2025/26 Operating Budget Presentation 第13页；DPAC Fact Sheet 第2页。" } }
+      "10": { state: have, tip: { en: "Currently available at secondary. The 25-26 'Mandarin Program' wind-down is documented as elementary-focused (Mandarin Language Arts); no documented secondary-level cut. Source: SD41 2025/26 Operating Budget Presentation p.13; DPAC Fact Sheet p.2.", zh: "中学层级目前仍开设。2025-26 'Mandarin Program' 淘汰仅涉及小学（Mandarin Language Arts）；中学未见明确削减记录。来源：SD41 2025/26 Operating Budget Presentation 第13页；DPAC Fact Sheet 第2页。" } }
+      "11": { state: have, tip: { en: "Currently available at secondary. The 25-26 'Mandarin Program' wind-down is documented as elementary-focused (Mandarin Language Arts); no documented secondary-level cut. Source: SD41 2025/26 Operating Budget Presentation p.13; DPAC Fact Sheet p.2.", zh: "中学层级目前仍开设。2025-26 'Mandarin Program' 淘汰仅涉及小学（Mandarin Language Arts）；中学未见明确削减记录。来源：SD41 2025/26 Operating Budget Presentation 第13页；DPAC Fact Sheet 第2页。" } }
+      "12": { state: have, tip: { en: "Currently available at secondary. The 25-26 'Mandarin Program' wind-down is documented as elementary-focused (Mandarin Language Arts); no documented secondary-level cut. Source: SD41 2025/26 Operating Budget Presentation p.13; DPAC Fact Sheet p.2.", zh: "中学层级目前仍开设。2025-26 'Mandarin Program' 淘汰仅涉及小学（Mandarin Language Arts）；中学未见明确削减记录。来源：SD41 2025/26 Operating Budget Presentation 第13页；DPAC Fact Sheet 第2页。" } }
 
   - id: advanced
     name:
       en: "Advanced / enrichment learning"
       zh: "Advanced Learning 拓展课程"
     note:
-      en: "How strong students build the academic profile that gets them into UBC's selective programs, scholarships, and specialty admissions. Already cut for 2025-26 (MACC, Grades 4-7). Without enrichment, top students sit in undifferentiated classes for 12 years."
-      zh: "学生用这个建立学术档案，去申请 UBC 的选拔项目、奖学金、特殊招生。2025-26 已被砍（MACC，4-7 年级）。没有拓展课程，最优秀的学生在 12 年里坐在没有分层的普通班里。"
+      en: "How strong students build the academic profile that gets them into UBC's selective programs, scholarships, and specialty admissions. Already cut for 2025-26 (MACC, Grades 4-7; BETA Mini at Alpha Secondary, Grades 8-12). Without enrichment, top students sit in undifferentiated classes for 12 years."
+      zh: "学生用这个建立学术档案，去申请 UBC 的选拔项目、奖学金、特殊招生。2025-26 已被砍（MACC，4-7 年级；Alpha Secondary 的 BETA Mini，8-12 年级）。没有拓展课程，最优秀的学生在 12 年里坐在没有分层的普通班里。"
     grades:
-      "4":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
-      "5":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
-      "6":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
-      "7":  { state: gone, tip: { en: "MACC stream eliminated 25-26. Source: SD41 budget", zh: "MACC 2025-26 已取消。来源: SD41预算" } }
-      "8":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "9":  { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "10": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "11": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
-      "12": { state: risk, tip: { en: "Reduced",   zh: "已削减" } }
+      "4":  { state: gone, tip: { en: "MACC stream (Suncrest & Capitol Hill) eliminated 25-26. $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'MACC Program – Suncrest & Capitol Hill 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "MACC 课程（Suncrest 和 Capitol Hill）2025-26 取消。2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'MACC Program – Suncrest & Capitol Hill 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "5":  { state: gone, tip: { en: "MACC stream (Suncrest & Capitol Hill) eliminated 25-26. $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'MACC Program – Suncrest & Capitol Hill 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "MACC 课程（Suncrest 和 Capitol Hill）2025-26 取消。2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'MACC Program – Suncrest & Capitol Hill 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "6":  { state: gone, tip: { en: "MACC stream (Suncrest & Capitol Hill) eliminated 25-26. $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'MACC Program – Suncrest & Capitol Hill 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "MACC 课程（Suncrest 和 Capitol Hill）2025-26 取消。2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'MACC Program – Suncrest & Capitol Hill 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "7":  { state: gone, tip: { en: "MACC stream (Suncrest & Capitol Hill) eliminated 25-26. $128,371 positive variance for 2026/27 footnoted. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'MACC Program – Suncrest & Capitol Hill 0.00 / $0' + footnote); DPAC Fact Sheet p.2.", zh: "MACC 课程（Suncrest 和 Capitol Hill）2025-26 取消。2026/27 节省 $128,371（页脚附注）。来源：SD41 2025/26 Operating Budget Presentation 第13页（'MACC Program – Suncrest & Capitol Hill 0.00 / $0' 加页脚）；DPAC Fact Sheet 第2页。" } }
+      "8":  { state: lost, tip: { en: "BETA Mini Program at Alpha Secondary cut 25-26: 1.57 FTE / $201,543. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Beta Mini Program – Alpha 1.57 / $201,543'); DPAC Fact Sheet p.2 (cites 'MACC and BETA advanced learning programs').", zh: "Alpha Secondary 的 BETA Mini 项目 2025-26 取消：1.57 FTE / $201,543。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Beta Mini Program – Alpha 1.57 / $201,543'）；DPAC Fact Sheet 第2页（引用 'MACC and BETA advanced learning programs'）。" } }
+      "9":  { state: lost, tip: { en: "BETA Mini Program at Alpha Secondary cut 25-26: 1.57 FTE / $201,543. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Beta Mini Program – Alpha 1.57 / $201,543'); DPAC Fact Sheet p.2 (cites 'MACC and BETA advanced learning programs').", zh: "Alpha Secondary 的 BETA Mini 项目 2025-26 取消：1.57 FTE / $201,543。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Beta Mini Program – Alpha 1.57 / $201,543'）；DPAC Fact Sheet 第2页（引用 'MACC and BETA advanced learning programs'）。" } }
+      "10": { state: lost, tip: { en: "BETA Mini Program at Alpha Secondary cut 25-26: 1.57 FTE / $201,543. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Beta Mini Program – Alpha 1.57 / $201,543'); DPAC Fact Sheet p.2 (cites 'MACC and BETA advanced learning programs').", zh: "Alpha Secondary 的 BETA Mini 项目 2025-26 取消：1.57 FTE / $201,543。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Beta Mini Program – Alpha 1.57 / $201,543'）；DPAC Fact Sheet 第2页（引用 'MACC and BETA advanced learning programs'）。" } }
+      "11": { state: lost, tip: { en: "BETA Mini Program at Alpha Secondary cut 25-26: 1.57 FTE / $201,543. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Beta Mini Program – Alpha 1.57 / $201,543'); DPAC Fact Sheet p.2 (cites 'MACC and BETA advanced learning programs').", zh: "Alpha Secondary 的 BETA Mini 项目 2025-26 取消：1.57 FTE / $201,543。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Beta Mini Program – Alpha 1.57 / $201,543'）；DPAC Fact Sheet 第2页（引用 'MACC and BETA advanced learning programs'）。" } }
+      "12": { state: lost, tip: { en: "BETA Mini Program at Alpha Secondary cut 25-26: 1.57 FTE / $201,543. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Beta Mini Program – Alpha 1.57 / $201,543'); DPAC Fact Sheet p.2 (cites 'MACC and BETA advanced learning programs').", zh: "Alpha Secondary 的 BETA Mini 项目 2025-26 取消：1.57 FTE / $201,543。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Beta Mini Program – Alpha 1.57 / $201,543'）；DPAC Fact Sheet 第2页（引用 'MACC and BETA advanced learning programs'）。" } }
 
   - id: library
     name:
@@ -121,19 +131,19 @@ services:
       en: "When your child needs to learn how to research, evaluate sources, and write a real paper: a teacher-librarian is who teaches that. Without one: your child enters Grade 11 having never been taught research literacy."
       zh: "当你的孩子需要学如何做研究、评估资料、写一篇真正的论文：图书管理员是教这个的人。没有他：你的孩子进入十一年级时，从未被教过研究素养。"
     grades:
-      K:  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "1":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "2":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "3":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "4":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "5":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "6":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "7":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "8":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "9":  { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "10": { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "11": { state: risk, tip: { en: "Stretched", zh: "紧张" } }
-      "12": { state: risk, tip: { en: "Stretched", zh: "紧张" } }
+      K:    { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "1":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "2":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "3":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "4":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "5":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "6":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "7":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "8":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "9":  { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "10": { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "11": { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
+      "12": { state: risk, tip: { en: "2.00 FTE Library Assistants downgraded to Library Technicians 25-26 ($51,862 saved). Additional 0.70 FTE Teacher-Librarian cut planned for 2026-27. Source: SD41 2025/26 Operating Budget Presentation p.13; SD41 Preliminary Budget Report 2026-27 p.15.", zh: "2025-26 将 2.00 个图书助理降级为图书技术员（节省 $51,862）。2026-27 拟再砍 0.70 FTE 图书馆教师。来源：SD41 2025/26 Operating Budget Presentation 第13页；SD41 Preliminary Budget Report 2026-27 第15页。" } }
 
   - id: electives
     name:
@@ -143,33 +153,33 @@ services:
       en: "Specialty sciences, arts streams, language options. The classes that make your child's transcript distinctive. When course allocations drop, electives go first. Your Grade 12's transcript starts looking like everyone else's."
       zh: "专业科学、艺术、语言。让你孩子成绩单与众不同的那些课。课时分配减少，选修课首先被砍。你十二年级孩子的成绩单开始看起来和其他人一样了。"
     grades:
-      "8":  { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
-      "9":  { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
-      "10": { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
-      "11": { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
-      "12": { state: risk, tip: { en: "Narrowing", zh: "减少中" } }
+      "8":  { state: risk, tip: { en: "Declining enrolment + 7.0 FTE secondary teacher reduction (Enrolling Teachers BTA) for 2026-27 typically affects elective offerings first. Source: SD41 Preliminary Budget Report 2026-27 p.15 (Status Quo Staffing Changes table).", zh: "学生数下降 + 2026-27 中学教师减 7.0 FTE（Enrolling Teachers BTA），通常先冲击选修课。来源：SD41 Preliminary Budget Report 2026-27 第15页（Status Quo Staffing Changes 表）。" } }
+      "9":  { state: risk, tip: { en: "Declining enrolment + 7.0 FTE secondary teacher reduction (Enrolling Teachers BTA) for 2026-27 typically affects elective offerings first. Source: SD41 Preliminary Budget Report 2026-27 p.15 (Status Quo Staffing Changes table).", zh: "学生数下降 + 2026-27 中学教师减 7.0 FTE（Enrolling Teachers BTA），通常先冲击选修课。来源：SD41 Preliminary Budget Report 2026-27 第15页（Status Quo Staffing Changes 表）。" } }
+      "10": { state: risk, tip: { en: "Declining enrolment + 7.0 FTE secondary teacher reduction (Enrolling Teachers BTA) for 2026-27 typically affects elective offerings first. Source: SD41 Preliminary Budget Report 2026-27 p.15 (Status Quo Staffing Changes table).", zh: "学生数下降 + 2026-27 中学教师减 7.0 FTE（Enrolling Teachers BTA），通常先冲击选修课。来源：SD41 Preliminary Budget Report 2026-27 第15页（Status Quo Staffing Changes 表）。" } }
+      "11": { state: risk, tip: { en: "Declining enrolment + 7.0 FTE secondary teacher reduction (Enrolling Teachers BTA) for 2026-27 typically affects elective offerings first. Source: SD41 Preliminary Budget Report 2026-27 p.15 (Status Quo Staffing Changes table).", zh: "学生数下降 + 2026-27 中学教师减 7.0 FTE（Enrolling Teachers BTA），通常先冲击选修课。来源：SD41 Preliminary Budget Report 2026-27 第15页（Status Quo Staffing Changes 表）。" } }
+      "12": { state: risk, tip: { en: "Declining enrolment + 7.0 FTE secondary teacher reduction (Enrolling Teachers BTA) for 2026-27 typically affects elective offerings first. Source: SD41 Preliminary Budget Report 2026-27 p.15 (Status Quo Staffing Changes table).", zh: "学生数下降 + 2026-27 中学教师减 7.0 FTE（Enrolling Teachers BTA），通常先冲击选修课。来源：SD41 Preliminary Budget Report 2026-27 第15页（Status Quo Staffing Changes 表）。" } }
 
   - id: custodial
     name:
       en: "Daily cleaning & upkeep"
       zh: "日常清洁维护"
     note:
-      en: "Bathrooms cleaned every other day. Spills wait. Repair tickets sit for weeks. Your child's school physically gets worse every term until something breaks."
-      zh: "厕所隔天清洁一次。洒了等着擦。报修单挂着好几周。你孩子的学校每个学期都在变差，直到某样东西真的坏掉。"
+      en: "Bathrooms cleaned every other day. Spills wait. Repair tickets sit for weeks. Your elementary child's school physically gets worse every term until something breaks. (25-26 cut hit elementary specifically; secondary unaffected.)"
+      zh: "厕所隔天清洁一次。洒了等着擦。报修单挂着好几周。你小学孩子的学校每个学期都在变差，直到某样东西真的坏掉。（2025-26 削减仅涉及小学；中学未受影响。）"
     grades:
-      K:  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "1":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "2":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "3":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "4":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "5":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "6":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "7":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "8":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "9":  { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "10": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "11": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
-      "12": { state: lost, tip: { en: "Reduced 25-26", zh: "2025-26已削减" } }
+      K:    { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "1":  { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "2":  { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "3":  { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "4":  { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "5":  { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "6":  { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "7":  { state: lost, tip: { en: "Daytime elementary custodians reduced to on-call 25-26: 6.50 FTE / $515,595 cut. Source: SD41 2025/26 Operating Budget Presentation p.13 (line 'Elementary Custodial Services 6.50 / $515,595'); DPAC Fact Sheet p.2.", zh: "2025-26 白班小学清洁工降为按需上岗：砍 6.50 FTE / $515,595。来源：SD41 2025/26 Operating Budget Presentation 第13页（'Elementary Custodial Services 6.50 / $515,595'）；DPAC Fact Sheet 第2页。" } }
+      "8":  { state: have, tip: { en: "Currently full custodial coverage at secondary. The 25-26 cut was elementary-specific ('Elementary Custodial Services'); secondary not in cut list. Source: SD41 2025/26 Operating Budget Presentation p.13.", zh: "中学层级目前清洁照常。2025-26 削减仅涉及小学（'Elementary Custodial Services'）；中学未在削减清单。来源：SD41 2025/26 Operating Budget Presentation 第13页。" } }
+      "9":  { state: have, tip: { en: "Currently full custodial coverage at secondary. The 25-26 cut was elementary-specific ('Elementary Custodial Services'); secondary not in cut list. Source: SD41 2025/26 Operating Budget Presentation p.13.", zh: "中学层级目前清洁照常。2025-26 削减仅涉及小学（'Elementary Custodial Services'）；中学未在削减清单。来源：SD41 2025/26 Operating Budget Presentation 第13页。" } }
+      "10": { state: have, tip: { en: "Currently full custodial coverage at secondary. The 25-26 cut was elementary-specific ('Elementary Custodial Services'); secondary not in cut list. Source: SD41 2025/26 Operating Budget Presentation p.13.", zh: "中学层级目前清洁照常。2025-26 削减仅涉及小学（'Elementary Custodial Services'）；中学未在削减清单。来源：SD41 2025/26 Operating Budget Presentation 第13页。" } }
+      "11": { state: have, tip: { en: "Currently full custodial coverage at secondary. The 25-26 cut was elementary-specific ('Elementary Custodial Services'); secondary not in cut list. Source: SD41 2025/26 Operating Budget Presentation p.13.", zh: "中学层级目前清洁照常。2025-26 削减仅涉及小学（'Elementary Custodial Services'）；中学未在削减清单。来源：SD41 2025/26 Operating Budget Presentation 第13页。" } }
+      "12": { state: have, tip: { en: "Currently full custodial coverage at secondary. The 25-26 cut was elementary-specific ('Elementary Custodial Services'); secondary not in cut list. Source: SD41 2025/26 Operating Budget Presentation p.13.", zh: "中学层级目前清洁照常。2025-26 削减仅涉及小学（'Elementary Custodial Services'）；中学未在削减清单。来源：SD41 2025/26 Operating Budget Presentation 第13页。" } }
 
   - id: class-size
     name:
@@ -179,16 +189,16 @@ services:
       en: "32 kids in a Grade 4 class instead of 24. Three students with IEPs, one with severe anxiety, one English language learner — and one teacher. Every child gets less of the teacher's attention. The students with the most needs get the least support."
       zh: "32 个孩子的四年级班级，而不是 24 个。三个 IEP 学生，一个严重焦虑，一个英语学习者——一个老师。每个孩子分到的老师注意力更少。需要最多的学生得到的支持最少。"
     grades:
-      K:  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "1":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "2":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "3":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "4":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "5":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "6":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "7":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "8":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "9":  { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "10": { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "11": { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
-      "12": { state: risk, tip: { en: "Pressure", zh: "持续压力" } }
+      K:    { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "1":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "2":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "3":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "4":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "5":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "6":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "7":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "8":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "9":  { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "10": { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "11": { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
+      "12": { state: risk, tip: { en: "Currently meeting collective agreement maximums (K=20, 1-3=22, 4-7=30, 8-12=31). If $9.4M not funded and falls on teachers: per DPAC analysis, 72 teachers cut → +2 students/class, zero flexibility. Source: SD41 Preliminary Budget Report 2026-27 p.15-16; DPAC Fact Sheet p.3.", zh: "目前在工会协议上限内 (K=20, 1-3=22, 4-7=30, 8-12=31)。如 $9.4M 不到位且砍教师：DPAC 估算砍 72 教师 → 每班 +2 人，零弹性。来源：SD41 Preliminary Budget Report 2026-27 第15-16页；DPAC Fact Sheet 第3页。" } }
