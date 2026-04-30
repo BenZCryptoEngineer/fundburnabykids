@@ -8,6 +8,7 @@
 // public component" — same convention used elsewhere in this repo.
 
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import type { Lang } from '~/lib/i18n';
 
 interface Props {
@@ -39,7 +40,7 @@ const { lang } = Astro.props;
       <!-- BCPSEA -->
       <article class="smap__box smap__box--warning">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">🏛️</span>
+          <span class="smap__icon"><Icon name="briefcase" size={22} /></span>
           <h3 class="smap__box-title sans">BCPSEA</h3>
           <span class="smap__num smap__num--1" aria-label="step 1">①</span>
         </div>
@@ -69,7 +70,7 @@ const { lang } = Astro.props;
       <!-- TREASURY BOARD -->
       <article class="smap__box smap__box--lever">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">💰</span>
+          <span class="smap__icon"><Icon name="wallet" size={22} /></span>
           <h3 class="smap__box-title sans">Treasury Board</h3>
           <span class="smap__num smap__num--3" aria-label="step 3">③</span>
         </div>
@@ -99,7 +100,7 @@ const { lang } = Astro.props;
       <!-- CABINET / MIN. OF EDUCATION -->
       <article class="smap__box">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">👔</span>
+          <span class="smap__icon"><Icon name="landmark" size={22} /></span>
           <h3 class="smap__box-title sans">
             <I18nText
               en="Cabinet (Beare + Bailey)"
@@ -161,7 +162,7 @@ const { lang } = Astro.props;
       <!-- SD41 -->
       <article class="smap__box smap__box--victim">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">🏫</span>
+          <span class="smap__icon"><Icon name="school" size={22} /></span>
           <h3 class="smap__box-title sans">SD41</h3>
           <span class="smap__num smap__num--2" aria-label="step 2">②</span>
         </div>
@@ -191,7 +192,7 @@ const { lang } = Astro.props;
       <!-- DPAC -->
       <article class="smap__box">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">👥</span>
+          <span class="smap__icon"><Icon name="users" size={22} /></span>
           <h3 class="smap__box-title sans">DPAC</h3>
         </div>
         <p class="smap__metaphor">
@@ -220,7 +221,7 @@ const { lang } = Astro.props;
       <!-- 5 BURNABY MLAs -->
       <article class="smap__box smap__box--lever">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">🗳️</span>
+          <span class="smap__icon"><Icon name="vote" size={22} /></span>
           <h3 class="smap__box-title sans">
             <I18nText
               en="5 Burnaby MLAs"
@@ -275,7 +276,7 @@ const { lang } = Astro.props;
       <!-- 49 SCHOOLS -->
       <article class="smap__box smap__box--victim">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">🏠</span>
+          <span class="smap__icon"><Icon name="home" size={22} /></span>
           <h3 class="smap__box-title sans">
             <I18nText
               en="49 Burnaby schools"
@@ -304,7 +305,7 @@ const { lang } = Astro.props;
       <!-- PAC -->
       <article class="smap__box">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">👨‍👩‍👧</span>
+          <span class="smap__icon"><Icon name="users" size={22} /></span>
           <h3 class="smap__box-title sans">PAC</h3>
         </div>
         <p class="smap__metaphor">
@@ -334,7 +335,7 @@ const { lang } = Astro.props;
     <div class="smap__row smap__row--1col">
       <article class="smap__box smap__box--you">
         <div class="smap__box-head">
-          <span class="smap__icon" aria-hidden="true">👤</span>
+          <span class="smap__icon"><Icon name="user" size={22} /></span>
           <h3 class="smap__box-title sans">
             <I18nText en="YOU — Burnaby parent" zh="你 — Burnaby 家长" lang={lang} />
           </h3>
@@ -349,7 +350,7 @@ const { lang } = Astro.props;
         </p>
         <ul class="smap__roles">
           <li>
-            <span class="smap__role-icon" aria-hidden="true">🗳️</span>
+            <span class="smap__role-icon"><Icon name="vote" size={18} /></span>
             <strong><I18nText en="VOTER" zh="投票人" lang={lang} /></strong> —
             <I18nText
               en="you elected your MLA"
@@ -358,7 +359,7 @@ const { lang } = Astro.props;
             />
           </li>
           <li>
-            <span class="smap__role-icon" aria-hidden="true">👪</span>
+            <span class="smap__role-icon"><Icon name="users" size={18} /></span>
             <strong><I18nText en="PARENT" zh="家长" lang={lang} /></strong> —
             <I18nText
               en="you're a member of your kid's school's PAC by default"
@@ -367,7 +368,7 @@ const { lang } = Astro.props;
             />
           </li>
           <li>
-            <span class="smap__role-icon" aria-hidden="true">📬</span>
+            <span class="smap__role-icon"><Icon name="mail" size={18} /></span>
             <strong><I18nText en="CONSTITUENT" zh="选民" lang={lang} /></strong> —
             <I18nText
               en="any of your 5 Burnaby MLAs MUST take your email"

@@ -27,6 +27,7 @@
 // <I18nText> so adding or fixing translations stays in one place.
 
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import StakeholderMapBody from '~/components/_StakeholderMapBody.astro';
 import type { Lang } from '~/lib/i18n';
 
@@ -83,7 +84,7 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
         data-smap-zoom-open={dialogId}
         aria-label={zoomLabel}
       >
-        <span aria-hidden="true">🔍</span>
+        <Icon name="search" size={16} />
         <span>{zoomLabel}</span>
       </button>
     </div>
@@ -335,8 +336,9 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     margin-bottom: 4px;
   }
   .smap__icon {
-    font-size: 22px;
-    line-height: 1;
+    color: var(--accent);
+    display: inline-flex;
+    flex-shrink: 0;
   }
   .smap__box-title {
     flex: 1;
@@ -425,8 +427,9 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
   .smap__role-icon {
     position: absolute;
     left: 0;
-    top: 0;
-    font-size: 18px;
+    top: 1px;
+    color: var(--accent);
+    display: inline-flex;
   }
 
   .smap .muted, .smap-zoom .muted { color: var(--muted); }

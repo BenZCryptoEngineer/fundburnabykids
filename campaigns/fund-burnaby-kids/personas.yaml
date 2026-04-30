@@ -1,6 +1,6 @@
 personas:
   - id: parent
-    icon: "👪"
+    icon: "users"
     title:
       en: "What your child actually loses"
       zh: "您的孩子实际会失去什么"
@@ -19,7 +19,7 @@ personas:
       target: "#journey"
 
   - id: pac
-    icon: "🏫"
+    icon: "school"
     title:
       en: "What your school loses — and what a PAC can do"
       zh: "您学校会失去什么——PAC能做什么"
@@ -38,7 +38,7 @@ personas:
       target: "#coalition"
 
   - id: trustee
-    icon: "🏛️"
+    icon: "landmark"
     title:
       en: "The structural case"
       zh: "结构性论点"

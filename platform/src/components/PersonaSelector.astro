@@ -10,6 +10,7 @@
 
 import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import SvgVisual from '~/components/SvgVisual.astro';
 import { t, localizedUrl } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
@@ -78,7 +79,9 @@ function ctaHref(target: string): string {
       class="personas__helper sans"
       data-smap-zoom-open="stakeholder-zoom"
     >
-      <span class="personas__helper-icon" aria-hidden="true">🤔</span>
+      <span class="personas__helper-icon">
+        <Icon name="help-circle" size={24} />
+      </span>
       <span class="personas__helper-text">
         <strong>
           <I18nText
@@ -109,7 +112,9 @@ function ctaHref(target: string): string {
           aria-controls={`persona-panel-${p.id}`}
           aria-selected={idx === 0 ? 'true' : 'false'}
         >
-          <span class="persona-card__icon" aria-hidden="true">{p.icon}</span>
+          <span class="persona-card__icon">
+            <Icon name={p.icon} size={24} />
+          </span>
           <span class="persona-card__title">{t(p.title, lang)}</span>
           <span class="persona-card__chevron" aria-hidden="true">→</span>
         </button>
@@ -259,9 +264,9 @@ function ctaHref(target: string): string {
     outline-offset: 2px;
   }
   .personas__helper-icon {
-    font-size: 24px;
-    line-height: 1;
     flex-shrink: 0;
+    color: var(--accent);
+    display: inline-flex;
   }
   .personas__helper-text {
     flex: 1;
@@ -300,6 +305,12 @@ function ctaHref(target: string): string {
     display: flex;
     align-items: center;
     gap: 12px;
+    /* min-height keeps cards visually aligned in the 3-column grid
+       even when one title wraps to two lines and another is a single
+       line — without it, varying title lengths produce a visible
+       sawtooth at the bottom of the row. ~76px = padding (32) + two
+       lines of 15px text @ 1.3 line-height (~39) + a bit of slack. */
+    min-height: 76px;
     background: var(--paper);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
@@ -322,9 +333,12 @@ function ctaHref(target: string): string {
     transform: rotate(90deg);
   }
   .persona-card__icon {
-    font-size: 28px;
-    line-height: 1;
     flex-shrink: 0;
+    color: var(--accent);
+    display: inline-flex;
+  }
+  .persona-card--active .persona-card__icon {
+    color: #fff;
   }
   .persona-card__title {
     flex: 1;
