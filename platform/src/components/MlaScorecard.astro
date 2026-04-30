@@ -21,6 +21,12 @@ interface Props {
 const { lang } = Astro.props;
 
 type Status = 'awaiting' | 'acknowledged' | 'committed' | 'opposed';
+type TreasuryBoard = {
+  role: 'Chair' | 'Vice-Chair' | 'Member';
+  source_url: string;
+  source_label: string;
+  last_verified: string;
+};
 type Mla = {
   id: string;
   name: string;
@@ -34,6 +40,10 @@ type Mla = {
   recipient_role: 'to' | 'cc';
   status: Status;
   status_evidence?: { quote?: string; source_url?: string; source_date?: string | null };
+  // Treasury Board membership — surfaced on the card with a small badge
+  // when present. Only the two Burnaby MLAs serving on TB (Choi,
+  // Routledge per the April 2026 DPAC Parent Explainer) have this set.
+  treasury_board?: TreasuryBoard;
   last_updated: string;
 };
 
@@ -50,6 +60,15 @@ const statusLabels: Record<Status, { en: string; zh: string }> = {
 function statusLabel(s: Status, l: Lang): string {
   return statusLabels[s][l];
 }
+
+// Treasury Board members on this scorecard — used to drive the
+// educational note above the grid. Only renders when at least one
+// MLA in mlas.yaml has the treasury_board field set.
+const tbMembers = mlas.filter((m) => m.treasury_board);
+// The source URL for all TB-membership claims (currently DPAC's
+// Parent Explainer). Used by the educational note to link out.
+const tbSourceUrl = tbMembers[0]?.treasury_board?.source_url;
+const tbSourceLabel = tbMembers[0]?.treasury_board?.source_label;
 ---
 
 <section class="scorecard" id="mlas">
@@ -78,6 +97,32 @@ function statusLabel(s: Status, l: Lang): string {
       </p>
     </header>
 
+    {tbMembers.length > 0 && (
+      <aside class="scorecard__tb-note">
+        <p class="scorecard__tb-note__label sans">
+          <span aria-hidden="true">🏛️</span>
+          <I18nText
+            en="About the Treasury Board badge"
+            zh="关于 Treasury Board 标识"
+            lang={lang}
+          />
+        </p>
+        <p>
+          <I18nText
+            en="BC's Treasury Board approves spending from Budget 2026's $5 billion Contingencies Vote — the same fund this campaign is asking the Province to apply to the SD41 arbitration. Two of Burnaby's MLAs serve on Treasury Board: when you write to them, your letter reaches both your representative AND a member of the body that decides this funding request."
+            zh="BC Treasury Board 负责审批 Budget 2026 中 $5B Contingencies Vote 的支出 — 也就是本次活动请求省府用来支付 SD41 仲裁裁决的同一笔基金。Burnaby 5 位 MLA 中有 2 位是 Treasury Board 成员；写给他们的信，既到选民代表手中，也到决策机构成员手中。"
+            lang={lang}
+          />
+        </p>
+        {tbSourceUrl && tbSourceLabel && (
+          <p class="scorecard__tb-note__source sans">
+            <I18nText en="Source: " zh="来源：" lang={lang} />
+            <a href={tbSourceUrl} target="_blank" rel="noopener noreferrer">{tbSourceLabel}</a>
+          </p>
+        )}
+      </aside>
+    )}
+
     <div class="scorecard__grid">
       {mlas.map((m) => (
         <article class={`mla-card mla-card--${m.status}`}>
@@ -88,6 +133,22 @@ function statusLabel(s: Status, l: Lang): string {
             <div class="mla-card__id">
               <h3 class="mla-card__name sans">{m.name}</h3>
               <p class="mla-card__riding sans">{t(m.riding, lang)}</p>
+              {m.treasury_board?.role && (
+                <a
+                  class="mla-card__tb-badge sans"
+                  href={m.treasury_board.source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={`Source: ${m.treasury_board.source_label}`}
+                >
+                  <span aria-hidden="true">🏛️</span>
+                  <I18nText
+                    en={`Treasury Board · ${m.treasury_board.role}`}
+                    zh={`Treasury Board · ${m.treasury_board.role === 'Chair' ? '主席' : m.treasury_board.role === 'Vice-Chair' ? '副主席' : '成员'}`}
+                    lang={lang}
+                  />
+                </a>
+              )}
             </div>
           </header>
 
@@ -178,6 +239,45 @@ function statusLabel(s: Status, l: Lang): string {
     margin: 0;
   }
 
+  /* Educational note about the Treasury Board badge — only renders when
+     at least one MLA in mlas.yaml has treasury_board set. Educational
+     framing per Burnaby DPAC's lead (institutional structure, not
+     "pressure these individuals"). */
+  .scorecard__tb-note {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin: 0 0 24px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .scorecard__tb-note__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0 0 6px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .scorecard__tb-note p {
+    margin: 0 0 8px;
+  }
+  .scorecard__tb-note__source {
+    margin: 8px 0 0;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .scorecard__tb-note__source a {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
   .scorecard__grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -234,6 +334,31 @@ function statusLabel(s: Status, l: Lang): string {
     color: var(--muted);
     margin: 0;
     line-height: 1.3;
+  }
+
+  /* Treasury Board badge on the MLA card. Inline pill style, links out
+     to the source (DPAC's Parent Explainer per mlas.yaml). Visually
+     subordinate to the status pill — informational, not a status. */
+  .mla-card__tb-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+    padding: 2px 8px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    text-decoration: none;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .mla-card__tb-badge:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   .mla-card__status {

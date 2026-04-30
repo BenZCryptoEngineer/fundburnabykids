@@ -109,7 +109,18 @@ mlas:
       quote: ""
       source_url: ""
       source_date: null
-    last_updated: 2026-04-26
+    # Treasury Board membership identified via Burnaby DPAC's Parent
+    # Explainer (April 2026). Treasury Board approves spending from
+    # Budget 2026's $5B Contingencies Vote — the same fund the campaign
+    # is asking the Province to apply to the SD41 arbitration. Surface
+    # this on the scorecard so constituents know their letter to her
+    # reaches both a representative AND a Treasury Board member.
+    treasury_board:
+      role: "Member"
+      source_url: "http://dpac.burnabypac.ca/wp-content/uploads/sites/2/2026/04/SD41_Parent_Explainer.pdf"
+      source_label: "Burnaby DPAC Parent Explainer (PDF)"
+      last_verified: 2026-04-29
+    last_updated: 2026-04-29
 
   - id: choi
     name: "Paul Choi"
@@ -125,4 +136,15 @@ mlas:
       quote: ""
       source_url: ""
       source_date: null
-    last_updated: 2026-04-26
+    # Treasury Board membership identified via Burnaby DPAC's Parent
+    # Explainer (April 2026). Note: Burnaby DPAC has chosen Paul Choi's
+    # constituency office for its May 1, 2026 Day of Action because of
+    # this dual role (Burnaby MLA + Treasury Board member) — we mirror
+    # that institutional reasoning on the scorecard, educational not
+    # adversarial.
+    treasury_board:
+      role: "Member"
+      source_url: "http://dpac.burnabypac.ca/wp-content/uploads/sites/2/2026/04/SD41_Parent_Explainer.pdf"
+      source_label: "Burnaby DPAC Parent Explainer (PDF)"
+      last_verified: 2026-04-29
+    last_updated: 2026-04-29
