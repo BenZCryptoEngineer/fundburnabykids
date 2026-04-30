@@ -30,7 +30,7 @@ personas:
       label:
         en: "Open PAC Endorsement Kit →"
         zh: "打开PAC背书工具包 →"
-      target: "showPacKit()"
+      target: "/pac-kit"
     cta_secondary:
       label:
         en: "See coalition members"
