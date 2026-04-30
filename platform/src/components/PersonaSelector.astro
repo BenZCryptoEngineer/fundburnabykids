@@ -240,7 +240,10 @@ function ctaHref(target: string): string {
     background: var(--paper);
     border: 1px dashed var(--accent);
     border-radius: var(--radius-md);
-    font-family: inherit;
+    /* Sans-serif to match the persona cards below (which explicitly
+       set --font-sans). Without this the helper bar inherits body's
+       serif, creating a visual mismatch with the cards next to it. */
+    font-family: var(--font-sans);
     text-align: left;
     cursor: pointer;
     color: var(--ink);

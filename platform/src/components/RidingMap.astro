@@ -31,9 +31,22 @@ import burnabyRidings from '~/data/burnaby-ridings.json';
 
 interface Props {
   lang: Lang;
+  /** When true, render WITHOUT the outer <section>/wrap-wide/kicker/h2
+      framing, so the map can integrate visually into a parent section
+      (e.g. inline at the end of Hero, sharing the parent's heading
+      and background). The interactive bits (toggle, SVG, tooltip,
+      legend) all still render — just the section-level chrome is
+      suppressed. */
+  embedded?: boolean;
 }
 
-const { lang } = Astro.props;
+const { lang, embedded = false } = Astro.props;
+
+// Tag = `section` when standalone (own section in page flow with own
+// kicker + h2), `div` when embedded (caller's section provides the
+// framing). Astro doesn't have a tag-name component shorthand so we
+// switch via two conditional render branches at the root.
+const RootTag = embedded ? 'div' : 'section';
 
 // ---- Load data --------------------------------------------------------------
 
@@ -125,29 +138,33 @@ function bucketByGoal(count: number): number {
 }
 ---
 
-<section class="riding-map" id="riding-map">
-  <div class="wrap-wide">
-    <p class="kicker sans">
-      <I18nText
-        en="WHERE BURNABY IS SIGNING"
-        zh="本拿比签名分布"
-        lang={lang}
-      />
-    </p>
-    <h2 class="riding-map__heading">
-      <I18nText
-        en="Each riding's signature count, live."
-        zh="每个选区的实时签名数。"
-        lang={lang}
-      />
-    </h2>
-    <p class="riding-map__sub">
-      <I18nText
-        en={`MLAs respond to their own constituents. Sign by riding, delivered to that riding's MLA. Per-riding goal: ${PER_RIDING_GOAL.toLocaleString()}.`}
-        zh={`MLA 只对自己选区的选民负政治责任。签名按选区汇总，分别递送对应 MLA。每选区目标：${PER_RIDING_GOAL.toLocaleString()}。`}
-        lang={lang}
-      />
-    </p>
+<RootTag class={`riding-map${embedded ? ' riding-map--embedded' : ''}`} id={embedded ? undefined : 'riding-map'}>
+  <div class={embedded ? 'riding-map__inner' : 'wrap-wide'}>
+    {!embedded && (
+      <>
+        <p class="kicker sans">
+          <I18nText
+            en="WHERE BURNABY IS SIGNING"
+            zh="本拿比签名分布"
+            lang={lang}
+          />
+        </p>
+        <h2 class="riding-map__heading">
+          <I18nText
+            en="Each riding's signature count, live."
+            zh="每个选区的实时签名数。"
+            lang={lang}
+          />
+        </h2>
+        <p class="riding-map__sub">
+          <I18nText
+            en={`MLAs respond to their own constituents. Sign by riding, delivered to that riding's MLA. Per-riding goal: ${PER_RIDING_GOAL.toLocaleString()}.`}
+            zh={`MLA 只对自己选区的选民负政治责任。签名按选区汇总，分别递送对应 MLA。每选区目标：${PER_RIDING_GOAL.toLocaleString()}。`}
+            lang={lang}
+          />
+        </p>
+      </>
+    )}
 
     <div class="riding-map__toggle" role="tablist">
       <button class="active" data-mode="goal" role="tab">
@@ -222,40 +239,42 @@ function bucketByGoal(count: number): number {
       </div>
     </div>
 
-    <p class="riding-map__source sans">
-      <I18nText en="Map data: " zh="地图数据来源：" lang={lang} />
-      <a href="https://catalogue.data.gov.bc.ca/dataset/1cba4b16-263f-4d42-8d84-f5fecaa03d1a"
-         target="_blank" rel="noopener">
+    {!embedded && (
+      <p class="riding-map__source sans">
+        <I18nText en="Map data: " zh="地图数据来源：" lang={lang} />
+        <a href="https://catalogue.data.gov.bc.ca/dataset/1cba4b16-263f-4d42-8d84-f5fecaa03d1a"
+           target="_blank" rel="noopener">
+          <I18nText
+            en="Elections BC · 2023 Electoral Boundaries Redistribution"
+            zh="Elections BC · 2023 选区重划"
+            lang={lang}
+          />
+        </a>
+        {' '}(<I18nText en="BC Data Catalogue" zh="BC 数据目录" lang={lang} />,
         <I18nText
-          en="Elections BC · 2023 Electoral Boundaries Redistribution"
-          zh="Elections BC · 2023 选区重划"
+          en={` retrieved ${new Date().toISOString().slice(0, 10)}`}
+          zh={` 获取于 ${new Date().toISOString().slice(0, 10)}`}
+          lang={lang}
+        />).
+        {' '}<I18nText en="Released under the" zh="许可：" lang={lang} />{' '}
+        <a href="https://www.elections.bc.ca/docs/EBC-Open-Data-Licence.pdf"
+           target="_blank" rel="noopener">Elections BC Open Data Licence</a>.
+        {' '}<I18nText
+          en="Color ramp: "
+          zh="配色："
           lang={lang}
         />
-      </a>
-      {' '}(<I18nText en="BC Data Catalogue" zh="BC 数据目录" lang={lang} />,
-      <I18nText
-        en={` retrieved ${new Date().toISOString().slice(0, 10)}`}
-        zh={` 获取于 ${new Date().toISOString().slice(0, 10)}`}
-        lang={lang}
-      />).
-      {' '}<I18nText en="Released under the" zh="许可：" lang={lang} />{' '}
-      <a href="https://www.elections.bc.ca/docs/EBC-Open-Data-Licence.pdf"
-         target="_blank" rel="noopener">Elections BC Open Data Licence</a>.
-      {' '}<I18nText
-        en="Color ramp: "
-        zh="配色："
-        lang={lang}
-      />
-      <a href="https://colorbrewer2.org/#type=sequential&scheme=Purples&n=5"
-         target="_blank" rel="noopener">ColorBrewer Purples (5-class)</a>.
-      {' '}<I18nText
-        en="Postal-code → riding mapping is approximate at FSA boundaries; not for voter eligibility."
-        zh="按邮编 FSA 派生选区是近似（FSA 跨选区），不可用于选民资格判断。"
-        lang={lang}
-      />
-    </p>
+        <a href="https://colorbrewer2.org/#type=sequential&scheme=Purples&n=5"
+           target="_blank" rel="noopener">ColorBrewer Purples (5-class)</a>.
+        {' '}<I18nText
+          en="Postal-code → riding mapping is approximate at FSA boundaries; not for voter eligibility."
+          zh="按邮编 FSA 派生选区是近似（FSA 跨选区），不可用于选民资格判断。"
+          lang={lang}
+        />
+      </p>
+    )}
   </div>
-</section>
+</RootTag>
 
 <script>
   type RidingDatum = {
