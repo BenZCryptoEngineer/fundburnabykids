@@ -7,6 +7,7 @@
 // renders cleanly to PDF for delivery to MLA constituency offices.
 
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import { formatDate, t, localizedUrl } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
 import type { PublicLetter } from '~/lib/supabase';
@@ -67,7 +68,7 @@ const mlaPathBase = lang === 'zh' ? `/zh/mla/${mla.id}/` : `/mla/${mla.id}/`;
     <ol class="mla-inbox__list">
       {letters.map((l) => (
         <li class="mla-inbox__row">
-          <span class="mla-inbox__bullet" aria-hidden="true">▸</span>
+          <span class="mla-inbox__bullet"><Icon name="chevron-right" size={16} /></span>
           <a class="mla-inbox__link" href={`${letterPathBase}${encodeURIComponent(l.letter_token)}/`}>
             <span class="mla-inbox__signer sans">
               <strong>{l.first_name} {l.last_initial}.</strong>, {l.school}
@@ -159,9 +160,10 @@ const mlaPathBase = lang === 'zh' ? `/zh/mla/${mla.id}/` : `/mla/${mla.id}/`;
   .mla-inbox__row:last-child { border-bottom: none; }
   .mla-inbox__bullet {
     color: var(--accent);
-    font-size: 14px;
     flex-shrink: 0;
-    line-height: 1.5;
+    display: inline-flex;
+    align-items: center;
+    padding-top: 4px;
   }
   .mla-inbox__link {
     flex: 1;

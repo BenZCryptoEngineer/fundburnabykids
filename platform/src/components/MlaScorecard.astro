@@ -11,6 +11,7 @@
 
 import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import { formatDate, t } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
 
@@ -100,7 +101,7 @@ const tbSourceLabel = tbMembers[0]?.treasury_board?.source_label;
     {tbMembers.length > 0 && (
       <aside class="scorecard__tb-note">
         <p class="scorecard__tb-note__label sans">
-          <span aria-hidden="true">🏛️</span>
+          <span class="scorecard__tb-note__icon"><Icon name="landmark" size={18} /></span>
           <I18nText
             en="About the Treasury Board badge"
             zh="关于 Treasury Board 标识"
@@ -141,7 +142,7 @@ const tbSourceLabel = tbMembers[0]?.treasury_board?.source_label;
                   rel="noopener noreferrer"
                   title={`Source: ${m.treasury_board.source_label}`}
                 >
-                  <span aria-hidden="true">🏛️</span>
+                  <span class="mla-card__tb-badge__icon"><Icon name="landmark" size={14} /></span>
                   <I18nText
                     en={`Treasury Board · ${m.treasury_board.role}`}
                     zh={`Treasury Board · ${m.treasury_board.role === 'Chair' ? '主席' : m.treasury_board.role === 'Vice-Chair' ? '副主席' : '成员'}`}
@@ -264,6 +265,16 @@ const tbSourceLabel = tbMembers[0]?.treasury_board?.source_label;
     font-size: 13px;
     text-transform: uppercase;
     letter-spacing: 0.04em;
+  }
+  .scorecard__tb-note__icon {
+    color: var(--accent);
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .mla-card__tb-badge__icon {
+    color: var(--accent);
+    display: inline-flex;
+    flex-shrink: 0;
   }
   .scorecard__tb-note p {
     margin: 0 0 8px;

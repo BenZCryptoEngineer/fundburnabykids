@@ -5,6 +5,7 @@
 
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import { pickLang, localizedUrl } from '~/lib/i18n';
 
 const lang = pickLang(Astro.url.pathname);
@@ -18,7 +19,7 @@ const lang = pickLang(Astro.url.pathname);
   <section class="pac-verified">
     <div class="wrap">
       <div class="pac-verified__card">
-        <div class="pac-verified__icon" aria-hidden="true" data-icon>✓</div>
+        <div class="pac-verified__icon" data-icon><Icon name="badge-check" size={32} /></div>
         <h1 data-title>
           <I18nText
             en="Endorsement verified"
@@ -61,9 +62,16 @@ const lang = pickLang(Astro.url.pathname);
       schoolEl.textContent = school;
     }
 
+    const lucideSvg = (paths: string) =>
+      `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+    const ICON_INFO = '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>';
+    const ICON_ALERT = '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/>';
+
     if (already) {
-      if (iconEl) iconEl.textContent = 'ℹ';
-      if (iconEl) iconEl.setAttribute('data-state', 'already');
+      if (iconEl) {
+        iconEl.innerHTML = lucideSvg(ICON_INFO);
+        iconEl.setAttribute('data-state', 'already');
+      }
       if (titleEl) {
         titleEl.textContent = lang === 'zh'
           ? '此 endorsement 已验证'
@@ -75,8 +83,10 @@ const lang = pickLang(Astro.url.pathname);
           : 'The verify link was already consumed. No further action needed.';
       }
     } else if (error === 'invalid') {
-      if (iconEl) iconEl.textContent = '⚠';
-      if (iconEl) iconEl.setAttribute('data-state', 'error');
+      if (iconEl) {
+        iconEl.innerHTML = lucideSvg(ICON_ALERT);
+        iconEl.setAttribute('data-state', 'error');
+      }
       if (titleEl) {
         titleEl.textContent = lang === 'zh'
           ? '链接无效或已过期'
@@ -88,8 +98,10 @@ const lang = pickLang(Astro.url.pathname);
           : 'Use the SQL fallback in the admin email to verify manually in Supabase Studio.';
       }
     } else if (error === 'server') {
-      if (iconEl) iconEl.textContent = '⚠';
-      if (iconEl) iconEl.setAttribute('data-state', 'error');
+      if (iconEl) {
+        iconEl.innerHTML = lucideSvg(ICON_ALERT);
+        iconEl.setAttribute('data-state', 'error');
+      }
       if (titleEl) {
         titleEl.textContent = lang === 'zh'
           ? '服务器错误'
@@ -122,10 +134,10 @@ const lang = pickLang(Astro.url.pathname);
     border-radius: 50%;
     background: var(--success, #15803D);
     color: #fff;
-    font-size: 32px;
-    font-weight: 700;
-    line-height: 64px;
     margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .pac-verified__icon[data-state="already"] { background: var(--accent); }
   .pac-verified__icon[data-state="error"] { background: var(--warm); }

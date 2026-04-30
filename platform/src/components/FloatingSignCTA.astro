@@ -20,6 +20,7 @@
 // Desktop: bottom-right pill (doesn't dominate the page).
 
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import type { Lang } from '~/lib/i18n';
 
 interface Props {
@@ -36,7 +37,7 @@ const { lang } = Astro.props;
   aria-label={lang === 'zh' ? '签名 + 寄信，60 秒' : 'Sign + send email, 60 seconds'}
   hidden
 >
-  <span class="float-sign__icon" aria-hidden="true">✍</span>
+  <span class="float-sign__icon"><Icon name="pencil" size={18} /></span>
   <span class="float-sign__text">
     <I18nText
       en="Sign + send email"
@@ -173,8 +174,8 @@ const { lang } = Astro.props;
     outline-offset: 2px;
   }
   .float-sign__icon {
-    font-size: 18px;
-    line-height: 1;
+    display: inline-flex;
+    flex-shrink: 0;
   }
   .float-sign__text {
     line-height: 1.2;

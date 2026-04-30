@@ -5,6 +5,7 @@
 
 import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import Countdown from '~/components/Countdown.astro';
 import SignatureCounter from '~/components/SignatureCounter.astro';
 import ProgressBar from '~/components/ProgressBar.astro';
@@ -84,7 +85,7 @@ const totalPacs = pacEndorsements.length;
       data-lang={lang}
       hidden={pacEndorsements.length === 0}
     >
-      <span class="hero__pac-banner__badge" aria-hidden="true">✓</span>
+      <span class="hero__pac-banner__badge"><Icon name="badge-check" size={18} /></span>
       <span class="hero__pac-banner__text">
         <I18nText en="Endorsed by" zh="已获 endorse：" lang={lang} />
         {' '}
@@ -152,26 +153,28 @@ const totalPacs = pacEndorsements.length;
 
     <ProgressBar lang={lang} />
 
-    {/* Minimal "where do these signatures come from?" trigger — the
-        full RidingMap (purples choropleth) doesn't match Hero's navy
-        accent inline, so we tuck the per-riding view behind a small
-        question-mark button that opens a dialog. Single muted line;
-        the ? circle is the click target. Dialog markup is below
-        Hero's </section>. */}
+    {/* Riding-map teaser pill — sits below the SignatureCounter and
+        above the dual CTAs. Designed as a subtle "interactive element"
+        affordance (line-soft pill with map icon + arrow), not a hidden
+        help link. Earlier rev used "?" trailing a dotted-underline
+        line, but parents read it as glossary help, not "interactive
+        map". Map icon + action verb + → makes the affordance obvious
+        without competing with the primary CTAs below. */}
     <button
       type="button"
       class="hero__map-link"
       data-hero-map-open
       aria-label={lang === 'zh' ? '查看签名按选区分布' : 'See signatures by Burnaby riding'}
     >
+      <span class="hero__map-link__icon"><Icon name="map" size={18} /></span>
       <span class="hero__map-link__text">
         <I18nText
-          en="Where do these signatures come from?"
-          zh="这些签名都来自哪里？"
+          en="See live signatures by Burnaby riding"
+          zh="看签名按选区分布（实时）"
           lang={lang}
         />
       </span>
-      <span class="icon-help" aria-hidden="true">?</span>
+      <span class="hero__map-link__arrow" aria-hidden="true">→</span>
     </button>
 
     {/* Dual CTA */}
@@ -346,13 +349,7 @@ const totalPacs = pacEndorsements.length;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--success, #15803D);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
+    color: var(--success, #15803D);
     flex-shrink: 0;
   }
   .hero__pac-banner__text {
@@ -374,43 +371,59 @@ const totalPacs = pacEndorsements.length;
     margin-bottom: 8px;
   }
 
-  /* Tiny "where do these signatures come from?" link — sits under
-     the ProgressBar. Single muted line + a small ? circle; the whole
-     button is clickable, opens the riding-map dialog. Visually quiet
-     so it doesn't compete with the milestones above or the CTAs
-     below. */
+  /* Riding-map teaser pill — sub-CTA between ProgressBar and the
+     dual primary CTAs. Subtle pill chrome (line-soft bg + 1px line
+     border) signals "interactive element" without competing with the
+     primary buttons. Map icon on the left + action verb in the
+     middle + arrow on the right makes it obvious that clicking opens
+     a map view. Inline-flex so it auto-sizes to its content rather
+     than stretching across the hero. */
   .hero__map-link {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
-    margin: 10px 0 22px;
-    padding: 4px 6px 4px 4px;
-    background: transparent;
-    border: none;
-    /* Sans to match the surrounding Hero UI chrome (countdown, kicker,
-       progress bar, CTAs all use --font-sans). Default `inherit` would
-       fall back to body's serif and create a serif/sans seam right
-       between the milestone progress and the CTAs. */
+    gap: 10px;
+    margin: 14px 0 22px;
+    padding: 8px 14px;
+    background: var(--line-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
     font-family: var(--font-sans);
     font-size: 13px;
-    line-height: 1.4;
+    font-weight: 500;
+    line-height: 1.2;
     color: var(--ink-soft);
     cursor: pointer;
-    transition: color 0.15s;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, transform 0.1s;
   }
   .hero__map-link:hover,
   .hero__map-link:focus-visible {
+    background: var(--cream);
+    border-color: var(--accent);
     color: var(--accent);
+    transform: translateY(-1px);
   }
   .hero__map-link:focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 4px;
-    border-radius: 4px;
+    outline-offset: 2px;
+  }
+  .hero__map-link__icon {
+    color: var(--accent);
+    display: inline-flex;
+    flex-shrink: 0;
   }
   .hero__map-link__text {
-    text-decoration: underline;
-    text-decoration-style: dotted;
-    text-underline-offset: 3px;
+    /* No more dotted underline — the pill chrome carries the
+       affordance; underlining inside a pill reads noisy. */
+  }
+  .hero__map-link__arrow {
+    color: var(--accent);
+    font-size: 14px;
+    line-height: 1;
+    transition: transform 0.15s;
+  }
+  .hero__map-link:hover .hero__map-link__arrow,
+  .hero__map-link:focus-visible .hero__map-link__arrow {
+    transform: translateX(2px);
   }
 
   /* Riding-map dialog — centered modal on desktop, full-screen on

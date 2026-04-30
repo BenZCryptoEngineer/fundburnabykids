@@ -7,6 +7,7 @@
 
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import { pickLang, localizedUrl } from '~/lib/i18n';
 
 const lang = pickLang(Astro.url.pathname);
@@ -29,7 +30,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
             inline script below). Hidden by default so the static HTML
             renders the form first if JS is disabled. */}
         <div class="recover-sent" data-recover-sent hidden>
-          <div class="recover-icon" aria-hidden="true">📬</div>
+          <div class="recover-icon"><Icon name="mail-open" size={36} /></div>
           <h1>
             <I18nText en="Check your email" zh="请查收邮件" lang={lang} />
           </h1>
@@ -150,8 +151,9 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     box-shadow: var(--shadow-sm);
   }
   .recover-icon {
-    font-size: 48px;
-    margin-bottom: 16px;
+    color: var(--accent);
+    margin: 0 auto 16px;
+    display: inline-flex;
   }
   h1 { font-size: 26px; margin-bottom: 12px; }
   .recover-lede {

@@ -1,6 +1,7 @@
 ---
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import { pickLang, localizedUrl } from '~/lib/i18n';
 
 const lang = pickLang(Astro.url.pathname);
@@ -32,7 +33,7 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
   <section class="confirm-page">
     <div class="wrap">
       <div class="confirm-card">
-        <div class="confirm-icon" aria-hidden="true">✓</div>
+        <div class="confirm-icon"><Icon name="badge-check" size={56} /></div>
         <h1>
           {isAlready ? (
             <I18nText
@@ -96,7 +97,7 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
           </h2>
           <ul>
             <li>
-              <span class="confirm-timeline__icon" aria-hidden="true">📨</span>
+              <span class="confirm-timeline__icon"><Icon name="mail" size={20} /></span>
               <I18nText
                 en="Your email is in 7 MLA inboxes today — staff sort by postal code, yours is in your riding's pile."
                 zh="你的邮件今天就进了 7 位 MLA 的收件箱 — 工作人员按邮编分流，你的会进对应选区的那一摞。"
@@ -104,7 +105,7 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
               />
             </li>
             <li>
-              <span class="confirm-timeline__icon" aria-hidden="true">🏛️</span>
+              <span class="confirm-timeline__icon"><Icon name="landmark" size={20} /></span>
               <I18nText
                 en="At 500 confirmed signers, we print every letter and hand-deliver to all 5 Burnaby MLA constituency offices alongside local press outreach."
                 zh="累积到 500 名确认签名后，我们把所有信件打印出来，亲手送到 5 位 Burnaby MLA 选区办公室，同步联系本地媒体。"
@@ -112,7 +113,7 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
               />
             </li>
             <li>
-              <span class="confirm-timeline__icon" aria-hidden="true">🎯</span>
+              <span class="confirm-timeline__icon"><Icon name="target" size={20} /></span>
               <I18nText
                 en="Goal: 2,000 parents by May 27 budget vote (≈400 per riding) — at that scale the petition becomes a political object the Education Minister must respond to in writing."
                 zh="目标：5 月 27 日预算通过日前到 2000 名家长（每区约 400）— 达到这个规模，请愿就成为 Education Minister 必须书面回应的政治文件。"
@@ -120,7 +121,7 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
               />
             </li>
             <li>
-              <span class="confirm-timeline__icon" aria-hidden="true">📅</span>
+              <span class="confirm-timeline__icon"><Icon name="calendar" size={20} /></span>
               <I18nText
                 en="After May 27, the cuts are locked in for the 2026-27 school year. There's no &ldquo;next chance&rdquo; before September."
                 zh="5 月 27 日之后，削减将锁定到 2026-27 学年。9 月之前没有&ldquo;下一次机会&rdquo;。"
@@ -286,8 +287,6 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
     color: var(--success);
     display: grid;
     place-items: center;
-    font-size: 32px;
-    font-weight: 700;
     margin-bottom: 24px;
   }
   .confirm-page h1 {
@@ -361,8 +360,10 @@ const withdrawUrl = safeToken ? `${siteOrigin}${withdrawPath}${encodeURIComponen
   }
   .confirm-timeline li:last-child { margin-bottom: 0; }
   .confirm-timeline__icon {
-    font-size: 16px;
-    line-height: 1.4;
+    color: var(--accent);
+    display: inline-flex;
+    flex-shrink: 0;
+    padding-top: 2px;
   }
 
   /* Tell 2 other parents — share block. Highest-leverage call-to-

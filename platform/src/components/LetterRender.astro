@@ -12,6 +12,7 @@
 
 import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import { formatDate, t } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
 import type { PublicLetter } from '~/lib/supabase';
@@ -47,7 +48,7 @@ const signedDate = formatDate(letter.signed_at, lang);
 <article class="letter-card" lang={lang === 'zh' ? 'zh-CN' : 'en'}>
   <header class="letter-card__meta sans">
     <span class="letter-card__verified" aria-label={lang === 'zh' ? '已确认' : 'Verified'}>
-      <span class="letter-card__check" aria-hidden="true">✓</span>
+      <span class="letter-card__check"><Icon name="badge-check" size={16} /></span>
       <I18nText en="Verified" zh="已确认" lang={lang} />
     </span>
     <span class="letter-card__date">
@@ -219,15 +220,10 @@ const signedDate = formatDate(letter.signed_at, lang);
     font-weight: 600;
   }
   .letter-card__check {
-    display: inline-grid;
-    place-items: center;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--success-soft);
+    display: inline-flex;
+    align-items: center;
     color: var(--success);
-    font-size: 11px;
-    font-weight: 700;
+    flex-shrink: 0;
   }
   .letter-card__signer {
     font-size: 22px;

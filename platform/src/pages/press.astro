@@ -16,6 +16,7 @@
 
 import { getEntry } from 'astro:content';
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
+import Icon from '~/components/Icon.astro';
 import { pickLang, localizedUrl } from '~/lib/i18n';
 
 const lang = pickLang(Astro.url.pathname);
@@ -249,11 +250,26 @@ const facts = (factsEntry?.data as any)?.facts ?? [];
           <p class="press__contact-name sans"><strong>Ben Zhou</strong></p>
           <p class="press__contact-role sans muted">Founder, Fund Burnaby Kids · Burnaby parent</p>
           <ul class="press__contact-list">
-            <li>📧 <a href="mailto:ben@fundburnabykids.ca?subject=Media%20inquiry%20%E2%80%94%20Fund%20Burnaby%20Kids">ben@fundburnabykids.ca</a></li>
-            <li>🕐 <strong>Response time:</strong> within 2 hours weekdays, within 24 hours weekends (Pacific Time)</li>
-            <li>🗓️ <strong>By appointment</strong> — please email first with specifics about your story.</li>
-            <li>🗣️ <strong>Languages:</strong> English, Mandarin (普通话), Cantonese (粤语)</li>
-            <li>🏢 <strong>Day job:</strong> Founder, <a href="https://expeta.ca" target="_blank" rel="noopener noreferrer">Expeta Technologies</a> — research methodology context</li>
+            <li>
+              <span class="press__contact-icon"><Icon name="mail" size={18} /></span>
+              <a href="mailto:ben@fundburnabykids.ca?subject=Media%20inquiry%20%E2%80%94%20Fund%20Burnaby%20Kids">ben@fundburnabykids.ca</a>
+            </li>
+            <li>
+              <span class="press__contact-icon"><Icon name="clock" size={18} /></span>
+              <span><strong>Response time:</strong> within 2 hours weekdays, within 24 hours weekends (Pacific Time)</span>
+            </li>
+            <li>
+              <span class="press__contact-icon"><Icon name="calendar" size={18} /></span>
+              <span><strong>By appointment</strong> — please email first with specifics about your story.</span>
+            </li>
+            <li>
+              <span class="press__contact-icon"><Icon name="megaphone" size={18} /></span>
+              <span><strong>Languages:</strong> English, Mandarin (普通话), Cantonese (粤语)</span>
+            </li>
+            <li>
+              <span class="press__contact-icon"><Icon name="building" size={18} /></span>
+              <span><strong>Day job:</strong> Founder, <a href="https://expeta.ca" target="_blank" rel="noopener noreferrer">Expeta Technologies</a> — research methodology context</span>
+            </li>
           </ul>
           <p class="press__contact-scope">
             Ben speaks only for the campaign and for himself. He cannot accept or decline interviews on behalf of signers, MLAs, SD41, BCTF, or any other party — please contact those parties directly.
@@ -537,10 +553,21 @@ const facts = (factsEntry?.data as any)?.facts ?? [];
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
     font-size: 14px;
     color: var(--ink-soft);
     line-height: 1.5;
+  }
+  .press__contact-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .press__contact-icon {
+    color: var(--accent);
+    flex-shrink: 0;
+    display: inline-flex;
+    padding-top: 2px;
   }
   .press__contact-list a { color: var(--accent); }
   .press__contact-list strong { color: var(--ink); font-weight: 600; }

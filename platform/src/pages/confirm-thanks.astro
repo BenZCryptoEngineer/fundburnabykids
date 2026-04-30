@@ -14,6 +14,7 @@
 
 import CampaignLayout from '~/layouts/CampaignLayout.astro';
 import I18nText from '~/components/I18nText.astro';
+import Icon from '~/components/Icon.astro';
 import { pickLang, localizedUrl } from '~/lib/i18n';
 
 const lang = pickLang(Astro.url.pathname);
@@ -28,7 +29,7 @@ const lang = pickLang(Astro.url.pathname);
     <div class="wrap">
       <div class="thanks-card" data-variant="signature">
         <div class="thanks-header">
-          <div class="thanks-icon" aria-hidden="true">📬</div>
+          <div class="thanks-icon"><Icon name="mail" size={48} /></div>
           <h1 data-pac-headline-target>
             <I18nText
               en="We got your signature — 2 quick steps left"
@@ -152,10 +153,11 @@ const lang = pickLang(Astro.url.pathname);
               />
             </p>
             <p class="step-card__action" data-mailto-block>
-              <a class="btn btn--primary btn--lg" href="#" data-mailto-link target="_blank" rel="noopener">
+              <a class="btn btn--primary btn--lg btn--icon" href="#" data-mailto-link target="_blank" rel="noopener">
+                <Icon name="mail" size={18} />
                 <I18nText
-                  en="📨 Open the email →"
-                  zh="📨 打开邮件 →"
+                  en="Open the email →"
+                  zh="打开邮件 →"
                   lang={lang}
                 />
               </a>
@@ -315,8 +317,15 @@ const lang = pickLang(Astro.url.pathname);
     border-bottom: 1px solid var(--line);
   }
   .thanks-icon {
-    font-size: 44px;
-    margin-bottom: 12px;
+    color: var(--accent);
+    margin: 0 auto 12px;
+    display: inline-flex;
+  }
+  .btn--icon {
+    gap: 8px;
+  }
+  .btn--icon svg {
+    flex-shrink: 0;
   }
   h1 {
     font-size: 26px;
