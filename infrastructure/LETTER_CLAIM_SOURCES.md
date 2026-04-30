@@ -162,13 +162,23 @@ P11. Burnaby DPAC (the elected institutional voice for SD41
 
 ### P5.S3 — "Unrestricted reserves sit at roughly $4.3 million"
 
-- **Primary source:** SD41 financial documents (specific page TBD)
-- **URL candidates:**
-  - SD41 2025-26 Operating Budget Presentation — <https://burnabyschools.ca/wp-content/uploads/2025/05/2025-26-Operating-Budget-Presentation-27may2025.pdf>
-  - SD41 Annual Budget 2025-26 — <https://burnabyschools.ca/wp-content/uploads/2025/05/25-26_annual_budget_for-webpage.pdf>
-- **Matching language in source:** SD41's audited statements / budget presentation report on unrestricted operating surplus.
-- **Also cited at:** `facts.yaml` fact_02 (citation is CTV but the $4.3M figure may originate from SD41 financial statements rather than CTV reporting)
-- **Status:** **needs-verification** — should be cross-checked against SD41 primary financial document. DPAC Fact Sheet uses a different framing ("Reserve after $4.8M transfer: $2,712, recommended minimum $6.8M") — likely measuring a different point in time or different reserve definition. Resolve before next campaign-day push to MLAs.
+- **Primary source:** SD41 Preliminary Budget Report 2026-27 (FINAL), page 19 — "2025-2026 Q3 Projections"
+- **URL:** <https://burnabyschools.ca/wp-content/uploads/2026/04/2026-2027-Preliminary-Budget-Report_FINAL.pdf>
+- **Matching language in source:** Verbatim — *"Based on third-quarter projections and excluding the financial impact of the salary arbitration described above, the District was forecasting an additional surplus of approximately $1.1 million. This would have increased the current year structural surplus to $2.1 million and further supported the replenishment of reserves, **bringing the total unrestricted surplus up to $4.3 million**."* Page 19 also contains the table showing Unrestricted Surplus before arbitration impact = **$4,338,219**.
+- **Also cited at:** `facts.yaml` fact_02
+- **Status:** **verified** (resolved 2026-04-30)
+
+#### Reconciliation note on the three reserve figures
+
+The SD41 Preliminary Budget Report 2026-27 page 19 shows that the apparent contradiction between *$4.3M* (letter / facts.yaml), *$4.8M* (DPAC Fact Sheet), and *$2,712* (DPAC Fact Sheet) is not a contradiction at all — the three numbers are different snapshots of the same Q3 forecast, all from the same SD41 document:
+
+| Number | What it means | Page 19 wording |
+|---|---|---|
+| **$4.3M** ($4,338,219) | Unrestricted Surplus that would have been replenished by year-end **had the arbitration not landed** | "bringing the total unrestricted surplus up to $4.3 million" |
+| **$4.8M** ($4,335,507 unrestricted + $513,309 restricted = $4,848,816) | The arbitration's impact on reserves — the size of the draw | "a net unfavourable financial impact of $4.8 million" |
+| **$2,712** | Unrestricted Surplus **after** the arbitration impact ($4,338,219 − $4,335,507) | Table on page 19, row "Unrestricted Surplus" column "2025/2026 Q3" |
+
+So the letter's "$4.3M" wording refers to the would-have-been-without-arbitration reserve. The DPAC Fact Sheet's "$2,712" refers to the same reserve after the arbitration impact lands. Both are legitimate framings drawn from the same SD41 page, depending on whether the rhetorical point is "Burnaby was rebuilding reserves" or "the arbitration wiped them out."
 
 ### P6.S2 — "$5 billion Contingencies Vote exists precisely for costs like this — unforeseen, arising from collective bargaining, uncertain at budget time"
 
