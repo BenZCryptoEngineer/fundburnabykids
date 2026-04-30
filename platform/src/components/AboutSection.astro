@@ -38,9 +38,15 @@ const coalitionParas = aboutCoalition.split(/\n\s*\n/).filter(Boolean);
 
     <div class="founder-card">
       <header class="founder-card__head">
-        <div class="founder-card__avatar" aria-hidden="true">
-          {founder.avatar_text ?? 'BZ'}
-        </div>
+        <img
+          class="founder-card__avatar founder-card__avatar--photo"
+          src="/founder/ben.png"
+          alt={founder.name ?? 'Ben Zhou'}
+          width="64"
+          height="64"
+          loading="lazy"
+          decoding="async"
+        />
         <div class="founder-card__id">
           <h3 class="founder-card__name sans">{founder.name ?? 'Ben Zhou'}</h3>
           {founderRole && <p class="founder-card__role sans muted">{founderRole}</p>}
@@ -144,6 +150,17 @@ const coalitionParas = aboutCoalition.split(/\n\s*\n/).filter(Boolean);
   .founder-card__avatar--alt {
     background: var(--warm);
     font-size: 16px;
+  }
+  /* Photo variant overrides text-based avatar styles. object-position
+     pushes the image up ~25% so the face is centered in the circular
+     crop and the source's bottom-right "benz" signature + ✦ sparkle
+     mark fall outside the visible circle. */
+  .founder-card__avatar--photo {
+    object-fit: cover;
+    object-position: center 25%;
+    background: var(--paper);
+    color: transparent;
+    font-size: 0;
   }
   .founder-card__id {
     min-width: 0;
