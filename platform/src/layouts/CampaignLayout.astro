@@ -159,6 +159,10 @@ const mailingAddress = import.meta.env.MAILING_ADDRESS
         flex-direction: column;
         text-decoration: none;
         color: var(--ink);
+        /* Sans for the whole brand block so brand__tagline (which
+           doesn't set its own font-family) inherits sans, not body
+           serif — matches the surrounding nav UI chrome. */
+        font-family: var(--font-sans);
       }
       .brand__campaign {
         font-family: var(--font-sans);

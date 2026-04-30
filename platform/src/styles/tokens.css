@@ -98,6 +98,16 @@ body {
 body[data-lang="zh"] {
   font-family: var(--font-sans-zh);
   line-height: 1.75;
+
+  /* Lang-aware redefinition of --font-sans: every component-scoped rule
+     using `font-family: var(--font-sans)` (e.g. `.hero__map-link`,
+     `.btn-primary`, etc.) automatically swaps to the PingFang stack
+     under `body[data-lang="zh"]`, without each component needing its
+     own ZH override. Custom properties inherit, so the redefined value
+     cascades to every descendant. Keeps the `--font-sans-zh` token
+     available for components that explicitly want CJK regardless of
+     body lang. */
+  --font-sans: var(--font-sans-zh);
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -123,9 +133,18 @@ a {
 }
 a:hover { color: var(--accent-deep); }
 
+/* Buttons are UI chrome — default to sans-serif globally so authors
+   don't need to remember to set font-family on every button + so
+   buttons that DO inherit from a serif container (body default) still
+   render in sans. ZH override uses PingFang stack to keep CJK glyphs
+   correct. Components that need a button to render in body serif
+   (rare — e.g. inside a letter preview) can override locally. */
 button {
-  font-family: inherit;
+  font-family: var(--font-sans);
   cursor: pointer;
+}
+body[data-lang="zh"] button {
+  font-family: var(--font-sans-zh);
 }
 
 img, svg, video {
@@ -134,8 +153,14 @@ img, svg, video {
   display: block;
 }
 
-input, textarea, select, button {
+/* Form inputs keep inherit so user-typed content visually matches the
+   surrounding body copy (e.g. a serif paragraph with a serif input
+   feels intentional). Buttons split out above to default to sans. */
+input, textarea, select {
   font-family: inherit;
+  font-size: inherit;
+}
+button {
   font-size: inherit;
 }
 

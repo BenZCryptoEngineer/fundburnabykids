@@ -731,7 +731,11 @@ const animate = initial.length >= MARQUEE_FLOOR;
     color: var(--ink, #1a1a1a);
     background: var(--paper, #fff);
     box-sizing: border-box;
-    font-family: inherit;
+    /* Sans to match the .sans class on these elements + the surrounding
+       UI chrome of the modal. Explicit instead of `inherit` because the
+       Astro-scoped specificity of this rule beats global `.sans`, so
+       leaving inherit lets body serif leak through. */
+    font-family: var(--font-sans);
   }
   .signatories-modal__input:focus,
   .signatories-modal__select:focus {

@@ -282,6 +282,20 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     max-width: 100%;
     height: auto;
   }
+  /* Inline SVGs in src/data/visuals/*.svg hardcode `font-family="'Söhne',
+     sans-serif"` on every <text> element. Treated as a presentation
+     attribute (specificity 0), so this normal author rule wins and
+     swaps the SVG label fonts to follow body lang via the lang-aware
+     `--font-sans` token (Söhne on /en/, PingFang on /zh/). Without
+     this, ZH visual labels ship the Latin stack and CJK glyphs fall
+     back to system fonts — visibly inconsistent with the rest of the
+     ZH page. Both selectors needed: `.svg-visual__media` covers the
+     inline thumbnail; `.svg-lightbox__media` covers the panzoom
+     fullscreen clone inside the lightbox dialog. */
+  .svg-visual__media :global(svg text),
+  .svg-lightbox__media :global(svg text) {
+    font-family: var(--font-sans);
+  }
   .svg-visual__zoom {
     display: block;
     width: 100%;
@@ -291,7 +305,8 @@ const closeLabel = lang === 'zh' ? '关闭' : 'Close';
     padding: 0;
     margin: 0;
     cursor: zoom-in;
-    font: inherit;
+    font-family: var(--font-sans);
+    font-size: inherit;
     color: inherit;
     text-align: center;
     transition: border-color 0.15s, background 0.15s;

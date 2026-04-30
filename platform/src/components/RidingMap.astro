@@ -487,7 +487,8 @@ function bucketByGoal(count: number): number {
     padding: 8px 14px;
     cursor: pointer;
     color: var(--ink-soft);
-    font: inherit;
+    font-family: var(--font-sans);
+    font-size: inherit;
     font-weight: 500;
     border-right: 1px solid var(--line);
   }
@@ -509,6 +510,12 @@ function bucketByGoal(count: number): number {
     width: 100%;
     height: auto;
     display: block;
+  }
+  /* d3-emitted <text> nodes have no explicit font-family, so they
+     inherit body — which is serif on /en/. Pin to the lang-aware
+     `--font-sans` token so riding labels stay sans on both langs. */
+  .riding-map__svg text {
+    font-family: var(--font-sans);
   }
   .riding-map__region {
     transition: filter 0.2s;
