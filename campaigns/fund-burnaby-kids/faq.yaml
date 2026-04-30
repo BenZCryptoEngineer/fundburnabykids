@@ -27,7 +27,7 @@ faq:
 
         Fund Burnaby Kids is the current campaign of Burnaby Kids First — a parent-led coalition built to give Burnaby parents a durable voice on issues affecting local children. Fund Burnaby Kids is urgent and specific ($9.4M, by May 27). Burnaby Kids First is the longer-term coalition that will exist after this campaign ends.
 
-        Burnaby DPAC and the school board have publicly advocated for the same position — the Province must fully fund the $9.4M. This campaign is independent but aligned with their stance. We move faster than DPAC's monthly cycle allows; DPAC endorsements and school PAC coalition members are listed on the page as they join.
+        Burnaby DPAC (District Parent Advisory Council) is the elected institutional voice for parents across all 41 SD41 schools and has been organizing on this issue since April 2026 — their Parent Explainer is the most comprehensive single document on the case. This campaign supports DPAC's advocacy by adding signature collection and one-click constituent email on top of their broader work; we don't replace it. School-level PAC endorsements submitted through the form on this site appear in the Coalition section as they join (DPAC operates through its own institutional channel and is not on that list by design).
 
         No public funds are used. No political party is endorsed. No candidate is named.
       zh: |
@@ -35,9 +35,24 @@ faq:
 
         Fund Burnaby Kids 是 Burnaby Kids First 联盟目前的运动——后者是一个家长主导的联盟，旨在为Burnaby家长在影响本地孩子的议题上提供持久的声音。Fund Burnaby Kids 是紧迫而具体的（$9.4M，5月27日之前）。Burnaby Kids First 是在本次运动结束后仍会存续的长期联盟。
 
-        Burnaby DPAC和学区董事会已公开支持相同立场——省府必须全额资助$9.4M。本活动独立运营但与他们立场一致。我们比DPAC的月度周期更快行动；DPAC背书和加入的学校PAC联盟成员加入时会显示在页面上。
+        Burnaby DPAC（区家长咨询委员会，District Parent Advisory Council）是 SD41 全部 41 所学校选出的家长制度性代表机构，自 2026 年 4 月起就在为这件事组织行动 — 他们的 Parent Explainer 是目前关于本案最全面的单一文件。本活动以签名收集 + 一键发选民邮件的形式支持 DPAC 的倡导，并非取代他们的工作。透过本网站表单提交的学校层级 PAC endorsement 会显示在 Coalition 区段（DPAC 通过自己的制度性渠道运作，按设计不在这份名单上）。
 
         未使用任何公共资金。不支持任何政党。不提及任何候选人。
+    links:
+      - text:
+          en: "Burnaby DPAC main page"
+          zh: "Burnaby DPAC 主页"
+        url: "https://dpac.burnabypac.ca"
+        note:
+          en: "central hub for DPAC's campaign + executive contact"
+          zh: "DPAC 活动主页与执行委员会联络"
+      - text:
+          en: "DPAC Parent Explainer (PDF, 9 pages)"
+          zh: "DPAC Parent Explainer (PDF，9 页)"
+        url: "http://dpac.burnabypac.ca/wp-content/uploads/sites/2/2026/04/SD41_Parent_Explainer.pdf"
+        note:
+          en: "the authoritative document on the SD41 funding case — recommended reading"
+          zh: "SD41 资金事件的权威说明文件 — 推荐阅读"
 
   - id: pac-joining
     q:

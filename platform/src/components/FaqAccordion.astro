@@ -14,10 +14,16 @@ interface Props {
 const { lang } = Astro.props;
 
 const faqEntry = await getEntry('campaign', 'faq');
+type FaqLink = {
+  text: { en: string; zh: string };
+  url: string;
+  note?: { en: string; zh: string };
+};
 const items: Array<{
   id: string;
   q: { en: string; zh: string };
   a: { en: string; zh: string };
+  links?: FaqLink[];
 }> = (faqEntry?.data as any)?.faq ?? [];
 ---
 
@@ -46,6 +52,18 @@ const items: Array<{
           <summary class="faq__q sans">{t(it.q, lang)}</summary>
           <div class="faq__a">
             <p>{t(it.a, lang)}</p>
+            {it.links && it.links.length > 0 && (
+              <ul class="faq__a-links sans">
+                {it.links.map((link) => (
+                  <li>
+                    <a href={link.url} target="_blank" rel="noopener noreferrer">
+                      {t(link.text, lang)}
+                    </a>
+                    {link.note && <span class="faq__a-link-note muted"> — {t(link.note, lang)}</span>}
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </details>
       ))}
@@ -128,4 +146,25 @@ const items: Array<{
   .faq__a p {
     margin: 0;
   }
+  /* Reference links — optional `links` array per FAQ item, surfaces
+     primary sources (e.g. DPAC's Parent Explainer) inline so readers
+     don't have to leave the answer to find them. */
+  .faq__a-links {
+    list-style: none;
+    padding: 12px 0 0;
+    margin: 12px 0 0;
+    border-top: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .faq__a-links li { line-height: 1.5; }
+  .faq__a-links a {
+    color: var(--accent);
+    font-weight: 500;
+    text-decoration: underline;
+  }
+  .faq__a-link-note { color: var(--muted); }
+  .muted { color: var(--muted); }
 </style>
