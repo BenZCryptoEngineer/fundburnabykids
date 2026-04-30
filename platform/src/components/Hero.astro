@@ -8,6 +8,7 @@ import I18nText from '~/components/I18nText.astro';
 import Countdown from '~/components/Countdown.astro';
 import SignatureCounter from '~/components/SignatureCounter.astro';
 import ProgressBar from '~/components/ProgressBar.astro';
+import RidingMap from '~/components/RidingMap.astro';
 import { localizedUrl, t } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
 
@@ -96,9 +97,41 @@ const totalPacs = pacEndorsements.length;
         as abstract time scarcity ("28 days" — feels far away). Pairing
         it with the locked-in consequence line activates loss aversion:
         "after this date, the cuts persist for the 2026-27 school
-        year." Tooltip on the countdown gives the procedural detail. */}
+        year." Tooltip on the countdown gives the procedural detail.
+
+        Riding-map teaser sits inline next to the countdown so the
+        first-viewport orientation also includes "this is about MY
+        riding." Click → opens the full choropleth in a dialog with
+        per-riding signature counts. The full RidingMap component
+        renders inside the dialog (mounted always so polling + SSR
+        seed work). */}
     <div class="hero__countdown-row">
       <Countdown deadline={deadline} lang={lang} />
+      <button
+        type="button"
+        class="hero__map-teaser sans"
+        data-hero-map-open
+        aria-label={lang === 'zh' ? '查看 Burnaby 5 个选区签名分布' : 'See signatures by Burnaby riding'}
+      >
+        <span class="hero__map-teaser__icon" aria-hidden="true">🗺️</span>
+        <span class="hero__map-teaser__text">
+          <strong>
+            <I18nText
+              en="Signatures by riding"
+              zh="按选区看签名"
+              lang={lang}
+            />
+          </strong>
+          <span>
+            <I18nText
+              en="Tap to find your Burnaby riding"
+              zh="点击查找你的 Burnaby 选区"
+              lang={lang}
+            />
+          </span>
+        </span>
+        <span class="hero__map-teaser__chevron" aria-hidden="true">→</span>
+      </button>
     </div>
     <p class="hero__countdown-consequence sans">
       {lang === 'zh' ? (
@@ -175,6 +208,72 @@ const totalPacs = pacEndorsements.length;
 
   </div>
 </section>
+
+{/* Riding-map dialog — wrapped around the existing RidingMap component
+    so it inherits all the per-riding choropleth + polling behavior.
+    Mounted always (not lazy-rendered on open) so SSR seed + 30s poll
+    work whether the dialog has been opened yet or not. */}
+<dialog class="hero-map-dialog" id="hero-riding-map" aria-label={lang === 'zh' ? 'Burnaby 选区签名分布' : 'Burnaby riding signatures'}>
+  <button
+    type="button"
+    class="hero-map-dialog__close"
+    data-hero-map-close
+    aria-label={lang === 'zh' ? '关闭' : 'Close'}
+  >×</button>
+  <div class="hero-map-dialog__viewport">
+    <RidingMap lang={lang} />
+  </div>
+</dialog>
+
+<script>
+  // Riding-map dialog open/close. Lightweight — no panzoom, since the
+  // RidingMap inside is already SVG-based and renders at native size
+  // suitable for tap targets. Mobile users can pinch the page if they
+  // want to zoom further.
+  if (!(window as any).__heroMapBound) {
+    (window as any).__heroMapBound = true;
+    document.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement | null;
+      if (!target) return;
+
+      const opener = target.closest<HTMLElement>('[data-hero-map-open]');
+      if (opener) {
+        const dlg = document.getElementById('hero-riding-map') as HTMLDialogElement | null;
+        if (dlg && typeof dlg.showModal === 'function') {
+          // Save scroll position so closing the dialog returns the
+          // user to where they were (Safari resets scroll on
+          // dialog open with body overflow:hidden, see SvgVisual.astro
+          // for the same workaround).
+          (dlg as any).__savedY = window.scrollY;
+          dlg.showModal();
+        }
+        return;
+      }
+
+      const closer = target.closest<HTMLElement>('[data-hero-map-close]');
+      if (closer) {
+        const dlg = closer.closest('dialog') as HTMLDialogElement | null;
+        dlg?.close();
+        return;
+      }
+
+      // Backdrop click
+      if (target.tagName === 'DIALOG' && target.classList.contains('hero-map-dialog')) {
+        (target as HTMLDialogElement).close();
+      }
+    });
+
+    // Restore scroll on close (every dialog instance — bind once via
+    // delegation on first open is fine since there's only one instance).
+    const dlg = document.getElementById('hero-riding-map');
+    dlg?.addEventListener('close', () => {
+      const y = (dlg as any).__savedY;
+      if (typeof y === 'number') {
+        window.scrollTo({ top: y, left: 0, behavior: 'instant' as ScrollBehavior });
+      }
+    });
+  }
+</script>
 
 <script>
   // PAC banner client-side polling. SSR seeds the initial state from
@@ -278,8 +377,143 @@ const totalPacs = pacEndorsements.length;
   }
 
   .hero__countdown-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
     margin-bottom: 8px;
   }
+
+  /* Riding-map teaser — small clickable card next to the countdown.
+     Visually distinct from the countdown pill (different shape, accent
+     border) so they read as related but separate widgets. Mobile keeps
+     them in a single column when narrow. */
+  .hero__map-teaser {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px 8px 12px;
+    background: var(--paper);
+    border: 1px dashed var(--accent);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    text-align: left;
+    cursor: pointer;
+    color: var(--ink);
+    transition: background 0.15s, border-style 0.15s, transform 0.1s;
+  }
+  .hero__map-teaser:hover,
+  .hero__map-teaser:focus-visible {
+    background: var(--cream);
+    border-style: solid;
+  }
+  .hero__map-teaser:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .hero__map-teaser:active {
+    transform: scale(0.98);
+  }
+  .hero__map-teaser__icon {
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .hero__map-teaser__text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    font-size: 12px;
+    line-height: 1.35;
+    color: var(--ink-soft);
+  }
+  .hero__map-teaser__text strong {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .hero__map-teaser__chevron {
+    font-size: 16px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  @media (max-width: 480px) {
+    .hero__map-teaser { width: 100%; }
+  }
+
+  /* Riding-map dialog — wraps the full RidingMap. Centered modal on
+     desktop; full-screen on phones (consistent with SvgVisual / SmapZoom
+     patterns elsewhere on the site). */
+  .hero-map-dialog {
+    width: 95vw;
+    max-width: 1000px;
+    height: 90vh;
+    max-height: 92vh;
+    padding: 0;
+    border: none;
+    border-radius: var(--radius-lg);
+    background: var(--paper);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    position: relative;
+  }
+  .hero-map-dialog::backdrop { background: rgba(0, 0, 0, 0.85); }
+  .hero-map-dialog__close {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .hero-map-dialog__close:hover { background: var(--cream); color: var(--accent); }
+  .hero-map-dialog__viewport {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 12px;
+    box-sizing: border-box;
+    /* Inner RidingMap component renders its own padding; we just give
+       it scroll headroom in case viewport is smaller than the map. */
+  }
+  /* Suppress the outer .riding-map section's own background/border
+     padding when it lives inside the dialog — looks tighter. */
+  .hero-map-dialog__viewport :global(.riding-map) {
+    padding: 0;
+    background: transparent;
+    border-top: none;
+  }
+
+  @media (max-width: 560px) {
+    .hero-map-dialog {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100vh;
+      max-height: 100vh;
+      height: 100dvh;
+      max-height: 100dvh;
+      border-radius: 0;
+      margin: 0;
+    }
+  }
+
+  /* Lock background page scroll while the dialog is open. */
+  :global(body:has(dialog.hero-map-dialog[open])) {
+    overflow: hidden;
+  }
+
   .hero__countdown-consequence {
     margin: 0 0 24px;
     font-size: 14px;
