@@ -158,7 +158,7 @@ const animate = initial.length >= MARQUEE_FLOOR;
     </h2>
     <button
       type="button"
-      class="signatories-modal__close"
+      class="icon-close"
       data-close-signatories
       aria-label={lang === 'zh' ? '关闭' : 'Close'}
     >×</button>
@@ -692,25 +692,6 @@ const animate = initial.length >= MARQUEE_FLOOR;
     margin: 0;
     font-size: 16px;
     font-weight: 700;
-    color: var(--ink, #1a1a1a);
-  }
-  .signatories-modal__close {
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 50%;
-    width: 36px;
-    height: 36px;
-    font-size: 22px;
-    line-height: 1;
-    color: var(--muted, #6B7280);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-  }
-  .signatories-modal__close:hover {
-    background: var(--cream, #f4f1ea);
     color: var(--ink, #1a1a1a);
   }
   .signatories-modal__search {

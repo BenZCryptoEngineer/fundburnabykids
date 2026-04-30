@@ -35,7 +35,7 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
           lang={lang}
         />
       </h2>
-      <button class="pac-modal__close" type="button" data-close-modal aria-label="Close">×</button>
+      <button class="icon-close" type="button" data-close-modal aria-label="Close">×</button>
     </header>
 
     <div class="pac-modal__body">
@@ -320,20 +320,6 @@ const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY;
     font-weight: 700;
     margin: 0;
     color: var(--ink);
-  }
-  .pac-modal__close {
-    background: transparent;
-    border: none;
-    font-size: 28px;
-    line-height: 1;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  .pac-modal__close:hover {
-    color: var(--ink);
-    background: var(--line-soft);
   }
   .pac-modal__body {
     overflow-y: auto;

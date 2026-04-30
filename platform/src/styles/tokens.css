@@ -175,6 +175,83 @@ button {
 /* Sans-serif override (used for UI labels even inside serif body) */
 .sans { font-family: var(--font-sans); }
 
+/* =============================================================================
+ * Icon button utilities
+ *
+ * Single source of truth for the small UI controls scattered across the
+ * site (inline "?" help triggers, modal "×" close buttons). Before this,
+ * every component had its own scoped variant: .help-icon, .counter__why,
+ * .hero__map-link__q etc. — same affordance, four visual styles. Use one
+ * canonical look so the affordance reads consistently everywhere.
+ *
+ * - .icon-help: 20px circle next to a text label. Subtle filled-tonal
+ *   default (line-soft bg + 1px border + ink-soft text), hover/focus
+ *   shifts to accent fill. Matches Material 3 "Filled tonal icon
+ *   button" pattern: discoverable but doesn't compete with body copy.
+ * - .icon-close: 44px circle in the top-right of a dialog. Paper bg +
+ *   1px border meets WCAG 2.2 AA target size (24px+) and gives a
+ *   clear affordance against any backdrop (cream page or white card).
+ *
+ * Usage: add the class to the existing element. Components keep their
+ * own positioning class (e.g. `.hero-map-dialog__close`) for layout,
+ * and let the utility class handle visual chrome.
+ * ============================================================================= */
+
+.icon-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--line-soft);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  text-decoration: none;
+  vertical-align: middle;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.icon-help:hover,
+.icon-help:focus-visible {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  outline: none;
+  text-decoration: none;
+}
+
+.icon-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-family: var(--font-sans);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.icon-close:hover,
+.icon-close:focus-visible {
+  background: var(--cream);
+  color: var(--accent);
+  border-color: var(--accent);
+  outline: none;
+}
+
 /* Container widths */
 .wrap { max-width: var(--container-narrow); margin: 0 auto; padding: 0 var(--container-pad); }
 .wrap-wide { max-width: var(--container-wide); margin: 0 auto; padding: 0 var(--container-pad); }

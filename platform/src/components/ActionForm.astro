@@ -189,7 +189,7 @@ const dataMailto = JSON.stringify({
             <I18nText en="Your child's school" zh="孩子的学校" lang={lang} />
             <button
               type="button"
-              class="help-icon"
+              class="icon-help"
               data-open-modal="school-neighbourhood-help"
               aria-label={lang === 'zh' ? '查看学校与街区的对应表' : 'View school → neighbourhood mapping'}
             >?</button>
@@ -347,7 +347,7 @@ const dataMailto = JSON.stringify({
           lang={lang}
         />
       </h2>
-      <button class="school-help-modal__close" type="button" data-close-modal aria-label="Close">×</button>
+      <button class="icon-close" type="button" data-close-modal aria-label="Close">×</button>
     </header>
     <div class="school-help-modal__body">
       <p class="school-help-modal__lede">
@@ -814,29 +814,6 @@ const dataMailto = JSON.stringify({
     align-items: center;
     gap: 6px;
   }
-  .help-icon {
-    background: var(--cream);
-    border: 1px solid var(--line);
-    color: var(--accent);
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    font-size: 11px;
-    font-weight: 700;
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-    display: inline-grid;
-    place-items: center;
-    transition: background 0.15s, border-color 0.15s, color 0.15s;
-  }
-  .help-icon:hover,
-  .help-icon:focus-visible {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: #fff;
-    outline: none;
-  }
   [data-school-hint] {
     margin-top: 4px;
   }
@@ -875,20 +852,6 @@ const dataMailto = JSON.stringify({
     font-weight: 700;
     margin: 0;
     color: var(--ink);
-  }
-  .school-help-modal__close {
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 4px;
-  }
-  .school-help-modal__close:hover {
-    color: var(--ink);
-    background: var(--line-soft);
   }
   .school-help-modal__body {
     overflow-y: auto;
