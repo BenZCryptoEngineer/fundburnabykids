@@ -220,10 +220,13 @@ const facts = (factsEntry?.data as any)?.facts ?? [];
           <ul class="press__contact-list">
             <li>📧 <a href="mailto:ben@fundburnabykids.ca?subject=Media%20inquiry%20%E2%80%94%20Fund%20Burnaby%20Kids">ben@fundburnabykids.ca</a></li>
             <li>🕐 <strong>Response time:</strong> within 2 hours weekdays, within 24 hours weekends (Pacific Time)</li>
-            <li>🎙️ <strong>Available for:</strong> phone interviews, on-camera, document briefings, source verification</li>
-            <li>🗣️ <strong>Languages:</strong> English, 中文 (Mandarin)</li>
+            <li>🗓️ <strong>By appointment</strong> — please email first with specifics about your story.</li>
+            <li>🗣️ <strong>Languages:</strong> English, Mandarin (普通话), Cantonese (粤语)</li>
             <li>🏢 <strong>Day job:</strong> Founder, <a href="https://expeta.ca" target="_blank" rel="noopener noreferrer">Expeta Technologies</a> — research methodology context</li>
           </ul>
+          <p class="press__contact-scope">
+            Ben speaks only for the campaign and for himself. He cannot accept or decline interviews on behalf of signers, MLAs, SD41, BCTF, or any other party — please contact those parties directly.
+          </p>
         </div>
       </section>
 
@@ -431,6 +434,14 @@ const facts = (factsEntry?.data as any)?.facts ?? [];
   }
   .press__contact-list a { color: var(--accent); }
   .press__contact-list strong { color: var(--ink); font-weight: 600; }
+  .press__contact-scope {
+    margin: 14px 0 0;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
 
   .press__coverage {
     list-style: none;
