@@ -13,6 +13,24 @@
 mlas:
   # ---- Provincial cabinet recipients (always TO/CC the same two ministers) ----
 
+  # NOTE on status after the 2026-04-30 SD41 Board funding announcement:
+  # The Burnaby Board of Education publicly announced on 2026-04-30 that
+  # the Province has agreed to fund the full arbitration cost. Board
+  # Chair Schnider thanked Ministers Beare + Bailey by name and "local
+  # MLAs who actively engaged" as a group. We do NOT use this as
+  # evidence to individually upgrade any MLA's scorecard status,
+  # because:
+  #   (a) the schema's `committed` means the MLA publicly supports the
+  #       ask, NOT that a third party characterized them as engaged;
+  #   (b) for the five Burnaby MLAs, the Board's thanks named them as
+  #       a group, never individually.
+  # The outcome itself is communicated to readers via an outcome banner
+  # at the top of the MlaScorecard component (sources the Board
+  # announcement directly). Individual MLA rows will be upgraded only
+  # when each MLA issues their own citable public statement.
+  # `last_updated` is bumped to 2026-04-30 because we re-evaluated each
+  # row that day; the conclusion in every row was unchanged.
+
   - id: beare
     name: "Hon. Lisa Beare"
     riding:
@@ -27,7 +45,7 @@ mlas:
       quote: ""
       source_url: ""
       source_date: null
-    last_updated: 2026-04-26
+    last_updated: 2026-04-30
 
   - id: bailey
     name: "Hon. Brenda Bailey"
@@ -43,7 +61,7 @@ mlas:
       quote: ""
       source_url: ""
       source_date: null
-    last_updated: 2026-04-26
+    last_updated: 2026-04-30
 
   # ---- Five Burnaby ridings (43rd Parliament, post-2024 redistribution) ----
 
@@ -61,7 +79,7 @@ mlas:
       quote: ""
       source_url: ""
       source_date: null
-    last_updated: 2026-04-26
+    last_updated: 2026-04-30
 
   - id: arora
     name: "Rohini Arora"
@@ -77,7 +95,7 @@ mlas:
       quote: ""
       source_url: ""
       source_date: null
-    last_updated: 2026-04-26
+    last_updated: 2026-04-30
 
   - id: chouhan
     name: "Raj Chouhan"
@@ -93,7 +111,7 @@ mlas:
       quote: ""
       source_url: ""
       source_date: null
-    last_updated: 2026-04-26
+    last_updated: 2026-04-30
 
   - id: routledge
     name: "Janet Routledge"

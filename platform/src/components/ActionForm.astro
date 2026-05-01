@@ -13,6 +13,7 @@ import { getEntry } from 'astro:content';
 import I18nText from '~/components/I18nText.astro';
 import { t, localizedUrl } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
+import { OUTCOME_REACHED, DPAC_DAY_OF_ACTION_URL } from '~/lib/outcome';
 
 interface Props {
   lang: Lang;
@@ -59,6 +60,107 @@ const dataMailto = JSON.stringify({
 
 <section class="action-form-section" id="act">
   <div class="wrap">
+    {OUTCOME_REACHED ? (
+      <>
+        {/* Outcome state — sign-up closed. The form, public-preview card,
+            and Turnstile gating below are skipped entirely; existing
+            signers are routed to /find-my-signature/ for letter
+            recovery, and visitors who want to keep showing up are
+            handed off to Burnaby DPAC's May 1 Day of Action (parallel-
+            actor framing: their work on chronic underfunding is
+            distinct from this campaign's specific ask). The
+            letter-preview details remain as a historical record of
+            what signers attached their names to. */}
+        <header class="action-form-header">
+          <p class="kicker sans">
+            <I18nText en="Sign-up closed" zh="签名已结束" lang={lang} />
+          </p>
+          <h2>
+            <I18nText
+              en="The specific ask is resolved. Thank you for showing up."
+              zh="具体诉求已得到解决。感谢你站出来。"
+              lang={lang}
+            />
+          </h2>
+          <p class="action-form-header__sub sans">
+            <I18nText
+              en="On April 30, 2026, the Province committed to fund the full $9.4M arbitration cost. We've stopped accepting new signatures."
+              zh="2026 年 4 月 30 日，省府承诺承担本次仲裁裁决的全部 $9.4M 成本。我们已停止接收新签名。"
+              lang={lang}
+            />
+          </p>
+        </header>
+
+        <div class="action-closed-options">
+          <div class="action-closed-card">
+            <h3>
+              <I18nText en="Already signed?" zh="已经签过名？" lang={lang} />
+            </h3>
+            <p>
+              <I18nText
+                en="Your public letter URL and withdraw link still work. If you've lost them, recover by email."
+                zh="你的公开信件 URL 和退订链接依然有效。丢失的话可以通过邮箱找回。"
+                lang={lang}
+              />
+            </p>
+            <a class="action-closed-card__link" href={localizedUrl('/find-my-signature/', lang)}>
+              <I18nText en="Find your letter →" zh="找回我的信件 →" lang={lang} />
+            </a>
+          </div>
+
+          <div class="action-closed-card">
+            <h3>
+              <I18nText en="Want to keep showing up?" zh="想继续行动？" lang={lang} />
+            </h3>
+            <p>
+              <I18nText
+                en="Burnaby DPAC's May 1 Day of Action at MLA Paul Choi's office continues. They're working on broader funding pressures distinct from this campaign's specific ask — that's the place."
+                zh="Burnaby DPAC 在 MLA Paul Choi 办公室的 5 月 1 日 Day of Action 照常举行。他们关注的是与本次活动具体诉求相区分的、更宽泛的拨款议题——那里是延续行动的地方。"
+                lang={lang}
+              />
+            </p>
+            <a class="action-closed-card__link" href={DPAC_DAY_OF_ACTION_URL} target="_blank" rel="noopener noreferrer">
+              <I18nText en="Day of Action details ↗" zh="Day of Action 详情 ↗" lang={lang} />
+            </a>
+          </div>
+        </div>
+
+        {/* Letter preview — kept as historical record. Reframed
+            summary copy ("on record" instead of "you're co-signing")
+            and placeholder text ("Signer first name" instead of "Your
+            first name") since no new signers can attach to this. */}
+        <details class="letter-preview letter-preview--archive">
+          <summary class="sans">
+            <I18nText
+              en="What signers sent — the letter on record →"
+              zh="签署者寄出的信件（存档）→"
+              lang={lang}
+            />
+          </summary>
+          <div class="letter-preview__body">
+            {lang === 'zh' && (
+              <p class="letter-preview__lang-note sans muted small">
+                信件用英文发出（收件人是省政府部长 / MLA 办公室）。下方是寄出过的内容。
+              </p>
+            )}
+            <p class="letter-preview__meta sans small">
+              <strong>To:</strong> <code>ECC.Minister@gov.bc.ca</code> ·{' '}
+              <strong>Cc:</strong> <code>5 Burnaby MLAs + Finance Minister</code>
+            </p>
+            <p class="letter-preview__subject sans">
+              <strong><I18nText en="Subject:" zh="主题：" lang={lang} /></strong> {subjectEn}
+            </p>
+            <pre class="letter-preview__text">{bodyTemplateEn
+              .replace(/\{FIRST\}/g, '[Signer first name]')
+              .replace(/\{LAST\}/g, '[Signer last name]')
+              .replace(/\{SCHOOL\}/g, '[School]')
+              .replace(/\{GRADE\}/g, '[Grade]')
+              .replace(/\{POSTAL\}/g, '[Postal code]')}</pre>
+          </div>
+        </details>
+      </>
+    ) : (
+      <>
     <header class="action-form-header">
       <p class="kicker sans">
         <I18nText
@@ -331,6 +433,8 @@ const dataMailto = JSON.stringify({
         </a>.
       </p>
     </form>
+      </>
+    )}
   </div>
 </section>
 
@@ -595,6 +699,54 @@ const dataMailto = JSON.stringify({
     color: var(--ink-soft);
     margin: 0;
     line-height: 1.5;
+  }
+
+  /* Outcome-state cards — replace the active form with two side-by-side
+     option cards: (a) "Already signed?" → /find-my-signature/ for letter
+     recovery, (b) "Want to keep showing up?" → DPAC May 1 hand-off.
+     Same visual register as letter-preview (cream fill + line border)
+     so the page reads as a coherent post-resolution state, not a UI
+     left half-finished. Stack on narrow viewports. */
+  .action-closed-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .action-closed-card {
+    background: var(--cream);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .action-closed-card h3 {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    margin: 0;
+    line-height: 1.3;
+  }
+  .action-closed-card p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    margin: 0;
+  }
+  .action-closed-card__link {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--accent);
+    text-decoration: underline;
+    margin-top: auto;
+    align-self: flex-start;
+  }
+  .action-closed-card__link:hover {
+    text-decoration: none;
   }
   .form-coalition-note {
     font-size: 13px;

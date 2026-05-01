@@ -98,6 +98,44 @@ const tbSourceLabel = tbMembers[0]?.treasury_board?.source_label;
       </p>
     </header>
 
+    {/* Outcome banner — surfaces the SD41 Board's 2026-04-30 announcement
+        that the Province has agreed to fund the full arbitration cost.
+        This is event-level news, NOT a status change on any individual
+        MLA card: Board Chair Schnider's third-party thanks doesn't
+        substitute for an MLA's own citable public statement, so every
+        MLA row below stays `awaiting`. The mlas.yaml file documents the
+        same reasoning at the top of the file. Update the copy here only
+        if a Province / minister / MLA issues their own statement. */}
+    <aside class="scorecard__outcome">
+      <p class="scorecard__outcome__label sans">
+        <span class="scorecard__outcome__icon"><Icon name="check-circle" size={18} /></span>
+        <I18nText en="Outcome" zh="结果" lang={lang} />
+      </p>
+      <p>
+        <I18nText
+          en="On April 30, 2026, the Burnaby Board of Education announced the Province has agreed to fund the full cost of the arbitration ruling. Board Chair Kristin Schnider thanked Ministers Beare and Bailey, alongside 'local MLAs who actively engaged.'"
+          zh="2026 年 4 月 30 日，Burnaby 教育局董事会宣布省府已同意承担仲裁裁决的全部成本。董事会主席 Kristin Schnider 公开感谢 Beare 厅长、Bailey 厅长，以及「积极参与的本地 MLA」。"
+          lang={lang}
+        />
+      </p>
+      <p class="scorecard__outcome__caveat">
+        <I18nText
+          en="The cards below remain at &lsquo;awaiting reply&rsquo; because we only update individual status with each MLA&rsquo;s own citable public statement. The Board&rsquo;s third-party thanks confirms the outcome, but it doesn&rsquo;t substitute for first-person commitment from each representative."
+          zh="下方每张 MLA 卡片仍维持「等待回复」 — 个体状态只在 MLA 本人发出可引用的公开声明时才更新。Board 的第三方致谢确认了结果，但不能替代每位代表的本人立场声明。"
+          lang={lang}
+        />
+      </p>
+      <p class="scorecard__outcome__source sans">
+        <a
+          href="https://burnabyschools.ca/province-protects-districts-classrooms-and-budget-by-funding-arbitration-ruling/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <I18nText en="Read the SD41 announcement ↗" zh="阅读 SD41 公告 ↗" lang={lang} />
+        </a>
+      </p>
+    </aside>
+
     {tbMembers.length > 0 && (
       <aside class="scorecard__tb-note">
         <p class="scorecard__tb-note__label sans">
@@ -238,6 +276,61 @@ const tbSourceLabel = tbMembers[0]?.treasury_board?.source_label;
   .scorecard__lede {
     color: var(--ink-soft);
     margin: 0;
+  }
+
+  /* Outcome banner — surfaces the SD41 Board's 2026-04-30 funding
+     announcement at the top of the scorecard so readers don't read the
+     seven `awaiting` cards as "we missed the news". Visually heavier
+     than the TB-note below it (success-soft fill + darker green
+     border-left) because outcome > institutional context in importance.
+     Educational tone, not celebratory — we cite the Board statement,
+     name the ministers the Board named, and explicitly explain why
+     individual cards stay `awaiting`. */
+  .scorecard__outcome {
+    background: var(--success-soft);
+    border: 1px solid var(--success);
+    border-left: 4px solid var(--success);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin: 0 0 16px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .scorecard__outcome__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    color: var(--success);
+    margin: 0 0 6px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .scorecard__outcome__icon {
+    color: var(--success);
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .scorecard__outcome p {
+    margin: 0 0 8px;
+  }
+  .scorecard__outcome__caveat {
+    color: var(--ink-soft);
+    font-size: 13px;
+  }
+  .scorecard__outcome__source {
+    margin: 8px 0 0;
+    font-size: 13px;
+  }
+  .scorecard__outcome__source a {
+    color: var(--success);
+    font-weight: 600;
+    text-decoration: underline;
+  }
+  .scorecard__outcome__source a:hover {
+    text-decoration: none;
   }
 
   /* Educational note about the Treasury Board badge — only renders when

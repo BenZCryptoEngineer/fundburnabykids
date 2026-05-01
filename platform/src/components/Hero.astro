@@ -12,6 +12,7 @@ import ProgressBar from '~/components/ProgressBar.astro';
 import RidingMap from '~/components/RidingMap.astro';
 import { localizedUrl, t } from '~/lib/i18n';
 import type { Lang } from '~/lib/i18n';
+import { OUTCOME_REACHED, OUTCOME_SOURCE_URL, DPAC_DAY_OF_ACTION_URL } from '~/lib/outcome';
 
 interface Props {
   lang: Lang;
@@ -106,52 +107,128 @@ const totalPacs = pacEndorsements.length;
         per-riding signature counts. The full RidingMap component
         renders inside the dialog (mounted always so polling + SSR
         seed work). */}
-    <div class="hero__countdown-row">
-      <Countdown deadline={deadline} lang={lang} />
-    </div>
-    <p class="hero__countdown-consequence sans">
-      {lang === 'zh' ? (
-        <>
-          5 月 27 日之后，削减将<strong>锁定到 2026-27 学年</strong>。9 月之前没有&ldquo;下一次机会&rdquo;。
-        </>
+    {/* Countdown row + consequence — only relevant in active-campaign
+        state. Once OUTCOME_REACHED, the May 27 budget-adoption deadline
+        is moot (the specific ask was funded before then), so we hide
+        both the Countdown pill and the "after this date, cuts locked
+        in" line. Restoring the active hero is a single flip of
+        OUTCOME_REACHED in src/lib/outcome.ts. */}
+    {!OUTCOME_REACHED && (
+      <>
+        <div class="hero__countdown-row">
+          <Countdown deadline={deadline} lang={lang} />
+        </div>
+        <p class="hero__countdown-consequence sans">
+          {lang === 'zh' ? (
+            <>
+              5 月 27 日之后，削减将<strong>锁定到 2026-27 学年</strong>。9 月之前没有&ldquo;下一次机会&rdquo;。
+            </>
+          ) : (
+            <>
+              After May 27, the cuts are <strong>locked in for the 2026-27 school year</strong>. There is no &ldquo;next chance&rdquo; before September.
+            </>
+          )}
+        </p>
+      </>
+    )}
+
+    {/* Kicker — flips between active-campaign provenance ("BC Budget 2026
+        · SD41 · Arbitration funding") and outcome-state date stamp
+        ("Outcome — April 30, 2026") so the first thing readers see
+        matches the page's current purpose. */}
+    <p class="hero__kicker sans">
+      {OUTCOME_REACHED ? (
+        <I18nText
+          en="Outcome — April 30, 2026"
+          zh="结果 — 2026 年 4 月 30 日"
+          lang={lang}
+        />
       ) : (
-        <>
-          After May 27, the cuts are <strong>locked in for the 2026-27 school year</strong>. There is no &ldquo;next chance&rdquo; before September.
-        </>
+        <I18nText
+          en="BC Budget 2026 · Burnaby School District 41 · Arbitration funding"
+          zh="BC Budget 2026 · Burnaby 学区 SD41 · 仲裁裁决拨款"
+          lang={lang}
+        />
       )}
     </p>
 
-    {/* Kicker */}
-    <p class="hero__kicker sans">
-      <I18nText
-        en="BC Budget 2026 · Burnaby School District 41 · Arbitration funding"
-        zh="BC Budget 2026 · Burnaby 学区 SD41 · 仲裁裁决拨款"
-        lang={lang}
-      />
-    </p>
+    {OUTCOME_REACHED ? (
+      <>
+        {/* Outcome-state hero body — parallel-actor framing.
+            Specific ask resolved (paragraphs 1-2), DPAC's broader
+            structural work explicitly distinct (paragraph 3),
+            campaign infrastructure preserved as future asset
+            (paragraph 4). Source link to the SD41 Board's own
+            announcement under the body. */}
+        <h1 class="hero__headline hero__headline--outcome">
+          <I18nText en="Outcome reached." zh="诉求达成。" lang={lang} />
+        </h1>
+        <div class="hero__outcome-body">
+          <p class="hero__outcome-lead">
+            {lang === 'zh' ? (
+              <>2026 年 4 月 30 日，省府承诺承担本次仲裁裁决的全部 <span class="hero__amount">$9.4M</span> 成本。本次活动的具体诉求已得到解决。</>
+            ) : (
+              <>On April 30, 2026, the Province committed to fund the full <span class="hero__amount">$9.4M</span> arbitration cost. The specific ask of this campaign is resolved.</>
+            )}
+          </p>
+          <p>
+            <I18nText
+              en="This was a campaign about a specific, structural failure: a provincial bargaining body misinterpreted Burnaby's contract, and the cost was being passed to local classrooms. That's now been corrected."
+              zh="本次活动针对的是一个具体的结构性失误：省级集体谈判机构误读了 Burnaby 的合同，本应由省级承担的成本被转嫁到本地课堂。这一失误现已得到纠正。"
+              lang={lang}
+            />
+          </p>
+          <p>
+            {lang === 'zh' ? (
+              <>Burnaby DPAC 仍在持续推进更宽泛的长期教育拨款不足议题——他们的 <a href={DPAC_DAY_OF_ACTION_URL} target="_blank" rel="noopener noreferrer">5 月 1 日 Day of Action</a> 照常举行。那是与本次活动具体诉求相区分但互补的工作。</>
+            ) : (
+              <>Burnaby DPAC continues its broader work on chronic underfunding — their <a href={DPAC_DAY_OF_ACTION_URL} target="_blank" rel="noopener noreferrer">May 1 Day of Action</a> is still on, and that work is distinct from but complementary to this campaign's specific ask.</>
+            )}
+          </p>
+          <p>
+            <I18nText
+              en="What we built here — the data, the framework, the coalition of parents who showed up — doesn't disappear. We're thinking about what comes next."
+              zh="我们在这里建立的东西——数据、方法论、站出来的家长联盟——不会消失。下一步要做什么，我们正在思考。"
+              lang={lang}
+            />
+          </p>
+          <p class="hero__outcome-source sans">
+            <a href={OUTCOME_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+              <I18nText en="Read the SD41 announcement ↗" zh="阅读 SD41 公告 ↗" lang={lang} />
+            </a>
+          </p>
+        </div>
+      </>
+    ) : (
+      <>
+        {/* Headline (highlights $X.XM as a styled span) */}
+        <h1 class="hero__headline">
+          {(() => {
+            const parts = headline.split(askAmount);
+            if (parts.length === 2) {
+              return (
+                <>{parts[0]}<span class="hero__amount">{askAmount}</span>{parts[1]}</>
+              );
+            }
+            return headline;
+          })()}
+        </h1>
 
-    {/* Headline (highlights $X.XM as a styled span) */}
-    <h1 class="hero__headline">
-      {(() => {
-        const parts = headline.split(askAmount);
-        if (parts.length === 2) {
-          return (
-            <>{parts[0]}<span class="hero__amount">{askAmount}</span>{parts[1]}</>
-          );
-        }
-        return headline;
-      })()}
-    </h1>
-
-    {/* Subheadline */}
-    {subheadline && <p class="hero__sub">{subheadline}</p>}
+        {/* Subheadline */}
+        {subheadline && <p class="hero__sub">{subheadline}</p>}
+      </>
+    )}
 
     {/* Counter + Progress */}
     <div class="hero__counter">
       <SignatureCounter lang={lang} goal={goal} />
     </div>
 
-    <ProgressBar lang={lang} />
+    {/* ProgressBar: hidden in outcome state — the "X of 2000 signatures"
+        progress meter implies an active goal, which is moot once the
+        ask is resolved. SignatureCounter above keeps the historical
+        count visible. */}
+    {!OUTCOME_REACHED && <ProgressBar lang={lang} />}
 
     {/* Riding-map teaser pill — sits below the SignatureCounter and
         above the dual CTAs. Designed as a subtle "interactive element"
@@ -168,32 +245,46 @@ const totalPacs = pacEndorsements.length;
     >
       <span class="hero__map-link__icon"><Icon name="map" size={18} /></span>
       <span class="hero__map-link__text">
-        <I18nText
-          en="See live signatures by Burnaby riding"
-          zh="看签名按选区分布（实时）"
-          lang={lang}
-        />
+        {OUTCOME_REACHED ? (
+          <I18nText
+            en="See signatures by Burnaby riding"
+            zh="看签名按选区分布"
+            lang={lang}
+          />
+        ) : (
+          <I18nText
+            en="See live signatures by Burnaby riding"
+            zh="看签名按选区分布（实时）"
+            lang={lang}
+          />
+        )}
       </span>
       <span class="hero__map-link__arrow" aria-hidden="true">→</span>
     </button>
 
-    {/* Dual CTA */}
-    <div class="hero__cta-row">
-      <a class="btn btn--primary btn--lg" href={localizedUrl('/#act', lang)}>
-        <I18nText
-          en="Sign + email your MLA — 60 seconds"
-          zh="签名 + 给你的 MLA 发邮件 — 60 秒"
-          lang={lang}
-        />
-      </a>
-      <a class="btn btn--ghost btn--lg" href={localizedUrl('/#why', lang)}>
-        <I18nText
-          en="Read the case first"
-          zh="先看证据"
-          lang={lang}
-        />
-      </a>
-    </div>
+    {/* Dual CTA — hidden in outcome state. The active CTAs ("Sign +
+        email your MLA" / "Read the case first") drive the action
+        funnel that's now closed. The hero outcome body already carries
+        the source link to the SD41 announcement and the DPAC May 1
+        hand-off, so no replacement CTAs are needed. */}
+    {!OUTCOME_REACHED && (
+      <div class="hero__cta-row">
+        <a class="btn btn--primary btn--lg" href={localizedUrl('/#act', lang)}>
+          <I18nText
+            en="Sign + email your MLA — 60 seconds"
+            zh="签名 + 给你的 MLA 发邮件 — 60 秒"
+            lang={lang}
+          />
+        </a>
+        <a class="btn btn--ghost btn--lg" href={localizedUrl('/#why', lang)}>
+          <I18nText
+            en="Read the case first"
+            zh="先看证据"
+            lang={lang}
+          />
+        </a>
+      </div>
+    )}
 
     {/* Founder credit */}
     <p class="hero__founder sans">
@@ -524,6 +615,54 @@ const totalPacs = pacEndorsements.length;
     margin: 0 0 28px;
     max-width: 640px;
   }
+
+  /* Outcome-state hero: smaller H1 ("Outcome reached.") + multi-paragraph
+     body. The active hero's display H1 is sized clamp(32px, 5vw, 52px)
+     because it has to drive action; the outcome state is informational,
+     so the H1 dials back to leave more visual weight for the
+     paragraphs below. The lead paragraph picks up the scale where the
+     active subhead sat (clamp(17-20px)) so $9.4M is still the visual
+     anchor. */
+  .hero__headline--outcome {
+    font-size: clamp(28px, 4vw, 42px);
+    margin-bottom: 20px;
+  }
+  .hero__outcome-body {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    max-width: 700px;
+    margin: 0 0 12px;
+  }
+  .hero__outcome-body > p {
+    margin: 0;
+    font-size: clamp(15px, 2vw, 17px);
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+  .hero__outcome-body > p.hero__outcome-lead {
+    font-size: clamp(17px, 2.4vw, 20px);
+    line-height: 1.55;
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .hero__outcome-body a {
+    color: var(--accent);
+    text-decoration: underline;
+    font-weight: 500;
+  }
+  .hero__outcome-body a:hover {
+    text-decoration: none;
+  }
+  .hero__outcome-body > p.hero__outcome-source {
+    font-size: 13px;
+    margin-top: 4px;
+  }
+  .hero__outcome-body > p.hero__outcome-source a {
+    color: var(--success);
+    font-weight: 600;
+  }
+
   .hero__counter {
     margin: 24px 0 8px;
   }
