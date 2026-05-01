@@ -76,11 +76,18 @@ export const LANG_LABELS: Record<Lang, { self: string; other: string }> = {
 
 /**
  * Format a date in locale-aware short form (May 27, 2026 / 2026 年 5 月 27 日).
+ *
+ * timeZone: 'UTC' is intentional. YAML date literals like `2026-04-30`
+ * (no time + no TZ) get parsed by `new Date()` as UTC midnight; without
+ * the timeZone option, Intl.DateTimeFormat then re-renders that instant
+ * in the viewer's local TZ, which on PDT (UTC-7) yields the previous
+ * calendar day. Forcing UTC makes the rendered day match the day
+ * authored in YAML, regardless of who's viewing.
  */
 export function formatDate(iso: string | Date, lang: Lang): string {
   const d = typeof iso === 'string' ? new Date(iso) : iso;
   if (lang === 'zh') {
-    return new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+    return new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(d);
   }
-  return new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
+  return new Intl.DateTimeFormat('en-CA', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }).format(d);
 }
